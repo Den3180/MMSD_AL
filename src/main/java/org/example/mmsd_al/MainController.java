@@ -1,14 +1,51 @@
 package org.example.mmsd_al;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
+import javafx.scene.effect.Lighting;
+import javafx.scene.effect.Shadow;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Stop;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+
+import java.util.Objects;
+
 
 public class MainController {
+
     @FXML
-    private Label welcomeText;
-//Еуые
+    private TreeView treeView;
+
     @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("СОТКА ММСД!");
+    public void button_Click(ActionEvent actionEvent) {
+        Button bb=(Button)actionEvent.getSource();
+        Stage stage = (Stage) bb.getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
+    public void menuItemClick(ActionEvent actionEvent) {
+        MenuItem menuItem= (MenuItem)actionEvent.getSource();
+        if(menuItem==null) return;
+        String nameMenu=menuItem.getText();
+        switch (nameMenu){
+            case "Выход...":
+                Platform.exit();
+                break;
+            default:
+        }
     }
 }

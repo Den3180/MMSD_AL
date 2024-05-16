@@ -79,6 +79,12 @@
             <artifactId>jssc</artifactId>
             <version>2.9.6</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
