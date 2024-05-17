@@ -26,6 +26,8 @@ import java.util.Objects;
 
 public class MainController {
 
+    private Stage stage=StartApplication.stage;
+
     @FXML
     private TreeView treeView;
 
@@ -43,9 +45,29 @@ public class MainController {
         String nameMenu=menuItem.getText();
         switch (nameMenu){
             case "Выход...":
-                Platform.exit();
+                exitApp();
                 break;
-            default:
+            case "Устройства...":
+                break;
+            case "Каналы данных...":
+                break;
+            case "База данных...":
+                break;
+            case "Параметры...":
+                break;
+            case "Создать БД...":
+                break;
+            case "Отправить архив...":
+                break;
+            case "Загрузить архив...":
+                break;
+            case "О программе...":
+                break;
         }
+    }
+
+    private void exitApp(){
+       //Platform.exit();
+        stage.close();
     }
 }

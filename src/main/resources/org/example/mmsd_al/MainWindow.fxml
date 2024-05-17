@@ -49,7 +49,7 @@
    <center>
       <SplitPane dividerPositions="0.1889168765743073" BorderPane.alignment="CENTER">
         <items>
-          <TreeView fx:id="treeView" minHeight="0.0" minWidth="200" prefHeight="160.0" prefWidth="100.0" />
+          <TreeView fx:id="treeView" maxWidth="300.0" minWidth="100.0" prefWidth="200.0" />
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
         </items>
       </SplitPane>
