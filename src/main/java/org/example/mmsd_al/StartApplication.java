@@ -1,28 +1,24 @@
 package org.example.mmsd_al;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import java.awt.*;
 import java.io.IOException;
+import java.util.Objects;
 
 public class StartApplication extends Application {
 
     public static Stage stage;
     @Override
     public void start(Stage stage) throws IOException {
+        StartApplication.stage =stage;
         FXMLLoader fxmlLoader = new FXMLLoader(StartApplication.class.getResource("MainWindow.fxml"));
-        this.stage=stage;
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("ООО НПК 'ТехноПром' - Система Оперативной Телеметрии и Комплексного Анализа");
+        Image image=new Image(Objects.requireNonNull(StartApplication.class.getResourceAsStream("/about.png")));
+        stage.getIcons().add(image);
         stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();
