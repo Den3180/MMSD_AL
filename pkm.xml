@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="17.0.11" class="java.beans.XMLDecoder">
+ <object class="org.example.mmsd_al.Settings.ClassSettings">
+  <void property="baudRate">
+   <int>88888888</int>
+  </void>
+  <void property="password">
+   <string>Password</string>
+  </void>
+ </object>
+</java>

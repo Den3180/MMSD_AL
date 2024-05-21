@@ -1,4 +1,4 @@
-module org.example.mmsd_al {
+open module org.example.mmsd_al {
     requires javafx.controls;
     requires javafx.fxml;
 
@@ -8,6 +8,7 @@ module org.example.mmsd_al {
     requires org.kordamp.bootstrapfx.core;
     requires java.desktop;
 
-    opens org.example.mmsd_al to javafx.fxml;
+    //org.example.mmsd_al to javafx.fxml;
     exports org.example.mmsd_al;
+    exports org.example.mmsd_al.Classes;
 }

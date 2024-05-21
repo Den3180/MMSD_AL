@@ -5,7 +5,7 @@
 
 <BorderPane prefHeight="600" prefWidth="800" style="-fx-border-color: grey; -fx-border-width: 2;"
             xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.mmsd_al.MainController">
+            fx:controller="org.example.mmsd_al.MainWindow">
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>

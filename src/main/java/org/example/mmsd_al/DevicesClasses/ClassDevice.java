@@ -1,0 +1,290 @@
+package org.example.mmsd_al.DevicesClasses;
+
+import org.example.mmsd_al.Classes.ClassChannel;
+import org.example.mmsd_al.MainWindow;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Класс устройств.
+ */
+public class ClassDevice {
+
+
+
+    /**
+     * Перечисление статусов подключения.
+     */
+    public enum EnumLink{
+        Unknown,
+        LinkNo,
+        LinkYes,
+        LinkConnect;
+    }
+    /**
+     * Перечисление протоколов подключения.
+     */
+    public enum EnumProtocol
+    {
+        RTU(1),
+        TCP(2),
+        SMS(3),
+        GPRS(4),
+        GPRS_SMS(5);
+
+        EnumProtocol(int i){
+        }
+
+    }
+
+
+    /**
+    * Перечисление типов устройств.
+    */
+    public enum  EnumModel{
+        None,
+        BKM_3,
+        BKM_4,
+        SKZ,
+        SKZ_IP,
+        BSZ,
+        USIKP,
+        BKM_5,
+        KIP;
+
+    }
+    private int id;
+    private String _Name;
+    private int _Address;
+    private EnumProtocol _Protocol;
+    private int _Period;
+    private String _IPAddress;
+    private int _IPPort;
+    private EnumLink _LinkState;
+    private int _TxCounter;
+    private int _RxCounter;
+    private int _PacketLost;
+    private LocalDate _DTAct;
+    private String _ComPort;
+    private String _SIM;
+    private EnumModel _Model;
+    private LocalDate _DTConnect;
+    private boolean _WaitAnswer;
+    private String _Picket;
+    private double _Latitude =  00.000000D;
+    private double _Longitude = 00.000000D;
+    private double _Elevation;
+    private String _LinkStateName;
+    private int countNumber;
+    private List<ClassChannel> channels;
+    public int getId(){
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String get_Name() {
+        return _Name;
+    }
+
+    public void set_Name(String _Name){
+        this._Name=_Name;
+    }
+
+    public int get_Address() {
+        return _Address;
+    }
+
+    public void set_Address(int _Address) {
+        this._Address = _Address;
+    }
+
+    public EnumProtocol get_Protocol() {
+        return _Protocol;
+    }
+
+    public void set_Protocol(EnumProtocol _Protocol) {
+        this._Protocol = _Protocol;
+    }
+
+    public int get_Period() {
+        return _Period;
+    }
+
+    public void set_Period(int _Period) {
+        this._Period = _Period;
+    }
+
+    public String get_IPAddress() {
+        return _IPAddress;
+    }
+
+    public void set_IPAddress(String _IPAddress) {
+        this._IPAddress = _IPAddress;
+    }
+
+    public int get_IPPort() {
+        return _IPPort;
+    }
+
+    public void set_IPPort(int _IPPort) {
+        this._IPPort = _IPPort;
+    }
+
+    public String get_ComPort() {
+        return _ComPort;
+    }
+
+    public void set_ComPort(String _ComPort) {
+        this._ComPort = _ComPort;
+    }
+
+    public String get_SIM() {
+        return _SIM;
+    }
+
+    public void set_SIM(String _SIM) {
+        this._SIM = _SIM;
+    }
+
+    public EnumModel get_Model() {
+        return _Model;
+    }
+
+    public void set_Model(EnumModel _Model) {
+        this._Model = _Model;
+    }
+
+    public String get_Picket() {
+        return _Picket;
+    }
+
+    public void set_Picket(String _Picket) {
+        this._Picket = _Picket;
+    }
+
+    public double get_Longitude() {
+        return _Longitude;
+    }
+
+    public void set_Longitude(double _Longitude) {
+        this._Longitude = _Longitude;
+    }
+
+    public double get_Latitude() {
+        return _Latitude;
+    }
+
+    public void set_Latitude(double _Latitude) {
+        this._Latitude = _Latitude;
+    }
+
+    public double get_Elevation() {
+        return _Elevation;
+    }
+
+    public void set_Elevation(double _Elevation) {
+        this._Elevation = _Elevation;
+    }
+
+    public LocalDate get_DTAct() {
+        return _DTAct;
+    }
+
+    public void set_DTAct(LocalDate _DTAct) {
+        this._DTAct = _DTAct;
+    }
+
+    public int getCountNumber(){
+        return countNumber;
+    }
+
+    public void setCountNumber(int countNumber) {
+        this.countNumber = countNumber;
+    }
+
+    public EnumLink get_LinkState(){
+        return _LinkState;
+    }
+
+    public String get_LinkStateName() {
+        switch (get_LinkState()){
+            case LinkNo: return "Нет связи";
+            case LinkYes: return  "На связи";
+            case LinkConnect: return "Подключение";
+            default:return  "Неизвестно";
+        }
+    }
+
+    public void set_LinkStateName(String _LinkStateName) {
+        this._LinkStateName = _LinkStateName;
+    }
+
+    public String ProtocolName(){
+        switch (_Protocol){
+            case RTU: return "Modbus RTU";
+            case TCP: return "Modbus TCP";
+            case SMS: return "GSM SMS";
+            case GPRS: return "GPRS";
+            case GPRS_SMS: return "GPRS SMS";
+            default: return "не известно";
+        }
+    }
+
+    public String Modelname(){
+        switch (_Model){
+            case BKM_3: return "БКМ-3";
+            case BKM_4: return "БКМ-4";
+            case SKZ: return "СКЗ";
+            case SKZ_IP: return "СКЗ-ИП";
+            case BSZ: return "БСЗЭ";
+            case USIKP: return "УСИКП";
+            case BKM_5:return "БКМ-5";
+            case KIP:return "КИП";
+            default: return "не известно";
+        }
+    }
+
+    public String packetStatistics(){
+            return  Integer.toString(_TxCounter)+"/"+Integer.toString(_RxCounter);
+    }
+
+    public int get_TxCounter() {
+        return _TxCounter;
+    }
+
+    public int get_RxCounter() {
+        return _RxCounter;
+    }
+
+    public boolean get_WaitAnswer() {
+        return _WaitAnswer;
+    }
+
+    public List<ClassChannel> getChannels() {
+        return channels;
+    }
+
+    public void setChannels(List<ClassChannel> channels) {
+        this.channels = channels;
+    }
+
+    public String commParam(){
+        if ((_Protocol == EnumProtocol.TCP) || (_Protocol == EnumProtocol.GPRS)
+                || (_Protocol == EnumProtocol.GPRS_SMS))        return _IPAddress + ":" + _IPPort;
+        else if (_ComPort != "")                                return _ComPort;
+        else if (_Protocol == EnumProtocol.SMS)
+                                                                return "COM" + MainWindow.settings.getPortModem();
+        else if (MainWindow.settings.getPortModbus() == 0)           return "Нет";
+        else                                                    return "COM" + MainWindow.settings.getPortModbus();
+    }
+
+    public ClassDevice(){
+        id=0;
+        channels=new ArrayList<ClassChannel>();
+    }
+}

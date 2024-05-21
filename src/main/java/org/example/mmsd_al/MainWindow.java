@@ -1,14 +1,16 @@
 package org.example.mmsd_al;
 
+import org.example.mmsd_al.Settings.ClassSettings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 
-public class MainController {
+public class MainWindow {
 
     private Stage stage=StartApplication.stage;
+    public static ClassSettings settings;
 
     @FXML
     private TreeView treeView;
@@ -16,14 +18,20 @@ public class MainController {
     private MenuBar mainMenu;
 
     public void initialize(){
-
+        settings=new ClassSettings();
     }
 
     @FXML
     public void button_Click(ActionEvent actionEvent) {
-        Button bb=(Button)actionEvent.getSource();
-        Stage stage = (Stage) bb.getScene().getWindow();
-        stage.close();
+//        Button bb=(Button)actionEvent.getSource();
+//        Stage stage = (Stage) bb.getScene().getWindow();
+//        stage.close();
+
+        settings.setBaudRate(88888888);
+        settings.setPassword("Password");
+        settings.save();
+        var s2= ClassSettings.load();
+        System.out.println(s2.getBaudRate() + " "+s2.getPassword());
     }
 
     @FXML
@@ -36,6 +44,7 @@ public class MainController {
                 exitApp();
                 break;
             case "Устройства...":
+
                 break;
             case "Каналы данных...":
                 break;
