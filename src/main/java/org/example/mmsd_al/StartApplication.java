@@ -17,7 +17,7 @@ public class StartApplication extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(StartApplication.class.getResource("MainWindow.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("ООО НПК 'ТехноПром' - Система Оперативной Телеметрии и Комплексного Анализа");
-        Image image=new Image(Objects.requireNonNull(StartApplication.class.getResourceAsStream("/about.png")));
+       Image image=new Image(Objects.requireNonNull(StartApplication.class.getResourceAsStream("/about.png")));
         stage.getIcons().add(image);
         stage.setMaximized(true);
         stage.setScene(scene);

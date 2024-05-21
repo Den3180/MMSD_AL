@@ -1,4 +1,7 @@
 package DevicesClasses;
+
+import java.time.LocalDate;
+
 /**
  * Класс устройств.
  */
@@ -29,7 +32,7 @@ public class ClassDevice {
         }
     }
 
-    /** <summary>
+    /**
     * Перечисление типов устройств.
     */
     public enum  EnumModel{
@@ -54,11 +57,11 @@ public class ClassDevice {
     private int _TxCounter;
     private int _RxCounter;
     private int _PacketLost;
-   // private DateTime _DTAct;
+    private LocalDate _DTAct;
     private String _ComPort;
     private String _SIM;
     private EnumModel _Model;
-    //private DateTime _DTConnect;
+    private LocalDate _DTConnect;
     private Boolean _WaitAnswer;
     private String _Picket;
     private double _Latitude =  00.000000D;
