@@ -1,16 +1,25 @@
 package org.example.mmsd_al;
 
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import org.example.mmsd_al.DBClasses.ClassDB;
+import org.example.mmsd_al.DevicesClasses.ClassDevice;
+import org.example.mmsd_al.ServiceClasses.ClassDialog;
 import org.example.mmsd_al.Settings.ClassSettings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.time.LocalDate;
+
 
 public class MainWindow {
 
     private Stage stage=StartApplication.stage;
     public static ClassSettings settings;
+    public static ClassDB DB;
 
     @FXML
     private TreeView treeView;
@@ -23,15 +32,17 @@ public class MainWindow {
 
     @FXML
     public void button_Click(ActionEvent actionEvent) {
-//        Button bb=(Button)actionEvent.getSource();
-//        Stage stage = (Stage) bb.getScene().getWindow();
-//        stage.close();
 
-        settings.setBaudRate(88888888);
-        settings.setPassword("Password");
-        settings.save();
-        var s2= ClassSettings.load();
-        System.out.println(s2.getBaudRate() + " "+s2.getPassword());
+//
+        ClassDevice devout=new ClassDevice();
+        devout.set_Name("Dev5555");
+        devout.set_ComPort("Com3");
+        devout.set_DTAct(LocalDate.now());
+        devout.saveProfile(ClassDialog.saveDialog(stage).getAbsolutePath());
+
+        File selectedFile = ClassDialog.openDialog(stage);
+        ClassDevice devin=ClassDevice.load(selectedFile.getAbsolutePath());
+
     }
 
     @FXML
@@ -44,7 +55,6 @@ public class MainWindow {
                 exitApp();
                 break;
             case "Устройства...":
-
                 break;
             case "Каналы данных...":
                 break;

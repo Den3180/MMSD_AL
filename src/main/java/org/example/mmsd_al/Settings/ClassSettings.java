@@ -1,5 +1,7 @@
 package org.example.mmsd_al.Settings;
 
+import com.fasterxml.jackson.dataformat.xml.*;
+
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
@@ -63,14 +65,12 @@ public class ClassSettings implements Serializable {
      * Сохранить настройки в файл.
      */
     public void save(){
-
-        try (FileOutputStream fos=new FileOutputStream(FILE_NAME);){
-            XMLEncoder encoder=new XMLEncoder(fos);
-            encoder.writeObject(this);
-            encoder.close();
+        try{
+            XmlMapper xmlMapper = new XmlMapper();
+            xmlMapper.writeValue(new File(FILE_NAME), this);
         }
         catch (Exception ex){
-            System.out.println(ex.getMessage());
+
         }
     }
 
@@ -83,12 +83,8 @@ public class ClassSettings implements Serializable {
         File file=new File(pathFile);
         if(file.exists()){
             try{
-                FileInputStream fis = new FileInputStream(pathFile);
-                XMLDecoder decoder = new XMLDecoder(fis);
-                var sett=(ClassSettings) decoder.readObject();
-                decoder.close();
-                fis.close();
-                return sett;
+                XmlMapper xmlMapper = new XmlMapper();
+                return xmlMapper.readValue(file, ClassSettings.class);
             }
             catch (Exception ex){
                 System.out.println(ex.getMessage());
@@ -97,6 +93,7 @@ public class ClassSettings implements Serializable {
         return new ClassSettings();
     }
 
+    //region Setters and Getters
     public EnumTypeDB getTypeDB() {
         return typeDB;
     }
@@ -263,6 +260,7 @@ public class ClassSettings implements Serializable {
     public void setPeriodUSIKP(int periodUSIKP) {
         this.periodUSIKP = periodUSIKP;
     }
+    //endregion
 
     public enum EnumTypeDB
     {

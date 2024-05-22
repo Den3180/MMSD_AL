@@ -1,61 +1,31 @@
 package org.example.mmsd_al.DevicesClasses;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+//import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.MainWindow;
+import org.example.mmsd_al.Settings.ClassSettings;
 
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Класс устройств.
  */
+@JsonIgnoreProperties(value = "_DTAct", allowSetters = true)
 public class ClassDevice {
 
-
-
-    /**
-     * Перечисление статусов подключения.
-     */
-    public enum EnumLink{
-        Unknown,
-        LinkNo,
-        LinkYes,
-        LinkConnect;
-    }
-    /**
-     * Перечисление протоколов подключения.
-     */
-    public enum EnumProtocol
-    {
-        RTU(1),
-        TCP(2),
-        SMS(3),
-        GPRS(4),
-        GPRS_SMS(5);
-
-        EnumProtocol(int i){
-        }
-
-    }
-
-
-    /**
-    * Перечисление типов устройств.
-    */
-    public enum  EnumModel{
-        None,
-        BKM_3,
-        BKM_4,
-        SKZ,
-        SKZ_IP,
-        BSZ,
-        USIKP,
-        BKM_5,
-        KIP;
-
-    }
     private int id;
+
     private String _Name;
     private int _Address;
     private EnumProtocol _Protocol;
@@ -79,16 +49,14 @@ public class ClassDevice {
     private String _LinkStateName;
     private int countNumber;
     private List<ClassChannel> channels;
+
+    //region Setters and Getters
+
     public int getId(){
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String get_Name() {
-        return _Name;
     }
 
     public void set_Name(String _Name){
@@ -235,22 +203,8 @@ public class ClassDevice {
         }
     }
 
-    public String Modelname(){
-        switch (_Model){
-            case BKM_3: return "БКМ-3";
-            case BKM_4: return "БКМ-4";
-            case SKZ: return "СКЗ";
-            case SKZ_IP: return "СКЗ-ИП";
-            case BSZ: return "БСЗЭ";
-            case USIKP: return "УСИКП";
-            case BKM_5:return "БКМ-5";
-            case KIP:return "КИП";
-            default: return "не известно";
-        }
-    }
-
-    public String packetStatistics(){
-            return  Integer.toString(_TxCounter)+"/"+Integer.toString(_RxCounter);
+    public String get_Name() {
+        return _Name;
     }
 
     public int get_TxCounter() {
@@ -273,6 +227,12 @@ public class ClassDevice {
         this.channels = channels;
     }
 
+
+
+    public String packetStatistics(){
+            return  Integer.toString(_TxCounter)+"/"+Integer.toString(_RxCounter);
+    }
+
     public String commParam(){
         if ((_Protocol == EnumProtocol.TCP) || (_Protocol == EnumProtocol.GPRS)
                 || (_Protocol == EnumProtocol.GPRS_SMS))        return _IPAddress + ":" + _IPPort;
@@ -283,8 +243,153 @@ public class ClassDevice {
         else                                                    return "COM" + MainWindow.settings.getPortModbus();
     }
 
+    public String Modelname(){
+        switch (_Model){
+            case BKM_3: return "БКМ-3";
+            case BKM_4: return "БКМ-4";
+            case SKZ: return "СКЗ";
+            case SKZ_IP: return "СКЗ-ИП";
+            case BSZ: return "БСЗЭ";
+            case USIKP: return "УСИКП";
+            case BKM_5:return "БКМ-5";
+            case KIP:return "КИП";
+            default: return "не известно";
+        }
+    }
+
+
+    //endregion
     public ClassDevice(){
         id=0;
         channels=new ArrayList<ClassChannel>();
+        _Protocol=EnumProtocol.RTU;
+        _Period=60;
+        _IPAddress="192.168.0.1";
+        _IPPort=502;
+        _Address=1;
+        _LinkState=EnumLink.Unknown;
+        _ComPort = "";
+        _SIM = "";
+        _Model = EnumModel.None;
+        _DTConnect = LocalDate.MIN;
+        _WaitAnswer = false;
+        _Picket = "";
     }
+
+    /**
+     * Счетчик запросов.
+     */
+    public void packetSended(){
+        _TxCounter++;
+        if (_TxCounter > 10000) _TxCounter = 0;
+        //OnPropertyChanged("PacketStatistics");
+        _WaitAnswer = true;
+    }
+
+    /**
+     * Увеличение счетчика пакетов, выставление индикации, если пришел пакет, добавление события.
+     */
+    public void PacketReceived()
+    {
+        _WaitAnswer = false;
+        _RxCounter++;
+        if (_RxCounter > 10000) _RxCounter = 0;
+        //OnPropertyChanged("PacketStatistics");
+        if (_LinkState != EnumLink.LinkYes)
+        {
+            _LinkState = EnumLink.LinkYes;
+            //OnPropertyChanged("LinkState");
+            //OnPropertyChanged("LinkStateName");
+        }
+        _PacketLost = 0;
+        _DTAct = LocalDate.now();
+    }
+
+    /**
+     * Сохранить профиль устройства в файл(XML-формат).
+     * @param pathFile
+     * @return boolean
+     */
+    public boolean saveProfile(String pathFile){
+        try {
+            File file=new File(pathFile);
+            XmlMapper xmlMapper=new XmlMapper();
+            xmlMapper.writeValue(file, this);
+            return true;
+        }
+        catch (Exception ex){
+            System.out.println(ex.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Загрузить профиль устройства из файла.
+     * @param pathFile
+     * @return ClassDevice
+     */
+    public static ClassDevice load(String pathFile){
+        File file=new File(pathFile);
+        AtomicReference<ClassDevice> device = new AtomicReference<>();
+        if(file.exists()){
+            try{
+                XmlMapper xmlMapper = new XmlMapper();
+                device.set(xmlMapper.readValue(file, ClassDevice.class));
+                return device.get();
+            }
+            catch (Exception ex){
+                System.out.println(ex.getMessage());
+            }
+        }
+        return device.get();
+    }
+
+    @Override
+    public String toString(){
+        return this.get_Name();
+    }
+
+    //region Перечисления
+    /**
+     * Перечисление статусов подключения.
+     */
+    public enum EnumLink{
+        Unknown,
+        LinkNo,
+        LinkYes,
+        LinkConnect;
+    }
+    /**
+     * Перечисление протоколов подключения.
+     */
+    public enum EnumProtocol
+    {
+        RTU(1),
+        TCP(2),
+        SMS(3),
+        GPRS(4),
+        GPRS_SMS(5);
+
+        EnumProtocol(int i){
+        }
+
+    }
+
+
+    /**
+     * Перечисление типов устройств.
+     */
+    public enum  EnumModel{
+        None,
+        BKM_3,
+        BKM_4,
+        SKZ,
+        SKZ_IP,
+        BSZ,
+        USIKP,
+        BKM_5,
+        KIP;
+
+    }
+    //endregion
 }
