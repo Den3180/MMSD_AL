@@ -42,7 +42,8 @@ public class MainWindow {
 
         File selectedFile = ClassDialog.openDialog(stage);
         ClassDevice devin=ClassDevice.load(selectedFile.getAbsolutePath());
-
+Stage st=new Stage();
+st.show();
     }
 
     @FXML
