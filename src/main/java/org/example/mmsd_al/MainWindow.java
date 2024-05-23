@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.Properties;
 
 
 public class MainWindow {
@@ -33,17 +34,23 @@ public class MainWindow {
     @FXML
     public void button_Click(ActionEvent actionEvent) {
 
-//
+
         ClassDevice devout=new ClassDevice();
+        File selectedFile;
         devout.set_Name("Dev5555");
         devout.set_ComPort("Com3");
         devout.set_DTAct(LocalDate.now());
-        devout.saveProfile(ClassDialog.saveDialog(stage).getAbsolutePath());
+        selectedFile= ClassDialog.saveDialog(stage);
+        if(selectedFile!=null)
+        devout.saveProfile(selectedFile.getAbsolutePath());
 
-        File selectedFile = ClassDialog.openDialog(stage);
-        ClassDevice devin=ClassDevice.load(selectedFile.getAbsolutePath());
-Stage st=new Stage();
-st.show();
+        ClassDevice devin;
+        selectedFile = ClassDialog.openDialog(stage);
+        if(selectedFile!=null){
+            devin=ClassDevice.load(selectedFile.getAbsolutePath());
+        }
+         Stage st=new Stage();
+         st.show();
     }
 
     @FXML
