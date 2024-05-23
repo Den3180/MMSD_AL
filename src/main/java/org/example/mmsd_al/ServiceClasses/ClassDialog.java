@@ -4,6 +4,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class ClassDialog {
     /**
@@ -13,14 +14,22 @@ public class ClassDialog {
      */
     public static File openDialog(Stage stage){
 
+        File file;
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Открыть");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("XML Files", "*.xml"),
-                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                new FileChooser.ExtensionFilter("XML Files", "*.xml","*.XML"),
+                new FileChooser.ExtensionFilter("Text Files", "*.txt","*.TXT"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
-        return fileChooser.showOpenDialog(stage);
+        file=fileChooser.showOpenDialog(stage);
+//        if(file!=null) return file;
+//        String path=file.getAbsolutePath();
+//        StringBuilder sb=new StringBuilder(path);
+//
+//        if(path.endsWith("*.xml"|""))
+//        if(file.getex)
+        return file;
     }
 
     /**
@@ -33,8 +42,8 @@ public class ClassDialog {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Сохранить");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("XML Files", "*.xml"),
-                new FileChooser.ExtensionFilter("Text Files", "*.txt"),
+                new FileChooser.ExtensionFilter("XML Files", "*.xml","*.XML"),
+                new FileChooser.ExtensionFilter("Text Files", "*.txt","*.TXT"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
         return fileChooser.showSaveDialog(stage);
