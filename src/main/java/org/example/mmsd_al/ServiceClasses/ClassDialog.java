@@ -24,11 +24,12 @@ public class ClassDialog {
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
         File file=fileChooser.showOpenDialog(stage);
-        if(file==null) return file;
-        if(file.getAbsolutePath().contains(".")) return file;
-        String selectedExt = fileChooser.getSelectedExtensionFilter().getExtensions().get(0);
-        String path=file.getAbsolutePath()+selectedExt;
-        return new File(path);
+        if(file==null || file.getAbsolutePath().contains(".")) return file;
+        StringBuilder sbExt = new StringBuilder(fileChooser.getSelectedExtensionFilter().getExtensions().get(0));
+        if(sbExt.indexOf("*")!=-1){
+            return new File(file.getAbsolutePath()+sbExt.substring(1));
+        }
+        return file;
     }
 
     /**
