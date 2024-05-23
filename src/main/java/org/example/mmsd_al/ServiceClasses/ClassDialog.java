@@ -46,13 +46,12 @@ public class ClassDialog {
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
         File file=fileChooser.showSaveDialog(stage);
-        var hh= fileChooser.getSelectedExtensionFilter().getExtensions().get(0);
-        if(file==null) return file;
-        if(file.getAbsolutePath().contains(".")) return file;
-        String selectedExt = fileChooser.getSelectedExtensionFilter().getExtensions().get(0).split("/*")[0];
-        if(selectedExt.startsWith("*"))
-            selectedExt=selectedExt.substring(1);
-        String path=file.getAbsolutePath()+selectedExt;
-        return new File(path);
+
+        if(file==null || file.getAbsolutePath().contains(".")) return file;
+        StringBuilder sbExt = new StringBuilder(fileChooser.getSelectedExtensionFilter().getExtensions().get(0));
+        if(sbExt.indexOf("*")!=-1){
+            return new File(file.getAbsolutePath()+sbExt.substring(1));
+        }
+        return file;
     }
 }
