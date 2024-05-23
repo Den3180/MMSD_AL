@@ -34,23 +34,23 @@ public class MainWindow {
     @FXML
     public void button_Click(ActionEvent actionEvent) {
 
-
-        ClassDevice devout=new ClassDevice();
-        File selectedFile;
-        devout.set_Name("Dev5555");
-        devout.set_ComPort("Com3");
-        devout.set_DTAct(LocalDate.now());
-        selectedFile= ClassDialog.saveDialog(stage);
-        if(selectedFile!=null)
-        devout.saveProfile(selectedFile.getAbsolutePath());
-
-        ClassDevice devin;
-        selectedFile = ClassDialog.openDialog(stage);
-        if(selectedFile!=null){
-            devin=ClassDevice.load(selectedFile.getAbsolutePath());
-        }
-         Stage st=new Stage();
-         st.show();
+          ClassDB.create(" ");
+//        ClassDevice devout=new ClassDevice();
+//        File selectedFile;
+//        devout.set_Name("Dev5555");
+//        devout.set_ComPort("Com3");
+//        devout.set_DTAct(LocalDate.now());
+//        selectedFile= ClassDialog.saveDialog(stage);
+//        if(selectedFile!=null)
+//        devout.saveProfile(selectedFile.getAbsolutePath());
+//
+//        ClassDevice devin;
+//        selectedFile = ClassDialog.openDialog(stage);
+//        if(selectedFile!=null){
+//            devin=ClassDevice.load(selectedFile.getAbsolutePath());
+//        }
+//         Stage st=new Stage();
+//         st.show();
     }
 
     @FXML

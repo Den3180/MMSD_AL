@@ -24,7 +24,7 @@ public class ClassDialog {
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
         File file=fileChooser.showOpenDialog(stage);
-        if(file==null || file.getAbsolutePath().contains(".")) return file;
+        if(file==null || file.getName().contains(".")) return file;
         StringBuilder sbExt = new StringBuilder(fileChooser.getSelectedExtensionFilter().getExtensions().get(0));
         if(sbExt.indexOf("*")!=-1){
             return new File(file.getAbsolutePath()+sbExt.substring(1));
@@ -48,7 +48,7 @@ public class ClassDialog {
         );
         File file=fileChooser.showSaveDialog(stage);
 
-        if(file==null || file.getAbsolutePath().contains(".")) return file;
+        if(file==null || file.getName().contains(".")) return file;
         StringBuilder sbExt = new StringBuilder(fileChooser.getSelectedExtensionFilter().getExtensions().get(0));
         if(sbExt.indexOf("*")!=-1){
             return new File(file.getAbsolutePath()+sbExt.substring(1));

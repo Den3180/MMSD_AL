@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 //import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.MainWindow;
 import org.example.mmsd_al.Settings.ClassSettings;
