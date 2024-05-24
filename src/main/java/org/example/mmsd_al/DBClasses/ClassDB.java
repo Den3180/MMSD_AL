@@ -11,14 +11,9 @@ public class ClassDB {
 
     public static  boolean create(String pathDB){
 
-        File file;
-        if(pathDB==null || pathDB.isEmpty()) {
-            pathDB=new String(defaultPath);
-        };
-        file = new File(pathDB);
-        if(file.exists()){
-            file.delete();
-        }
+        if(pathDB==null || pathDB.isEmpty()) pathDB = new String(defaultPath);
+        File file = new File(pathDB);
+        if(file.exists()) file.delete();
         try {
             Connection connection= DriverManager.getConnection("jdbc:sqlite:"+pathDB);
             Statement statement=connection.createStatement();
