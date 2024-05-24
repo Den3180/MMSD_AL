@@ -10,6 +10,7 @@ open module org.example.mmsd_al {
     requires com.fasterxml.jackson.dataformat.xml;
     requires com.fasterxml.jackson.databind;
     requires java.sql;
+    requires annotations;
 
 
     exports org.example.mmsd_al;

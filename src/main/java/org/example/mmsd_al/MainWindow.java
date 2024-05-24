@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import org.example.mmsd_al.DBClasses.ClassDB;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
 import org.example.mmsd_al.Settings.ClassSettings;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -42,7 +43,7 @@ public class MainWindow {
     }
 
     @FXML
-    public void menuItemClick(ActionEvent actionEvent) {
+    public void menuItemClick(@NotNull ActionEvent actionEvent) {
         MenuItem menuItem= (MenuItem)actionEvent.getSource();
         if(menuItem==null) return;
         String nameMenu=menuItem.getText();
