@@ -1,26 +1,22 @@
 package org.example.mmsd_al;
 
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import org.example.mmsd_al.DBClasses.ClassDB;
-import org.example.mmsd_al.DevicesClasses.ClassDevice;
-import org.example.mmsd_al.ServiceClasses.ClassDialog;
-import org.example.mmsd_al.Settings.ClassSettings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.example.mmsd_al.DBClasses.ClassDB;
+import org.example.mmsd_al.ServiceClasses.ClassMessage;
+import org.example.mmsd_al.Settings.ClassSettings;
 
 import java.io.File;
-import java.time.LocalDate;
-import java.util.Properties;
 
 
 public class MainWindow {
 
-    private Stage stage=StartApplication.stage;
     public static ClassSettings settings;
     public static ClassDB DB;
+    private Stage stage=StartApplication.stage;
+    private File dbFile;
 
     @FXML
     private TreeView treeView;
@@ -28,29 +24,21 @@ public class MainWindow {
     private MenuBar mainMenu;
 
     public void initialize(){
-        settings=new ClassSettings();
+        settings=ClassSettings.load();
+        DB=new ClassDB();
+        dbFile=new File(settings.getdB());
+        if(!dbFile.exists()){
+           ButtonType buttonType= ClassMessage.showMessage("База данных",null,"Файл БД не доступен!\nСоздать БД?",
+                                      Alert.AlertType.CONFIRMATION);
+           if(buttonType.getButtonData()== ButtonBar.ButtonData.OK_DONE){
+               ClassDB.create(null);
+           }
+        }
     }
 
     @FXML
     public void button_Click(ActionEvent actionEvent) {
 
-          ClassDB.create(" ");
-//        ClassDevice devout=new ClassDevice();
-//        File selectedFile;
-//        devout.set_Name("Dev5555");
-//        devout.set_ComPort("Com3");
-//        devout.set_DTAct(LocalDate.now());
-//        selectedFile= ClassDialog.saveDialog(stage);
-//        if(selectedFile!=null)
-//        devout.saveProfile(selectedFile.getAbsolutePath());
-//
-//        ClassDevice devin;
-//        selectedFile = ClassDialog.openDialog(stage);
-//        if(selectedFile!=null){
-//            devin=ClassDevice.load(selectedFile.getAbsolutePath());
-//        }
-//         Stage st=new Stage();
-//         st.show();
     }
 
     @FXML

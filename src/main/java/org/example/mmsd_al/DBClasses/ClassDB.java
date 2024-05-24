@@ -1,22 +1,33 @@
 package org.example.mmsd_al.DBClasses;
+import java.io.File;
 import java.sql.*;
 
 public class ClassDB {
 
-    public final int Version=7;
     private static String areaName="Технопром";
     private static Connection conn;
+    public final int Version=7;
+    private static String defaultPath="pkm.db";
 
     public static  boolean create(String pathDB){
 
+        File file;
+        if(pathDB==null || pathDB.isEmpty()) {
+            pathDB=new String(defaultPath);
+        };
+        file = new File(pathDB);
+        if(file.exists()){
+            file.delete();
+        }
         try {
-            Connection connection= DriverManager.getConnection("jdbc:sqlite:sample.db");
+            Connection connection= DriverManager.getConnection("jdbc:sqlite:"+pathDB);
             Statement statement=connection.createStatement();
-            statement.executeUpdate("create table person (id integer, name string)");
+            statement.executeUpdate("create table teachers (id integer, name string)");
+            statement.executeUpdate("create table students (id integer, name string)");
             statement.close();
             connection.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+
         }
 
         return true;

@@ -4,9 +4,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.nio.file.FileSystem;
-import java.nio.file.Path;
-import java.util.Properties;
 
 public class ClassDialog {
     /**
@@ -20,6 +17,7 @@ public class ClassDialog {
         fileChooser.setTitle("Открыть");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("XML Files(*.xml)", "*.xml"),
+                new FileChooser.ExtensionFilter("DB Files(*.db)", "*.db"),
                 new FileChooser.ExtensionFilter("Text Files(*.txt)", "*.txt"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
@@ -43,6 +41,7 @@ public class ClassDialog {
         fileChooser.setTitle("Сохранить");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("XML Files(*.xml)", "*.xml"),
+                new FileChooser.ExtensionFilter("DB Files(*.db)", "*.db"),
                 new FileChooser.ExtensionFilter("Text Files(*.txt)", "*.txt"),
                 new FileChooser.ExtensionFilter("All Files", "*.*")
         );
