@@ -3,6 +3,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.scene.control.skin.SplitPaneSkin.Content?>
+<?import com.dlsc.formsfx.view.controls.SimpleControl?>
 <BorderPane prefHeight="600" prefWidth="800" style="-fx-border-color: grey; -fx-border-width: 2;"
             xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.mmsd_al.MainWindow">
@@ -52,8 +54,10 @@
       <SplitPane dividerPositions="0.1889168765743073" BorderPane.alignment="CENTER">
         <items>
           <TreeView fx:id="treeView" maxWidth="300.0" minWidth="100.0" prefWidth="200.0" />
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
-        </items>
+          <AnchorPane fx:id="mainTable" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" >
+              <TableView fx:id="userControlDevices" > </TableView>
+          </AnchorPane>
+      </items>
       </SplitPane>
    </center>
         </BorderPane>
