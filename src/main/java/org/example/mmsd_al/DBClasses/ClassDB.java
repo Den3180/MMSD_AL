@@ -172,6 +172,7 @@ public class ClassDB {
             ResultSet resultSet= statement.executeQuery("SELECT rowid, * FROM dev ORDER BY name");
             while (resultSet.next()){
                 ClassDevice dev=new ClassDevice();
+                dev.setCountNumber(lst.size()+1);
                 dev.setId(resultSet.getInt("rowid"));
                 dev.set_Name(resultSet.getString("name"));
                 dev.set_Protocol(ClassDevice.EnumProtocol.values()[resultSet.getInt("prot")]);

@@ -1,19 +1,12 @@
 package org.example.mmsd_al.DevicesClasses;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 //import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.MainWindow;
-import org.example.mmsd_al.Settings.ClassSettings;
 
-import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,14 +41,51 @@ public class ClassDevice {
     private double _Longitude = 00.000000D;
     private double _Elevation;
     private String _LinkStateName;
+    private String _PacketStatistics;
     private int countNumber;
+    private String _ProtocolName;
+    private String _ModelName;
     private List<ClassChannel> channels;
 
     //region Setters and Getters
 
+    public String get_ModelName() {
+        return _ModelName;
+    }
+
+    public void set_ModelName(EnumModel model) {
+        this._ModelName = switch (model){
+            case None -> "";
+            case BKM_3 -> "БКМ-3";
+            case BKM_4 -> "БКМ-4";
+            case SKZ -> "СКЗ";
+            case SKZ_IP -> "СКЗ-ИП";
+            case BSZ -> "БСЗЭ";
+            case USIKP -> "УСИКП";
+            case BKM_5 -> "БКМ-5";
+            case KIP -> "КИП";
+        };
+    }
+
+    public void set_ProtocolName(EnumProtocol protocol) {
+        switch (protocol){
+            case RTU -> _ProtocolName="Modbus RTU";
+            case TCP -> _ProtocolName="Modbus TCP";
+            case SMS -> _ProtocolName="GSM SMS";
+            case GPRS -> _ProtocolName="GPRS";
+            case GPRS_SMS -> _ProtocolName="GPRS SMS";
+            default -> _ProtocolName="не известно";
+        }
+    }
+
+    public String get_ProtocolName() {
+        return _ProtocolName;
+    }
+
     public int getId(){
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -78,6 +108,7 @@ public class ClassDevice {
 
     public void set_Protocol(EnumProtocol _Protocol) {
         this._Protocol = _Protocol;
+        set_ProtocolName(_Protocol);
     }
 
     public int get_Period() {
@@ -126,6 +157,7 @@ public class ClassDevice {
 
     public void set_Model(EnumModel _Model) {
         this._Model = _Model;
+        set_ModelName(_Model);
     }
 
     public String get_Picket() {
@@ -223,15 +255,16 @@ public class ClassDevice {
     public List<ClassChannel> getChannels() {
         return channels;
     }
-
     public void setChannels(List<ClassChannel> channels) {
         this.channels = channels;
     }
 
+    public void set_PacketStatistics(String _PacketStatistics) {
+        this._PacketStatistics = "0/0";
+    }
 
-
-    public String packetStatistics(){
-            return  Integer.toString(_TxCounter)+"/"+Integer.toString(_RxCounter);
+    public String get_PacketStatistics() {
+        return _TxCounter+"/"+_RxCounter;
     }
 
     public String commParam(){
@@ -260,6 +293,7 @@ public class ClassDevice {
 
 
     //endregion
+
     public ClassDevice(){
         id=0;
         channels=new ArrayList<ClassChannel>();
@@ -275,6 +309,7 @@ public class ClassDevice {
         _DTConnect = LocalDate.MIN;
         _WaitAnswer = false;
         _Picket = "";
+       // _ProtocolName=ProtocolName();
     }
 
     /**
@@ -365,15 +400,12 @@ public class ClassDevice {
      */
     public enum EnumProtocol
     {
-        RTU(1),
-        TCP(2),
-        SMS(3),
-        GPRS(4),
-        GPRS_SMS(5);
-
-        EnumProtocol(int i){
-        }
-
+        None,
+        RTU,
+        TCP,
+        SMS,
+        GPRS,
+        GPRS_SMS
     }
 
 

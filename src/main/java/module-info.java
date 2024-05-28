@@ -11,8 +11,10 @@ open module org.example.mmsd_al {
     requires com.fasterxml.jackson.databind;
     requires java.sql;
     requires annotations;
+    requires jdk.httpserver;
 
 
     exports org.example.mmsd_al;
     exports org.example.mmsd_al.Classes;
+    exports org.example.mmsd_al.UserControlsClasses;
 }
