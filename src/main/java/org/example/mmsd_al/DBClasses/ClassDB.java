@@ -1,5 +1,6 @@
 package org.example.mmsd_al.DBClasses;
 import javafx.beans.property.SimpleStringProperty;
+import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.Settings.ClassSettings;
 
@@ -17,7 +18,7 @@ public class ClassDB {
     private static Statement statement;
     //</editor-fold>
 
-    //<editor-fold desc="Создание базы">
+    // <editor-fold desc="Создание базы">
 
     /**
      * Создать базу данных.
@@ -160,10 +161,19 @@ public class ClassDB {
         return "нет данных";
     }
 
+    public void closeDB(){
+        try {
+            statement.close();
+            conn.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     //<editor-fold desc="Devices">
 
     /**
-     * Загрузиьт устройства из базы данных.
+     * Загрузить устройства из базы данных.
      * @return
      */
     public ArrayList<ClassDevice> devicesLoad(){
@@ -197,6 +207,26 @@ public class ClassDB {
     }
     //</editor-fold>
 
+    public ArrayList<ClassChannel> registriesLoad(int deviceID){
+        ArrayList<ClassChannel> lst=new ArrayList<>();
+        StringBuilder cmd=new StringBuilder("SELECT reg.rowid, reg.*, dev.name AS d_name, dev.address AS d_adr"
+                + " FROM reg LEFT JOIN dev ON reg.dev = dev.rowid");
+        if(deviceID >0 ){
+            cmd.append(" WHERE reg.dev = "+String.valueOf(deviceID)+" ORDER by type DESC, adr ASC");
+        }
+        try {
+            ResultSet resultSet= statement.executeQuery(cmd.toString());
+            var lt=new ArrayList<Integer>();
+            while (resultSet.next()){
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return lst;
+    }
+
     //<editor-fold desc="Setters and Getters">
     public static String getAreaName() {
         return areaName;
@@ -205,6 +235,23 @@ public class ClassDB {
     public static void setAreaName(String areaName) {
         ClassDB.areaName = areaName;
     }
+
+    public static Connection getConn() {
+        return conn;
+    }
+
+    public static void setConn(Connection conn) {
+        ClassDB.conn = conn;
+    }
+
+    public static Statement getStatement() {
+        return statement;
+    }
+
+    public static void setStatement(Statement statement) {
+        ClassDB.statement = statement;
+    }
+
     //</editor-fold>
 
 }
