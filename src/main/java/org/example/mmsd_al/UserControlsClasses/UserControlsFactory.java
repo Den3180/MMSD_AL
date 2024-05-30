@@ -23,6 +23,18 @@ public class UserControlsFactory {
             "_PacketStatistics", "_LinkStateName"
     };
 
+    public static final String[] HEADES_CHANNEL=new String[]{
+            "№", "Наименование", "Устройство","Тип регистра", "Адрес", "Адр.(hex)",
+            "Формат", "Данные", "Коэф.","Знаков", "Min", "Max",
+            "Значение", "Актуальность","Архив","Шлюз"
+    };
+
+    public static  final String [] VARIABLES_CHANNEL=new String[]{
+            "_CountNumber", "_Name", "_DeviceName","_TypeRegistryFullName", "_Address", "_AddressHex",
+            "_Format", "_StrBaseValue", "_Koef.","_Accuracy","_Min","_Max",
+            "_Value","_StrDTAct","_Archive","_Ext"
+    };
+
     /**
      * Создать таблицу.
      * @param list источник данных
@@ -33,6 +45,7 @@ public class UserControlsFactory {
      * @param <T>
      */
     public static  <T> TableView<T> createTable(ObservableList<T> list, String[]headers, String[]variables, T obj){
+        if(list.stream().count()==0) return new TableView<>();
         TableView<T> tableView=new TableView<>(list);
         //tableView.setEditable(true);
         for(int i=0;i<headers.length;i++){

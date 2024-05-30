@@ -1,21 +1,22 @@
 package org.example.mmsd_al.Classes;
 
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
+import org.example.mmsd_al.MainWindow;
+import org.jetbrains.annotations.TestOnly;
 
-import java.text.Format;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ClassChannel {
 
     private int id;
-
     private String _Name;
-
-    private SimpleDateFormat _DTAct;
+    private LocalDateTime _DTAct;
     private int _Address;
+    private String _AddressHex;
     private EnumFormat _Format;
     private float _Koef;
     private double _Value;
@@ -23,16 +24,31 @@ public class ClassChannel {
     private double _Min;
     private EnumState _State;
     private EnumTypeRegistry _TypeRegistry;
+    private String _TypeRegistryFullName;
     private ClassDevice _Device;
+    private String _DeviceName;
     private int[] _BaseValue;
     private double _PreviousValue;
     private boolean _Archive;
     private int _Ext;
     private int _Accuracy;
     private double _NValue;
+    private int _CountNumber;
+    private String _StrBaseValue;
+    private String _StrDTAct;
+
 
 
     //<editor-fold desc="Setters and Getters">
+
+
+    public void set_CountNumber(int _CountNumber) {
+        this._CountNumber = _CountNumber;
+    }
+
+    public int get_CountNumber() {
+        return _CountNumber;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -50,19 +66,27 @@ public class ClassChannel {
         this._Name = _Name;
     }
 
-    public SimpleDateFormat get_DTAct() {
+    public LocalDateTime get_DTAct() {
         return _DTAct;
     }
 
-    public void set_DTAct(SimpleDateFormat _DTAct) {
+    public void set_DTAct(LocalDateTime _DTAct) {
         this._DTAct = _DTAct;
     }
 
-    public String getStrDTAct(){
-        //if(_DTAct== ) return "";
-       return "";
-//        SimpleDateFormat sdf=new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-//        String rr= sdf.format(Calendar.getInstance().getTime());
+    public void set_StrDTAct(String _StrDTAct) {
+        this._StrDTAct = _StrDTAct;
+    }
+
+    public String get_StrDTAct() {
+        if(_DTAct==LocalDateTime.MIN ) {
+            _StrDTAct="";
+            return _StrDTAct;
+        }
+        SimpleDateFormat sdf=new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        _StrDTAct= _DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss"));
+        return _StrDTAct;
+
     }
 
     public int get_Address() {
@@ -73,7 +97,11 @@ public class ClassChannel {
         this._Address = _Address;
     }
 
-    public String getAddressHex(){
+    public void set_AddressHex(String _AddressHex) {
+        this._AddressHex = _AddressHex;
+    }
+
+    public String get_AddressHex() {
         return "0x"+String.format("%04x",_Address).toUpperCase();
     }
 
@@ -93,12 +121,37 @@ public class ClassChannel {
         this._Koef = _Koef;
     }
 
+    public void set_StrBaseValue(String _StrBaseValue) {
+        this._StrBaseValue = _StrBaseValue;
+    }
+
+
+    public String get_StrBaseValue() {
+        if(_BaseValue.length==0) return "";
+        StringBuilder res=new StringBuilder("0x");
+        String format="%04x";
+        if(_TypeRegistry==EnumTypeRegistry.CoilOutput || _TypeRegistry==EnumTypeRegistry.DiscreteInput){
+            format="%02x";
+        }
+        for(int i=0;i<_BaseValue.length;i++){
+            res.append(String.format(format,_BaseValue[i]).toUpperCase());
+        }
+        _StrBaseValue=res.toString();
+        return _StrBaseValue;
+    }
+
     public double get_Value() {
         return _Value;
     }
 
-    public void set_Value(double _Value) {
-        this._Value = _Value;
+    public void set_Value(double value) {
+        _Value = convertMinus(value);
+        if(_Koef!=1) _Value*=(double) _Koef;
+        if(_Accuracy>0) _Value=(double) Math.round(_Value*100)/100;
+        _DTAct=LocalDateTime.now();
+        if(_Name!="" && _Name!="Резерв"){
+            //MainWindow.DB.registrySaveValue(this);
+        }
     }
 
     public double get_Max() {
@@ -149,7 +202,11 @@ public class ClassChannel {
         };
     }
 
-    public String getTypeRegistryFulltName(){
+    public void set_TypeRegistryFullName(String _TypeRegistryFullName) {
+        this._TypeRegistryFullName = _TypeRegistryFullName;
+    }
+
+    public String get_TypeRegistryFullName() {
         return switch (_TypeRegistry){
             case Unknown ->  "не известно";
             case DiscreteInput -> "Discrete Input";
@@ -171,11 +228,13 @@ public class ClassChannel {
         this._Device = _Device;
     }
 
-    public String getDeviceName(){
-        return _Device.get_Name();
+    public void set_DeviceName(String _DeviceName) {
+        this._DeviceName = _DeviceName;
     }
 
-
+    public String get_DeviceName() {
+        return _DeviceName;
+    }
 
     public int[] get_BaseValue() {
         return _BaseValue;
@@ -225,6 +284,41 @@ public class ClassChannel {
         this._NValue = _NValue;
     }
 //</editor-fold>
+
+    public ClassChannel(){
+        id=0;
+        _Name="Канал 1";
+        _Address=0;
+        _TypeRegistry=EnumTypeRegistry.HoldingRegistry;
+        _Device=new ClassDevice();
+        _Format = EnumFormat.UINT;
+        _Koef = 1;
+        _Value = 0;
+        _DTAct = LocalDateTime.MIN;
+        _PreviousValue = Double.MIN_VALUE;
+        _Archive = false;
+        _Accuracy=0;
+        _CountNumber =0;
+    }
+
+    //<editor-fold desc="Методы">
+    public void loadSaveValue(double saveValue,LocalDate dt){
+
+    }
+
+    public void sendValue(double value){
+
+    }
+
+    private double convertMinus(double val){
+
+        if (val>32767)
+        {
+            return val - 65535 - 1;
+        }
+        return val;
+    }
+    //</editor-fold>
 
     //<editor-fold desc="Перечисления">
     /**

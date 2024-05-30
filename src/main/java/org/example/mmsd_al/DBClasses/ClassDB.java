@@ -205,8 +205,17 @@ public class ClassDB {
         }
         return lst;
     }
+
     //</editor-fold>
 
+
+    //<editor-fold desc="Регистры">
+
+    /**
+     * Загрузить регистры из базы.
+     * @param deviceID id устройства в базе.
+     * @return список каналов ArrayList<ClassChannel>
+     */
     public ArrayList<ClassChannel> registriesLoad(int deviceID){
         ArrayList<ClassChannel> lst=new ArrayList<>();
         StringBuilder cmd=new StringBuilder("SELECT reg.rowid, reg.*, dev.name AS d_name, dev.address AS d_adr"
@@ -216,18 +225,52 @@ public class ClassDB {
         }
         try {
             ResultSet resultSet= statement.executeQuery(cmd.toString());
-            var lt=new ArrayList<Integer>();
-            while (resultSet.next()){
 
+            while (resultSet.next()){
+              ClassChannel channel=new ClassChannel();
+              channel.set_CountNumber(lst.size()+1);
+              channel.setId(resultSet.getInt("rowid"));
+              channel.set_Name(resultSet.getString("name"));
+              channel.set_TypeRegistry(ClassChannel.EnumTypeRegistry.values()[resultSet.getInt("type")]);
+              channel.set_Address(resultSet.getInt("adr"));
+              channel.set_Format(ClassChannel.EnumFormat.values()[resultSet.getInt("format")]);
+              channel.set_Koef(resultSet.getInt("k"));
+              channel.set_Max(resultSet.getDouble("vmax"));
+              channel.set_Min(resultSet.getDouble("vmin"));
+              channel.set_Archive(resultSet.getBoolean("rec"));
+              channel.get_Device().setId(resultSet.getInt("dev"));
+              channel.get_Device().set_Name(resultSet.getString("d_name"));
+              channel.get_Device().set_Address(resultSet.getInt("d_adr"));
+              channel.set_Ext(resultSet.getInt("ext"));
+              channel.set_Accuracy(resultSet.getInt("accuracy"));
+              channel.set_Value(resultSet.getDouble("val"));
+              lst.add(channel);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
 
         return lst;
     }
 
+    /**
+     * Сохранение текущего значения регистра.
+     * @param obj объект регистра
+     */
+    public void registrySaveValue(ClassChannel obj) {
+
+        try {
+            statement.executeUpdate("UPDATE reg SET val="+obj.get_Value()+", dt=datetime('now', 'localtime')"+
+            " WHERE rowid = "+obj.getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    //</editor-fold>
+
+
     //<editor-fold desc="Setters and Getters">
+
     public static String getAreaName() {
         return areaName;
     }

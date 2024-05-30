@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -12,6 +13,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import javafx.util.StringConverter;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DBClasses.ClassDB;
@@ -61,7 +63,13 @@ public class MainWindow {
         }
         Devices= FXCollections.observableArrayList(DB.devicesLoad());
         Channels=FXCollections.observableArrayList(DB.registriesLoad(0));
-        treeView.setRoot(TreeViewFactory.createRootTree(Devices,"Устройства"));
+
+        treeView.setRoot(TreeViewFactory.createRootTree(Devices,new Pair<Integer,String>(0,"Устройство"){
+            @Override
+            public String toString(){
+            return this.getValue();
+            }
+        }));
 
         switch (settings.getStartWindow()){
             case 0:
@@ -110,18 +118,23 @@ public class MainWindow {
         Platform.exit();
     }
 
-    boolean flag =false;
-    public void treeView_MouseClicked(MouseEvent mouseEvent) {
-        if(!flag){
 
-            mainTable.getChildren().clear();
-            mainTable.getChildren().add(new TableView<>());
-            flag=true;
-        }
-        else{
-            mainTable.getChildren().clear();
-            mainTable.getChildren().add(userControlDevices);
-            flag=false;
-        }
+    public void treeView_MouseClicked(MouseEvent mouseEvent) {
+       TreeItem item= (TreeItem) treeView.getSelectionModel().getSelectedItems().get(0);
+       var dd=  ((Pair<Integer,String>)item.getValue()).getKey();
+       if(dd == 0){
+           mainTable.getChildren().clear();
+       }
+//
+//        if(!flag){
+//            mainTable.getChildren().clear();
+//            mainTable.getChildren().add(new TableView<>());
+//            flag=true;
+//        }
+//        else{
+//            mainTable.getChildren().clear();
+//            mainTable.getChildren().add(userControlDevices);
+//            flag=false;
+//        }
     }
 }
