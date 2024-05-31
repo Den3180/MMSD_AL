@@ -3,9 +3,12 @@ import javafx.beans.property.SimpleStringProperty;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.Settings.ClassSettings;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class ClassDB {
@@ -234,17 +237,22 @@ public class ClassDB {
               channel.set_TypeRegistry(ClassChannel.EnumTypeRegistry.values()[resultSet.getInt("type")]);
               channel.set_Address(resultSet.getInt("adr"));
               channel.set_Format(ClassChannel.EnumFormat.values()[resultSet.getInt("format")]);
-              channel.set_Koef(resultSet.getInt("k"));
+              channel.set_Koef(resultSet.getFloat("k"));
               channel.set_Max(resultSet.getDouble("vmax"));
               channel.set_Min(resultSet.getDouble("vmin"));
               channel.set_Archive(resultSet.getBoolean("rec"));
               channel.get_Device().setId(resultSet.getInt("dev"));
-              channel.get_Device().set_Name(resultSet.getString("d_name"));
+              channel.set_DeviceName(resultSet.getString("d_name"));
               channel.get_Device().set_Address(resultSet.getInt("d_adr"));
               channel.set_Ext(resultSet.getInt("ext"));
               channel.set_Accuracy(resultSet.getInt("accuracy"));
-              channel.set_Value(resultSet.getDouble("val"));
-              lst.add(channel);
+              String tempDate=resultSet.getString("dt");
+                if(tempDate!=null) {
+                    channel.set_DTAct(LocalDateTime.parse(tempDate,DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                }
+                channel.loadSaveValue(resultSet.getDouble("val"));
+
+                lst.add(channel);
             }
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

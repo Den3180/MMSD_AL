@@ -2,6 +2,7 @@ package org.example.mmsd_al.Classes;
 
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
 import java.sql.Date;
@@ -70,7 +71,7 @@ public class ClassChannel {
         return _DTAct;
     }
 
-    public void set_DTAct(LocalDateTime _DTAct) {
+    public void set_DTAct(@NotNull LocalDateTime _DTAct) {
         this._DTAct = _DTAct;
     }
 
@@ -150,7 +151,7 @@ public class ClassChannel {
         if(_Accuracy>0) _Value=(double) Math.round(_Value*100)/100;
         _DTAct=LocalDateTime.now();
         if(_Name!="" && _Name!="Резерв"){
-            //MainWindow.DB.registrySaveValue(this);
+            MainWindow.DB.registrySaveValue(this);
         }
     }
 
@@ -230,6 +231,7 @@ public class ClassChannel {
 
     public void set_DeviceName(String _DeviceName) {
         this._DeviceName = _DeviceName;
+        _Device.set_Name(_DeviceName);
     }
 
     public String get_DeviceName() {
@@ -299,11 +301,17 @@ public class ClassChannel {
         _Archive = false;
         _Accuracy=0;
         _CountNumber =0;
+        _BaseValue=new int[]{};
     }
 
     //<editor-fold desc="Методы">
-    public void loadSaveValue(double saveValue,LocalDate dt){
 
+    /**
+     * Заполнение значений каналов при первой выгрузки из базы данных.
+     * @param saveValue значение из БД
+     */
+    public void loadSaveValue(double saveValue){
+        _Value=saveValue;
     }
 
     public void sendValue(double value){

@@ -8,6 +8,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.StringConverter;
+import org.example.mmsd_al.Classes.ClassChannel;
+import org.example.mmsd_al.DevicesClasses.ClassDevice;
 
 public class UserControlsFactory {
 
@@ -26,13 +28,13 @@ public class UserControlsFactory {
     public static final String[] HEADES_CHANNEL=new String[]{
             "№", "Наименование", "Устройство","Тип регистра", "Адрес", "Адр.(hex)",
             "Формат", "Данные", "Коэф.","Знаков", "Min", "Max",
-            "Значение", "Актуальность","Архив","Шлюз"
+            "Значение", "Актуальность"//,"Архив","Шлюз"
     };
 
     public static  final String [] VARIABLES_CHANNEL=new String[]{
             "_CountNumber", "_Name", "_DeviceName","_TypeRegistryFullName", "_Address", "_AddressHex",
-            "_Format", "_StrBaseValue", "_Koef.","_Accuracy","_Min","_Max",
-            "_Value","_StrDTAct","_Archive","_Ext"
+            "_Format", "_StrBaseValue", "_Koef","_Accuracy","_Min","_Max",
+            "_Value","_StrDTAct"//,"_Archive","_Ext"
     };
 
     /**
@@ -59,6 +61,13 @@ public class UserControlsFactory {
             }
         }
         tableView.setTableMenuButtonVisible(true);
+        ObservableList<T> rr= tableView.getItems();
+        if(obj instanceof ClassChannel){
+            int i=0;
+            for (var el:rr){
+                ((ClassChannel)el).set_CountNumber(++i);
+            }
+        }
         return tableView;
     }
 
@@ -74,24 +83,30 @@ public class UserControlsFactory {
      */
     private static <T,S> TableColumn<T,S> setColTable(T obj1, S obj2, String hdr, String vrb){
         TableColumn<T,S> col = new TableColumn<T,S>(hdr);
+        col.setMinWidth(20);
+        if(HEADERS_DEVICE[1].equals(hdr) && obj1 instanceof ClassDevice ||HEADES_CHANNEL[1].equals(hdr)){
+            col.setPrefWidth(300);
+            col.setMaxWidth(800);
+        }
         col.setCellValueFactory(new PropertyValueFactory<T,S>(vrb));
-        col.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<S>() {
-            @Override
-            public String toString(S object) {
-                return object.toString();
-            }
 
-            @Override
-            public S fromString(String string) {
-                return (S)string;
-            }
-        }));
-        col.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<T,S>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent event) {
-
-            }
-        });
+//        col.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<S>() {
+//            @Override
+//            public String toString(S object) {
+//                return object.toString();
+//            }
+//
+//            @Override
+//            public S fromString(String string) {
+//                return (S)string;
+//            }
+//        }));
+//        col.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<T,S>>() {
+//            @Override
+//            public void handle(TableColumn.CellEditEvent event) {
+//
+//            }
+//        });
         return col;
     }
 }

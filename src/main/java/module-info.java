@@ -12,6 +12,7 @@ open module org.example.mmsd_al {
     requires java.sql;
     requires annotations;
     requires jdk.httpserver;
+    requires jdk.net;
 
 
     exports org.example.mmsd_al;

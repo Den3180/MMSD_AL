@@ -47,11 +47,10 @@
       </MenuBar>
    </top>
    <center>
-      <SplitPane dividerPositions="0.1889168765743073" BorderPane.alignment="CENTER">
+      <SplitPane fx:id="sPane" dividerPositions="0.5" BorderPane.alignment="CENTER">
         <items>
           <TreeView fx:id="treeView" maxWidth="300.0" minWidth="100.0" onMouseClicked="#treeView_MouseClicked" prefWidth="200.0" />
-          <AnchorPane fx:id="mainTable" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-          </AnchorPane>
+            <Pane prefHeight="200.0" prefWidth="200.0" />
       </items>
       </SplitPane>
    </center>

@@ -12,9 +12,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
+import jdk.nio.Channels;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DBClasses.ClassDB;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
@@ -42,9 +46,9 @@ public class MainWindow {
     @FXML
     private MenuBar mainMenu;
     @FXML
-    private AnchorPane mainTable;
-    @FXML
+    private SplitPane sPane;
     private TableView userControlDevices;
+    private TableView userControlChannels;
 
     public void initialize(){
         settings=ClassSettings.load();
@@ -75,9 +79,10 @@ public class MainWindow {
             case 0:
                 userControlDevices = UserControlsFactory.createTable(Devices, UserControlsFactory.HEADERS_DEVICE,
                         UserControlsFactory.VARIABLES_DEVICE, new ClassDevice());
-                mainTable.getChildren().add(userControlDevices);
+                sPane.getItems().set(1,userControlDevices);
                 break;
         }
+
     }
 
     @FXML
@@ -121,20 +126,15 @@ public class MainWindow {
 
     public void treeView_MouseClicked(MouseEvent mouseEvent) {
        TreeItem item= (TreeItem) treeView.getSelectionModel().getSelectedItems().get(0);
-       var dd=  ((Pair<Integer,String>)item.getValue()).getKey();
-       if(dd == 0){
-           mainTable.getChildren().clear();
+       var idNode=  ((Pair<Integer,String>)item.getValue()).getKey();
+        if(idNode == 0){
+            sPane.getItems().set(1,userControlDevices);
        }
-//
-//        if(!flag){
-//            mainTable.getChildren().clear();
-//            mainTable.getChildren().add(new TableView<>());
-//            flag=true;
-//        }
-//        else{
-//            mainTable.getChildren().clear();
-//            mainTable.getChildren().add(userControlDevices);
-//            flag=false;
-//        }
+       else{
+           var ch=Channels.stream().filter(e->e.get_Device().getId()==idNode).toList();
+            userControlChannels=UserControlsFactory.createTable(FXCollections.observableArrayList(ch),UserControlsFactory.HEADES_CHANNEL,
+                                                               UserControlsFactory.VARIABLES_CHANNEL,new ClassChannel());
+            sPane.getItems().set(1,userControlChannels);
+       }
     }
 }
