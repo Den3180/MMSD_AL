@@ -2,12 +2,18 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <BorderPane prefHeight="600" prefWidth="800" style="-fx-border-color: grey; -fx-border-width: 2;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mmsd_al.MainWindow">
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
           <Button mnemonicParsing="false" onAction="#button_Click" text="Button" />
+            <Label fx:id="lbTest" alignment="CENTER" contentDisplay="CENTER" prefHeight="50"
+                   prefWidth="300" text="Test" textAlignment="CENTER" textFill="#bc2525">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
         </items>
       </ToolBar>
    </bottom>

@@ -4,21 +4,12 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import javafx.util.StringConverter;
-import jdk.nio.Channels;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DBClasses.ClassDB;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
@@ -29,7 +20,11 @@ import org.example.mmsd_al.UserControlsClasses.UserControlsFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainWindow {
@@ -40,6 +35,7 @@ public class MainWindow {
     public static ObservableList<ClassChannel> Channels;
     private Stage stage=StartApplication.stage;
     private File dbFile;
+    private Timer timerSec;
 
     @FXML
     private TreeView treeView;
@@ -49,6 +45,9 @@ public class MainWindow {
     private SplitPane sPane;
     private TableView userControlDevices;
     private TableView userControlChannels;
+
+    @FXML
+    private Label lbTest;
 
     public void initialize(){
         settings=ClassSettings.load();
@@ -67,6 +66,14 @@ public class MainWindow {
         }
         Devices= FXCollections.observableArrayList(DB.devicesLoad());
         Channels=FXCollections.observableArrayList(DB.registriesLoad(0));
+        timerSec=new Timer(true);
+        int i=0;
+        timerSec.schedule(new TimerTask() {
+            @Override
+            public void run() {
+             Platform.runLater(()->timerSec_Tick());
+            }
+        },0,1000);
 
         treeView.setRoot(TreeViewFactory.createRootTree(Devices,new Pair<Integer,String>(0,"Устройство"){
             @Override
@@ -80,8 +87,10 @@ public class MainWindow {
                 userControlDevices = UserControlsFactory.createTable(Devices, UserControlsFactory.HEADERS_DEVICE,
                         UserControlsFactory.VARIABLES_DEVICE, new ClassDevice());
                 sPane.getItems().set(1,userControlDevices);
+                userControlDevices.setOnMouseClicked(this::tableDevice_MouseClicked);
                 break;
         }
+
 
     }
 
@@ -123,6 +132,23 @@ public class MainWindow {
         Platform.exit();
     }
 
+    private void timerSec_Tick(){
+        lbTest.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH.mm.ss")));
+    }
+
+    public void tableDevice_MouseClicked(MouseEvent e){
+        TableView sourse=(TableView) e.getSource();
+        ClassDevice device=(ClassDevice) sourse.getSelectionModel().getSelectedItems().get(0);
+        if(device ==null) return;
+        if(e.getButton().equals(MouseButton.PRIMARY)){
+            if(e.getClickCount()==2){
+                var ch=Channels.stream().filter(el->el.get_Device().getId()==device.getId()).toList();
+                userControlChannels=UserControlsFactory.createTable(FXCollections.observableArrayList(ch),UserControlsFactory.HEADES_CHANNEL,
+                        UserControlsFactory.VARIABLES_CHANNEL,new ClassChannel());
+                sPane.getItems().set(1,userControlChannels);
+            }
+        }
+    }
 
     public void treeView_MouseClicked(MouseEvent mouseEvent) {
        TreeItem item= (TreeItem) treeView.getSelectionModel().getSelectedItems().get(0);

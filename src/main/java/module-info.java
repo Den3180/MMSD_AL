@@ -13,6 +13,7 @@ open module org.example.mmsd_al {
     requires annotations;
     requires jdk.httpserver;
     requires jdk.net;
+    requires javafx.graphics;
 
 
     exports org.example.mmsd_al;
