@@ -7,8 +7,10 @@ import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.MainWindow;
 
 import java.io.File;
+import java.nio.channels.Channels;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -46,8 +48,18 @@ public class ClassDevice {
     private String _ProtocolName;
     private String _ModelName;
     private List<ClassChannel> channels;
+    private int counGroup;
+
 
     //region Setters and Getters
+
+    public void setCounGroup(int counGroup) {
+        this.counGroup = counGroup;
+    }
+
+    public int getCounGroup() {
+        return counGroup;
+    }
 
     public String get_ModelName() {
         return _ModelName;
@@ -64,6 +76,7 @@ public class ClassDevice {
             case USIKP -> "УСИКП";
             case BKM_5 -> "БКМ-5";
             case KIP -> "КИП";
+            case MMPR -> "ММПР";
         };
     }
 
@@ -385,6 +398,38 @@ public class ClassDevice {
         return this.get_Name();
     }
 
+    /**
+     * Разбиение списка регистров устройства на группы по 100 или по типу.
+     * Этими группами будет проводиться опрос.
+     * @return
+     */
+    public List<ClassGroupRequest> getGroups() {
+        //Максимальное количество в группе.
+        int MaxCount = 100;
+        //Максимально допустимый интервал между адресами регистров в группе.
+        int MaxSpace = 1;
+        //Коллекция групп регистров.
+        List<ClassGroupRequest> Groups = new ArrayList<ClassGroupRequest>();
+        //Список каналов устройства.
+        List<ClassChannel> lstChannels = new ArrayList<ClassChannel>(channels);
+        //Выход, если список каналов пуст.
+        if(lstChannels.size()==0) return Groups;
+        //Добавляем новую группу. Аргумент: тип первого регистра списка каналов.
+        Groups.add(new ClassGroupRequest(lstChannels.get(0).get_TypeRegistry()));
+        //Проходим по списку каналов устройства, проверяем их на соответсвие MaxCount
+        //и MaxSpace и тип регистра и добавляем в группы запроса.
+        for(ClassChannel item : lstChannels){
+         ClassGroupRequest group=Groups.get(Groups.size()-1);
+         if(!group.get_TypeRegistry().equals(item.get_TypeRegistry()) || (group.GetSize()>MaxCount) ||
+            (item.get_Address()-group.getLastAddress())>MaxSpace){
+             Groups.add(new ClassGroupRequest(item.get_TypeRegistry()));
+            }
+         Groups.get(Groups.size()-1).addChannel(item);
+        }
+        counGroup=Groups.size();
+        return Groups;
+    }
+
     //region Перечисления
     /**
      * Перечисление статусов подключения.
@@ -421,7 +466,9 @@ public class ClassDevice {
         BSZ,
         USIKP,
         BKM_5,
-        KIP;
+        KIP,
+        MMPR
+
 
     }
     //endregion

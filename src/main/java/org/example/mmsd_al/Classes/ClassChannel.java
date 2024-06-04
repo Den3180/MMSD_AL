@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+
 
 public class ClassChannel {
 
@@ -128,7 +130,7 @@ public class ClassChannel {
 
 
     public String get_StrBaseValue() {
-        if(_BaseValue.length==0) return "";
+        if(_BaseValue==null || _BaseValue.length==0) return "";
         StringBuilder res=new StringBuilder("0x");
         String format="%04x";
         if(_TypeRegistry==EnumTypeRegistry.CoilOutput || _TypeRegistry==EnumTypeRegistry.DiscreteInput){
@@ -151,7 +153,7 @@ public class ClassChannel {
         if(_Accuracy>0) _Value=(double) Math.round(_Value*100)/100;
         _DTAct=LocalDateTime.now();
         if(_Name!="" && _Name!="Резерв"){
-            MainWindow.DB.registrySaveValue(this);
+            //MainWindow.DB.registrySaveValue(this);
         }
     }
 

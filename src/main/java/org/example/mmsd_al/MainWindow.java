@@ -10,7 +10,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareAddress;
+import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareTypeReg;
 import org.example.mmsd_al.Classes.ClassChannel;
+import org.example.mmsd_al.Classes.ClassModbus;
 import org.example.mmsd_al.DBClasses.ClassDB;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
@@ -20,7 +23,6 @@ import org.example.mmsd_al.UserControlsClasses.UserControlsFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Timer;
@@ -33,6 +35,7 @@ public class MainWindow {
     public static ClassDB DB;
     public static ObservableList<ClassDevice> Devices;
     public static ObservableList<ClassChannel> Channels;
+    public  static ClassModbus modbus;
     private Stage stage=StartApplication.stage;
     private File dbFile;
     private Timer timerSec;
@@ -67,14 +70,26 @@ public class MainWindow {
         Devices= FXCollections.observableArrayList(DB.devicesLoad());
         Channels=FXCollections.observableArrayList(DB.registriesLoad(0));
         timerSec=new Timer(true);
-        int i=0;
+        modbus=new ClassModbus();
+
+        for(ClassDevice dev : Devices){
+            dev.setChannels(Channels.stream().filter(el->el.get_Device().getId()==dev.getId())
+                    .sorted(new ChannelCompareTypeReg().thenComparing(new ChannelCompareAddress())).toList());
+        }
+
         timerSec.schedule(new TimerTask() {
             @Override
             public void run() {
-             Platform.runLater(()->timerSec_Tick());
+                Runnable r=()->timerSec_Tick();
+                Thread thread=new Thread(r);
+                thread.setDaemon(true);
+                thread.start();
+             //Platform.runLater(()->timerSec_Tick());
             }
         },0,1000);
 
+
+        //Построение дерева устройств.
         treeView.setRoot(TreeViewFactory.createRootTree(Devices,new Pair<Integer,String>(0,"Устройство"){
             @Override
             public String toString(){
@@ -82,6 +97,7 @@ public class MainWindow {
             }
         }));
 
+        //Выбор стартовой таблицы.
         switch (settings.getStartWindow()){
             case 0:
                 userControlDevices = UserControlsFactory.createTable(Devices, UserControlsFactory.HEADERS_DEVICE,
@@ -90,14 +106,16 @@ public class MainWindow {
                 userControlDevices.setOnMouseClicked(this::tableDevice_MouseClicked);
                 break;
         }
-
-
     }
 
     @FXML
     public void button_Click(ActionEvent actionEvent) {
     }
 
+    /**
+     * Обработчик кнопок главного меню.
+     * @param actionEvent
+     */
     @FXML
     public void menuItemClick(@NotNull ActionEvent actionEvent) {
         MenuItem menuItem= (MenuItem)actionEvent.getSource();
@@ -126,6 +144,9 @@ public class MainWindow {
         }
     }
 
+    /**
+     * Закрыть приложение.
+     */
     private void exitApp(){
         DB.closeDB();
         stage.close();
@@ -133,7 +154,12 @@ public class MainWindow {
     }
 
     private void timerSec_Tick(){
-        lbTest.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH.mm.ss")));
+        Platform.runLater(()-> lbTest.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH.mm.ss"))));
+        if(modbus.getMode()==ClassModbus.eMode.None){
+            modbus.portOpen();
+            return;
+        }
+        modbus.Poll();
     }
 
     public void tableDevice_MouseClicked(MouseEvent e){
@@ -142,9 +168,10 @@ public class MainWindow {
         if(device ==null) return;
         if(e.getButton().equals(MouseButton.PRIMARY)){
             if(e.getClickCount()==2){
-                var ch=Channels.stream().filter(el->el.get_Device().getId()==device.getId()).toList();
-                userControlChannels=UserControlsFactory.createTable(FXCollections.observableArrayList(ch),UserControlsFactory.HEADES_CHANNEL,
-                        UserControlsFactory.VARIABLES_CHANNEL,new ClassChannel());
+                userControlChannels=UserControlsFactory.createTable(FXCollections.observableArrayList(device.getChannels())
+                        ,UserControlsFactory.HEADES_CHANNEL,
+                        UserControlsFactory.VARIABLES_CHANNEL,
+                        new ClassChannel());
                 sPane.getItems().set(1,userControlChannels);
             }
         }

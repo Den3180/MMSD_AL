@@ -14,9 +14,11 @@ open module org.example.mmsd_al {
     requires jdk.httpserver;
     requires jdk.net;
     requires javafx.graphics;
+    requires jlibmodbus;
 
 
     exports org.example.mmsd_al;
     exports org.example.mmsd_al.Classes;
     exports org.example.mmsd_al.UserControlsClasses;
+    exports org.example.mmsd_al.ServiceClasses.Comparators;
 }
