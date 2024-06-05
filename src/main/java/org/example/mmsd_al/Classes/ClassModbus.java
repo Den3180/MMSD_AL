@@ -10,6 +10,7 @@ import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.DevicesClasses.ClassGroupRequest;
 import org.example.mmsd_al.MainWindow;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 
@@ -29,7 +30,7 @@ public class ClassModbus {
     private boolean WaitAnswer; //only COM
     private final int numOfRegMax=125;
     private final int numOfRegMin=1;
-    Object locker = new Object();
+    public static Object locker = new Object();
 
     //<editor-fold desc="Setters/Getters">
     public void setMode(eMode mode) {
@@ -96,34 +97,52 @@ public class ClassModbus {
         for(ClassDevice device : MainWindow.Devices){
 
             if(device.get_Protocol()==ClassDevice.EnumProtocol.SMS) continue;
-           List<ClassGroupRequest> groups=device.getGroups();
-            ReadGroupRegistry(groups,device,RTUMaster);
+            if(device.getChannels().isEmpty()) continue;
+            if(RTUMaster==null) continue;
+            if(device.get_Period()==0) continue;
+            //if(device.getCounGroup()>0) continue;
+            //if (someDeviceInTheProcess(MainWindow.Devices, device)) continue;
+            //if(device.getInProcess()==true) continue;
+
+
+            //List<ClassGroupRequest> groups=device.getGroups();
+
+            ReadGroupRegistry(device,RTUMaster);
         }
     }
 
-    private void ReadGroupRegistry(List<ClassGroupRequest> Groups, ClassDevice device, ModbusMaster master){
+    private void ReadGroupRegistry(ClassDevice device, ModbusMaster master)            {
 
-        int countGroup= device.getCounGroup();
-        for(ClassGroupRequest group : Groups){
+        device.setInProcess(true);
+        //int countGroup= device.getCounGroup();
+        for(ClassGroupRequest group : device.getGroup()){
 
-            device.setCounGroup(countGroup--);
-            if(device.getCounGroup()<=0){
-            //TODO
-            }
+            //device.setCounGroup(--countGroup);
+//            if(device.getCounGroup()<=0){
+//               device.setInProcess(false);
+//            }
             int numOfPoint = group.GetSize();
             try{
-                if (group.get_TypeRegistry() == ClassChannel.EnumTypeRegistry.InputRegistry && numOfPoint < numOfRegMax)
-                {
-                    // data = await master.ReadInputRegistersAsync((byte)device.Address, (ushort)group.StartAddress,(ushort)numOfPoint);
-                    data = master.readInputRegisters(device.get_Address(), group.getStartAddress(),numOfPoint);
-                    if(data==null) continue;
-                }
-                if(group.get_TypeRegistry()== ClassChannel.EnumTypeRegistry.HoldingRegistry && numOfPoint < numOfRegMax){
-                    data = master.readHoldingRegisters(device.get_Address(), group.getStartAddress(),numOfPoint);
-                    if(data==null) continue;
-                }
+                    if (group.get_TypeRegistry() == ClassChannel.EnumTypeRegistry.InputRegistry && numOfPoint < numOfRegMax)
+                    {
+                        // data = await master.ReadInputRegistersAsync((byte)device.Address, (ushort)group.StartAddress,(ushort)numOfPoint);
+                        data = master.readInputRegisters(device.get_Address(), group.getStartAddress(),numOfPoint);
+                        if(data==null) continue;
+                        System.out.println(device +" " +group.get_TypeRegistry() + " : " + Arrays.toString(data));
+                    }
+                    if(group.get_TypeRegistry()== ClassChannel.EnumTypeRegistry.HoldingRegistry && numOfPoint < numOfRegMax){
+                        data = master.readHoldingRegisters(device.get_Address(), group.getStartAddress(),numOfPoint);
+                        if(data==null) continue;
+                        System.out.println(device +" " +group.get_TypeRegistry() + " "+ group.GetSize() +" : " + Arrays.toString(data));
+                    }
+
             } catch (Exception e) {
-                //TODO
+                System.out.println("ReadGroupRegistry: "+ e.getMessage());
+                Mode=eMode.None;
+            }
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
             switch (group.get_TypeRegistry()){
@@ -142,17 +161,58 @@ public class ClassModbus {
 
     private double GetDecimalFromBuffer(int offset, ClassChannel.EnumFormat format) {
         double V=0;
-        V= switch (format){
-            case UINT -> data[offset];
-            case SINT -> data[offset];
-            case Float, swFloat,UInt32 -> data[offset];
-        };
+       try{
+
+           V= switch (format){
+               case UINT -> data[offset];
+               case SINT -> data[offset];
+               case Float, swFloat,UInt32 -> data[offset];
+           };
+       }
+       catch(Exception ex){
+           var tt=ClassGroupRequest.CGR;
+           System.out.println(ex.getMessage());
+       }
         return V;
     }
 
     private int[] GetDataFromBuffer(int offset, ClassChannel.EnumFormat format) {
 
-        return null;
+        int[] d=new int[]{0};
+        if(data==null) return d;
+        switch (format){
+            case UINT, SINT ->{
+                d=new int[1];
+                d[0]=data[offset];
+            }
+            case UInt32,Float ->{
+                d = new int[2];
+                d[0] = data[offset];
+                d[1] = data[offset + 1];
+            }
+            case swFloat -> {
+                d = new int[2];
+                d[0] = data[offset+1];
+                d[1] = data[offset];
+            }
+        }
+        return d;
+    }
+
+    /**
+     * Проверка, ведет ли какое нибудь устройство опрос в текущий момент.
+     * @param devices
+     * @param currDevice
+     * @return
+     */
+    private boolean someDeviceInTheProcess(ObservableList<ClassDevice> devices, ClassDevice currDevice)
+    {
+        for(var dev : devices)
+        {
+            if (dev.getInProcess() == true && currDevice.getId() != dev.getId())
+                return true;
+        }
+        return false;
     }
 
     public List<ClassGroupRequest> GetGroups(){

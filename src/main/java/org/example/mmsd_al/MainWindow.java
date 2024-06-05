@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,6 +40,7 @@ public class MainWindow {
     private Stage stage=StartApplication.stage;
     private File dbFile;
     private Timer timerSec;
+    public static Object locker = new Object();
 
     @FXML
     private TreeView treeView;
@@ -69,25 +71,12 @@ public class MainWindow {
         }
         Devices= FXCollections.observableArrayList(DB.devicesLoad());
         Channels=FXCollections.observableArrayList(DB.registriesLoad(0));
-        timerSec=new Timer(true);
-        modbus=new ClassModbus();
 
         for(ClassDevice dev : Devices){
             dev.setChannels(Channels.stream().filter(el->el.get_Device().getId()==dev.getId())
                     .sorted(new ChannelCompareTypeReg().thenComparing(new ChannelCompareAddress())).toList());
+            dev.setGroups(dev.getGroups());
         }
-
-        timerSec.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Runnable r=()->timerSec_Tick();
-                Thread thread=new Thread(r);
-                thread.setDaemon(true);
-                thread.start();
-             //Platform.runLater(()->timerSec_Tick());
-            }
-        },0,1000);
-
 
         //Построение дерева устройств.
         treeView.setRoot(TreeViewFactory.createRootTree(Devices,new Pair<Integer,String>(0,"Устройство"){
@@ -106,6 +95,15 @@ public class MainWindow {
                 userControlDevices.setOnMouseClicked(this::tableDevice_MouseClicked);
                 break;
         }
+
+        modbus=new ClassModbus();
+        timerSec=new Timer(true);
+        timerSec.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                timerSec_Tick();
+            }
+        },0,1000);
     }
 
     @FXML
@@ -144,6 +142,7 @@ public class MainWindow {
         }
     }
 
+
     /**
      * Закрыть приложение.
      */
@@ -155,11 +154,12 @@ public class MainWindow {
 
     private void timerSec_Tick(){
         Platform.runLater(()-> lbTest.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH.mm.ss"))));
+
         if(modbus.getMode()==ClassModbus.eMode.None){
             modbus.portOpen();
             return;
         }
-        modbus.Poll();
+            modbus.Poll();
     }
 
     public void tableDevice_MouseClicked(MouseEvent e){

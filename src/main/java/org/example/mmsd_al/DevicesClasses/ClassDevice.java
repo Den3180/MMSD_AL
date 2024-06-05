@@ -17,10 +17,12 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Класс устройств.
  */
-@JsonIgnoreProperties(value = "_DTAct", allowSetters = true)
+@JsonIgnoreProperties(value = {"_DTAct","groups"}, allowSetters = true)
 public class ClassDevice {
 
     private int id;
+
+    private List<ClassGroupRequest> groups;
 
     private String _Name;
     private int _Address;
@@ -49,9 +51,28 @@ public class ClassDevice {
     private String _ModelName;
     private List<ClassChannel> channels;
     private int counGroup;
+    private boolean inProcess;
 
 
     //region Setters and Getters
+
+
+    public void setGroups(List<ClassGroupRequest> groups) {
+        this.groups = groups;
+    }
+
+    public List<ClassGroupRequest> getGroup(){
+        return  this.groups;
+    }
+
+    public void setInProcess(boolean inProcess) {
+        this.inProcess = inProcess;
+    }
+
+    public boolean getInProcess(){
+        return this.inProcess;
+    }
+
 
     public void setCounGroup(int counGroup) {
         this.counGroup = counGroup;
@@ -310,6 +331,7 @@ public class ClassDevice {
     public ClassDevice(){
         id=0;
         channels=new ArrayList<ClassChannel>();
+        groups=new ArrayList<>();
         _Protocol=EnumProtocol.RTU;
         _Period=60;
         _IPAddress="192.168.0.1";
@@ -322,6 +344,7 @@ public class ClassDevice {
         _DTConnect = LocalDate.MIN;
         _WaitAnswer = false;
         _Picket = "";
+        inProcess=false;
        // _ProtocolName=ProtocolName();
     }
 

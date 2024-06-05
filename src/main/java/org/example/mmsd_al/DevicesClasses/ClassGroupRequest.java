@@ -41,9 +41,11 @@ public class ClassGroupRequest {
         return _Channels.get(_Channels.size()-1).get_Address();
     }
 
+    public static ClassGroupRequest CGR;
     //Отступ от начального(не всегда нулевого) адреса.
     public int getOffset(int index)
     {
+        CGR=this;
         return _Channels.get(index).get_Address() - getStartAddress();
     }
 

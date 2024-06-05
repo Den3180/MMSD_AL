@@ -149,7 +149,13 @@ public class ClassChannel {
 
     public void set_Value(double value) {
         _Value = convertMinus(value);
-        if(_Koef!=1) _Value*=(double) _Koef;
+        if(_Koef!=1) {
+            _Value*=(double) _Koef;
+        }
+        else {
+            var tt=Math.round(_Value);
+            _Value= Math.round(_Value);
+        }
         if(_Accuracy>0) _Value=(double) Math.round(_Value*100)/100;
         _DTAct=LocalDateTime.now();
         if(_Name!="" && _Name!="Резерв"){

@@ -1,12 +1,14 @@
 package org.example.mmsd_al.UserControlsClasses;
 
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
@@ -88,7 +90,7 @@ public class UserControlsFactory {
             col.setPrefWidth(300);
             col.setMaxWidth(800);
         }
-        col.setCellValueFactory(new PropertyValueFactory<T,S>(vrb));
+         col.setCellValueFactory(new PropertyValueFactory<T,S>(vrb));
 
 //        col.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<S>() {
 //            @Override
