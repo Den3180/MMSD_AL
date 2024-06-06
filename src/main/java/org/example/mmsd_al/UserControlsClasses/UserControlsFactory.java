@@ -1,6 +1,7 @@
 package org.example.mmsd_al.UserControlsClasses;
 
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -57,7 +58,7 @@ public class UserControlsFactory {
                 var curField=obj.getClass().getDeclaredField(variables[i]);
                 curField.setAccessible(true);
                 var nv=curField.get(obj);
-                tableView.getColumns().add((TableColumn<T, ?>) setColTable(obj,nv,headers[i],variables[i]));
+                tableView.getColumns().add((TableColumn<T, ?>) setColTable(obj,nv,headers[i],variables[i],tableView));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -83,7 +84,7 @@ public class UserControlsFactory {
      * @param <T>
      * @param <S>
      */
-    private static <T,S> TableColumn<T,S> setColTable(T obj1, S obj2, String hdr, String vrb){
+    private static <T,S> TableColumn<T,S> setColTable(T obj1, S obj2, String hdr, String vrb,TableView tb){
         TableColumn<T,S> col = new TableColumn<T,S>(hdr);
         col.setMinWidth(20);
         if(HEADERS_DEVICE[1].equals(hdr) && obj1 instanceof ClassDevice ||HEADES_CHANNEL[1].equals(hdr)){

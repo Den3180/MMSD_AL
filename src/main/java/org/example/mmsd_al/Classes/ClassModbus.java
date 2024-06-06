@@ -139,6 +139,7 @@ public class ClassModbus {
             } catch (Exception e) {
                 System.out.println("ReadGroupRegistry: "+ e.getMessage());
                 Mode=eMode.None;
+                return;
             }
             try {
                 Thread.sleep(50);

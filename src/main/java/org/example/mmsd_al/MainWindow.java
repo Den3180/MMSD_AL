@@ -32,6 +32,8 @@ import java.util.TimerTask;
 
 public class MainWindow {
 
+    public  static MainWindow mainWindow;
+
     public static ClassSettings settings;
     public static ClassDB DB;
     public static ObservableList<ClassDevice> Devices;
@@ -51,10 +53,15 @@ public class MainWindow {
     private TableView userControlDevices;
     private TableView userControlChannels;
 
+    public TableView getUserControlChannels(){
+        return this.userControlChannels;
+    }
+
     @FXML
     private Label lbTest;
 
     public void initialize(){
+        mainWindow=this;
         settings=ClassSettings.load();
         DB=new ClassDB();
         dbFile=new File(settings.getdB());

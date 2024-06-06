@@ -1,5 +1,6 @@
 package org.example.mmsd_al.Classes;
 
+import javafx.scene.control.TableView;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
 import org.jetbrains.annotations.NotNull;
@@ -161,6 +162,15 @@ public class ClassChannel {
         if(_Name!="" && _Name!="Резерв"){
             //MainWindow.DB.registrySaveValue(this);
         }
+        TableView taView=MainWindow.mainWindow.getUserControlChannels();
+        if(taView==null) return;
+       int index=taView.getItems().indexOf(this);
+       if(index<0) return;
+        taView.getItems().set(index,this);
+       var elem=1;
+
+
+
     }
 
     public double get_Max() {
