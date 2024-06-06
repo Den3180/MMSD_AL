@@ -115,6 +115,8 @@ public class MainWindow {
 
     @FXML
     public void button_Click(ActionEvent actionEvent) {
+        Devices.get(0).set_Name("WWWW");
+        Devices.get(0).set_LinkStateName("Известно");
     }
 
     /**
@@ -166,7 +168,7 @@ public class MainWindow {
             modbus.portOpen();
             return;
         }
-            modbus.Poll();
+        modbus.Poll();
     }
 
     public void tableDevice_MouseClicked(MouseEvent e){

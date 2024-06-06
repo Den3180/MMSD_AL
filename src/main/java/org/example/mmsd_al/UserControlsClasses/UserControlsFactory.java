@@ -91,13 +91,6 @@ public class UserControlsFactory {
             col.setPrefWidth(300);
             col.setMaxWidth(800);
         }
-        col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<T, S>, ObservableValue<S>>() {
-            @Override
-            public ObservableValue<S> call(TableColumn.CellDataFeatures<T, S> param) {
-                return col.getCellObservableValue(0);
-            }
-        });
-
          col.setCellValueFactory(new PropertyValueFactory<T,S>(vrb));
 
 //        col.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<S>() {

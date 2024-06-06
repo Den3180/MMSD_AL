@@ -3,6 +3,9 @@ package org.example.mmsd_al.DevicesClasses;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 //import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.MainWindow;
 
@@ -24,31 +27,31 @@ public class ClassDevice {
 
     private List<ClassGroupRequest> groups;
 
-    private String _Name;
+    private SimpleStringProperty _Name;
     private int _Address;
     private EnumProtocol _Protocol;
-    private int _Period;
-    private String _IPAddress;
+    private SimpleIntegerProperty _Period;
+    private SimpleStringProperty _IPAddress;
     private int _IPPort;
     private EnumLink _LinkState;
     private int _TxCounter;
     private int _RxCounter;
     private int _PacketLost;
     private LocalDate _DTAct;
-    private String _ComPort;
-    private String _SIM;
+    private SimpleStringProperty _ComPort;
+    private SimpleStringProperty _SIM;
     private EnumModel _Model;
     private LocalDate _DTConnect;
     private boolean _WaitAnswer;
-    private String _Picket;
-    private double _Latitude =  00.000000D;
-    private double _Longitude = 00.000000D;
-    private double _Elevation;
-    private String _LinkStateName;
-    private String _PacketStatistics;
+    private SimpleStringProperty _Picket;
+    private SimpleDoubleProperty _Latitude;
+    private SimpleDoubleProperty _Longitude;
+    private SimpleDoubleProperty _Elevation;
+    private SimpleStringProperty _LinkStateName;
+    private SimpleStringProperty _PacketStatistics;
     private int countNumber;
-    private String _ProtocolName;
-    private String _ModelName;
+    private SimpleStringProperty _ProtocolName;
+    private SimpleStringProperty _ModelName;
     private List<ClassChannel> channels;
     private int counGroup;
     private boolean inProcess;
@@ -83,11 +86,11 @@ public class ClassDevice {
     }
 
     public String get_ModelName() {
-        return _ModelName;
+        return _ModelName.get();
     }
 
     public void set_ModelName(EnumModel model) {
-        this._ModelName = switch (model){
+        String modName = switch (model){
             case None -> "";
             case BKM_3 -> "БКМ-3";
             case BKM_4 -> "БКМ-4";
@@ -99,20 +102,30 @@ public class ClassDevice {
             case KIP -> "КИП";
             case MMPR -> "ММПР";
         };
+        this._ModelName.set(modName);
+    }
+
+    public SimpleStringProperty _ModelNameProperty() {
+        return _ModelName;
     }
 
     public void set_ProtocolName(EnumProtocol protocol) {
-        switch (protocol){
-            case RTU -> _ProtocolName="Modbus RTU";
-            case TCP -> _ProtocolName="Modbus TCP";
-            case SMS -> _ProtocolName="GSM SMS";
-            case GPRS -> _ProtocolName="GPRS";
-            case GPRS_SMS -> _ProtocolName="GPRS SMS";
-            default -> _ProtocolName="не известно";
-        }
+        String protName= switch (protocol){
+            case RTU -> "Modbus RTU";
+            case TCP -> "Modbus TCP";
+            case SMS -> "GSM SMS";
+            case GPRS -> "GPRS";
+            case GPRS_SMS ->"GPRS SMS";
+            default -> "не известно";
+        };
+        _ProtocolName.set(protName);
     }
 
     public String get_ProtocolName() {
+        return _ProtocolName.get();
+    }
+
+    public SimpleStringProperty _ProtocolNameProperty() {
         return _ProtocolName;
     }
 
@@ -125,7 +138,15 @@ public class ClassDevice {
     }
 
     public void set_Name(String _Name){
-        this._Name=_Name;
+        this._Name.set(_Name);
+    }
+
+    public String get_Name() {
+        return _Name.get();
+    }
+
+    public SimpleStringProperty _NameProperty() {
+        return _Name;
     }
 
     public int get_Address() {
@@ -146,19 +167,27 @@ public class ClassDevice {
     }
 
     public int get_Period() {
-        return _Period;
+        return _Period.get();
     }
 
     public void set_Period(int _Period) {
-        this._Period = _Period;
+        this._Period.set(_Period);
+    }
+
+    public SimpleIntegerProperty _PeriodProperty() {
+        return _Period;
     }
 
     public String get_IPAddress() {
-        return _IPAddress;
+        return _IPAddress.get();
     }
 
     public void set_IPAddress(String _IPAddress) {
-        this._IPAddress = _IPAddress;
+        this._IPAddress.set(_IPAddress);
+    }
+
+    public SimpleStringProperty _IPAddressProperty() {
+        return _IPAddress;
     }
 
     public int get_IPPort() {
@@ -170,19 +199,27 @@ public class ClassDevice {
     }
 
     public String get_ComPort() {
-        return _ComPort;
+        return _ComPort.get();
     }
 
     public void set_ComPort(String _ComPort) {
-        this._ComPort = _ComPort;
+        this._ComPort.set(_ComPort);
+    }
+
+    public SimpleStringProperty _ComPortProperty() {
+        return _ComPort;
     }
 
     public String get_SIM() {
-        return _SIM;
+        return _SIM.get();
     }
 
     public void set_SIM(String _SIM) {
-        this._SIM = _SIM;
+        this._SIM.set(_SIM);
+    }
+
+    public SimpleStringProperty _SIMProperty() {
+        return _SIM;
     }
 
     public EnumModel get_Model() {
@@ -195,35 +232,51 @@ public class ClassDevice {
     }
 
     public String get_Picket() {
-        return _Picket;
+        return _Picket.get();
     }
 
     public void set_Picket(String _Picket) {
-        this._Picket = _Picket;
+        this._Picket.set(_Picket);
+    }
+
+    public SimpleStringProperty _PicketProperty() {
+        return _Picket;
     }
 
     public double get_Longitude() {
-        return _Longitude;
+        return _Longitude.get();
     }
 
     public void set_Longitude(double _Longitude) {
-        this._Longitude = _Longitude;
+        this._Longitude.set(_Longitude);
+    }
+
+    public SimpleDoubleProperty _LongitudeProperty() {
+        return _Longitude;
     }
 
     public double get_Latitude() {
-        return _Latitude;
+        return _Latitude.get();
     }
 
     public void set_Latitude(double _Latitude) {
-        this._Latitude = _Latitude;
+        this._Latitude.set(_Latitude);
+    }
+
+    public SimpleDoubleProperty _LatitudeProperty() {
+        return _Latitude;
     }
 
     public double get_Elevation() {
-        return _Elevation;
+        return _Elevation.get();
     }
 
     public void set_Elevation(double _Elevation) {
-        this._Elevation = _Elevation;
+        this._Elevation.set(_Elevation);
+    }
+
+    public SimpleDoubleProperty _ElevationProperty() {
+        return _Elevation;
     }
 
     public LocalDate get_DTAct() {
@@ -247,16 +300,22 @@ public class ClassDevice {
     }
 
     public String get_LinkStateName() {
-        switch (get_LinkState()){
-            case LinkNo: return "Нет связи";
-            case LinkYes: return  "На связи";
-            case LinkConnect: return "Подключение";
-            default:return  "Неизвестно";
-        }
+        String lnk= switch (get_LinkState()){
+            case LinkNo-> "Нет связи";
+            case LinkYes-> "На связи";
+            case LinkConnect->"Подключение";
+            case Unknown-> "Неизвестно";
+        };
+        _LinkStateName.set(lnk);
+        return _LinkStateName.get();
     }
 
     public void set_LinkStateName(String _LinkStateName) {
-        this._LinkStateName = _LinkStateName;
+        this._LinkStateName.set(_LinkStateName);
+    }
+
+    public SimpleStringProperty _LinkStateNameProperty() {
+        return _LinkStateName;
     }
 
     public String ProtocolName(){
@@ -268,10 +327,6 @@ public class ClassDevice {
             case GPRS_SMS: return "GPRS SMS";
             default: return "не известно";
         }
-    }
-
-    public String get_Name() {
-        return _Name;
     }
 
     public int get_TxCounter() {
@@ -294,21 +349,25 @@ public class ClassDevice {
     }
 
     public void set_PacketStatistics(String _PacketStatistics) {
-        this._PacketStatistics = "0/0";
+        this._PacketStatistics.set(_PacketStatistics);
     }
 
     public String get_PacketStatistics() {
-        return _TxCounter+"/"+_RxCounter;
+        this._PacketStatistics.set(_TxCounter+"/"+_RxCounter);
+        return _PacketStatistics.get() ;
+    }
+
+    public SimpleStringProperty _PacketStatisticsProperty() {
+        return _PacketStatistics;
     }
 
     public String commParam(){
         if ((_Protocol == EnumProtocol.TCP) || (_Protocol == EnumProtocol.GPRS)
-                || (_Protocol == EnumProtocol.GPRS_SMS))        return _IPAddress + ":" + _IPPort;
-        else if (_ComPort != "")                                return _ComPort;
-        else if (_Protocol == EnumProtocol.SMS)
-                                                                return "COM" + MainWindow.settings.getPortModem();
-        else if (MainWindow.settings.getPortModbus() == 0)           return "Нет";
-        else                                                    return "COM" + MainWindow.settings.getPortModbus();
+                || (_Protocol == EnumProtocol.GPRS_SMS))   return _IPAddress.get() + ":" + _IPPort;
+        else if (_ComPort.isEmpty().get())                 return _ComPort.get();
+        else if (_Protocol == EnumProtocol.SMS)            return "COM" + MainWindow.settings.getPortModem();
+        else if (MainWindow.settings.getPortModbus() == 0) return "Нет";
+        else                                               return "COM" + MainWindow.settings.getPortModbus();
     }
 
     public String Modelname(){
@@ -330,22 +389,29 @@ public class ClassDevice {
 
     public ClassDevice(){
         id=0;
+        _Name=new SimpleStringProperty();
+        _ModelName=new SimpleStringProperty();
         channels=new ArrayList<ClassChannel>();
         groups=new ArrayList<>();
         _Protocol=EnumProtocol.RTU;
-        _Period=60;
-        _IPAddress="192.168.0.1";
+        _Period=new SimpleIntegerProperty(60);
+        _IPAddress=new SimpleStringProperty("192.168.0.1");
         _IPPort=502;
         _Address=1;
         _LinkState=EnumLink.Unknown;
-        _ComPort = "";
-        _SIM = "";
+        _ComPort = new SimpleStringProperty();
+        _SIM =new SimpleStringProperty();
         _Model = EnumModel.None;
         _DTConnect = LocalDate.MIN;
         _WaitAnswer = false;
-        _Picket = "";
+        _Picket = new SimpleStringProperty();
+        _Latitude=new SimpleDoubleProperty();
+        _Longitude=new SimpleDoubleProperty();
+        _Elevation=new SimpleDoubleProperty();
+        _ProtocolName=new SimpleStringProperty();
+        _PacketStatistics=new SimpleStringProperty("0/0");
+        _LinkStateName=new SimpleStringProperty("Неизвестно");
         inProcess=false;
-       // _ProtocolName=ProtocolName();
     }
 
     /**

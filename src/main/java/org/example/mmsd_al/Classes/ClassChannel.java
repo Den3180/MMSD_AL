@@ -176,9 +176,12 @@ public class ClassChannel {
         }
         _DTAct=LocalDateTime.now();
         _StrDTAct.set(_DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss")));
-        if(_Name.get()!="" && _Name.get()!="Резерв"){
-            //MainWindow.DB.registrySaveValue(this);
-        }
+
+//        if(_Name.get()!="" && _Name.get()!="Резерв"){
+//            Thread thread=new Thread(()->MainWindow.DB.registrySaveValue(this));
+//            thread.setDaemon(true);
+//            thread.start();
+//        }
     }
 
     public int get_Accuracy() {
@@ -243,6 +246,7 @@ public class ClassChannel {
 
     public void set_DTAct(@NotNull LocalDateTime _DTAct) {
         this._DTAct = _DTAct;
+        _StrDTAct.set(_DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss")));
     }
 
     public EnumFormat get_Format() {

@@ -66,7 +66,6 @@ public class ClassModbus {
         port.setParity(SerialPort.Parity.NONE);
         port.setStopBits(1);
         try {
-
             RTUMaster = ModbusMasterFactory.createModbusMasterRTU(port);
             RTUMaster.setResponseTimeout(1000);
             RTUMaster.connect();
@@ -111,6 +110,11 @@ public class ClassModbus {
         }
     }
 
+    /**
+     * Чтение регистров по группам и в пакетах по 100.
+     * @param device текущее устройство
+     * @param master текущий мастер(RTU,TCP,ASCII)
+     */
     private void ReadGroupRegistry(ClassDevice device, ModbusMaster master)            {
 
         device.setInProcess(true);
@@ -125,7 +129,6 @@ public class ClassModbus {
             try{
                     if (group.get_TypeRegistry() == ClassChannel.EnumTypeRegistry.InputRegistry && numOfPoint < numOfRegMax)
                     {
-                        // data = await master.ReadInputRegistersAsync((byte)device.Address, (ushort)group.StartAddress,(ushort)numOfPoint);
                         data = master.readInputRegisters(device.get_Address(), group.getStartAddress(),numOfPoint);
                         if(data==null) continue;
                         System.out.println(device +" " +group.get_TypeRegistry() + " : " + Arrays.toString(data));
@@ -139,6 +142,9 @@ public class ClassModbus {
             } catch (Exception e) {
                 System.out.println("ReadGroupRegistry: "+ e.getMessage());
                 Mode=eMode.None;
+                if(!RTUMaster.isConnected()){
+                   portOpen();
+                }
                 return;
             }
             try {
