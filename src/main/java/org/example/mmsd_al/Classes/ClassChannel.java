@@ -1,5 +1,9 @@
 package org.example.mmsd_al.Classes;
 
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableView;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
@@ -17,33 +21,204 @@ import java.util.Comparator;
 public class ClassChannel {
 
     private int id;
-    private String _Name;
+    private SimpleStringProperty _Name;
     private LocalDateTime _DTAct;
-    private int _Address;
-    private String _AddressHex;
+    private SimpleIntegerProperty _Address;
+    private SimpleStringProperty _AddressHex;
     private EnumFormat _Format;
-    private float _Koef;
-    private double _Value;
-    private double _Max;
-    private double _Min;
+    private SimpleFloatProperty _Koef;
+    private SimpleDoubleProperty _Value;
+    private SimpleDoubleProperty _Max;
+    private SimpleDoubleProperty _Min;
     private EnumState _State;
     private EnumTypeRegistry _TypeRegistry;
-    private String _TypeRegistryFullName;
+    private SimpleStringProperty _TypeRegistryFullName;
     private ClassDevice _Device;
-    private String _DeviceName;
+    private SimpleStringProperty _DeviceName;
     private int[] _BaseValue;
     private double _PreviousValue;
     private boolean _Archive;
     private int _Ext;
-    private int _Accuracy;
+    private SimpleIntegerProperty _Accuracy;
     private double _NValue;
     private int _CountNumber;
-    private String _StrBaseValue;
-    private String _StrDTAct;
+    private SimpleStringProperty _StrBaseValue;
+    private SimpleStringProperty _StrDTAct;
+
 
 
 
     //<editor-fold desc="Setters and Getters">
+
+
+    public String get_Name() {
+        return _Name.get();
+    }
+
+    public void set_Name(String _Name) {
+        this._Name.set(_Name);
+    }
+
+    public SimpleStringProperty _NameProperty() {
+        return _Name;
+    }
+
+    public String get_DeviceName() {
+        return _DeviceName.get();
+    }
+
+    public void set_DeviceName(String _DeviceName) {
+        this._DeviceName.set(_DeviceName);
+        _Device.set_Name(_DeviceName);
+    }
+
+    public SimpleStringProperty _DeviceNameProperty() {
+        return _DeviceName;
+    }
+
+    public String get_StrDTAct() {
+        if(_DTAct==LocalDateTime.MIN ) {
+           _StrDTAct.set("");
+        }
+        else{
+            _StrDTAct.set(_DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss")));
+        }
+        return _StrDTAct.get();
+    }
+
+    public void set_StrDTAct(String _StrDTAct) {
+        this._StrDTAct.set(_StrDTAct);
+    }
+
+    public SimpleStringProperty _StrDTActProperty() {
+        return _StrDTAct;
+    }
+
+    public int get_Address() {
+        return _Address.get();
+    }
+
+    public SimpleIntegerProperty _AddressProperty() {
+        return _Address;
+    }
+
+    public void set_Address(int _Address) {
+        this._Address.set(_Address);
+        this._AddressHex.set("0x"+String.format("%04x",this._Address.get()).toUpperCase());
+    }
+
+    public String get_AddressHex() {
+        return _AddressHex.get();
+    }
+
+    public SimpleStringProperty _AddressHexProperty() {
+        return _AddressHex;
+    }
+
+    public void set_AddressHex(String _AddressHex) {
+        this._AddressHex.set(_AddressHex);
+    }
+
+    public float get_Koef() {
+        return _Koef.get();
+    }
+
+    public SimpleFloatProperty _KoefProperty() {
+        return _Koef;
+    }
+
+    public void set_Koef(float _Koef) {
+        this._Koef.set(_Koef);
+    }
+
+    public String get_StrBaseValue() {
+        if(_BaseValue==null || _BaseValue.length==0)
+        {
+            _StrBaseValue.set("");
+        }
+        else{
+            StringBuilder res=new StringBuilder("0x");
+            String format="%04x";
+           if(_TypeRegistry==EnumTypeRegistry.CoilOutput || _TypeRegistry==EnumTypeRegistry.DiscreteInput){
+                format="%02x";
+           }
+            for(int i=0;i<_BaseValue.length;i++){
+                res.append(String.format(format,_BaseValue[i]).toUpperCase());
+            }
+           _StrBaseValue.set(res.toString());
+        }
+        return _StrBaseValue.get();
+    }
+
+    public SimpleStringProperty _StrBaseValueProperty() {
+        return _StrBaseValue;
+    }
+
+    public void set_StrBaseValue(String _StrBaseValue) {
+        this._StrBaseValue.set(_StrBaseValue);
+    }
+
+    public double get_Value() {
+        return _Value.get();
+    }
+
+    public SimpleDoubleProperty _ValueProperty() {
+        return _Value;
+    }
+
+    public void set_Value(double value) {
+        this._Value.set(convertMinus(value));
+        if(_Koef.get()!=1) {
+            _Value.set(_Value.get()*(double)_Koef.get());
+        }
+        if(_Accuracy.get()>0){
+            _Value.set((double) Math.round(_Value.get()*100)/100);
+        }
+        _DTAct=LocalDateTime.now();
+        _StrDTAct.set(_DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss")));
+        if(_Name.get()!="" && _Name.get()!="Резерв"){
+            //MainWindow.DB.registrySaveValue(this);
+        }
+    }
+
+    public int get_Accuracy() {
+        return _Accuracy.get();
+    }
+
+    public SimpleIntegerProperty _AccuracyProperty() {
+        return _Accuracy;
+    }
+
+    public void set_Accuracy(int _Accuracy) {
+        this._Accuracy.set(_Accuracy);
+    }
+
+    public double get_Max() {
+        return _Max.get();
+    }
+
+    public SimpleDoubleProperty _MaxProperty() {
+        return _Max;
+    }
+
+    public void set_Max(double _Max) {
+        this._Max.set(_Max);
+    }
+
+    public double get_Min() {
+        return _Min.get();
+    }
+
+    public SimpleDoubleProperty _MinProperty() {
+        return _Min;
+    }
+
+    public void set_Min(double _Min) {
+        this._Min.set(_Min);
+    }
+
+
+
 
 
     public void set_CountNumber(int _CountNumber) {
@@ -62,51 +237,12 @@ public class ClassChannel {
         return id;
     }
 
-    public String get_Name() {
-        return _Name;
-    }
-
-    public void set_Name(String _Name) {
-        this._Name = _Name;
-    }
-
     public LocalDateTime get_DTAct() {
         return _DTAct;
     }
 
     public void set_DTAct(@NotNull LocalDateTime _DTAct) {
         this._DTAct = _DTAct;
-    }
-
-    public void set_StrDTAct(String _StrDTAct) {
-        this._StrDTAct = _StrDTAct;
-    }
-
-    public String get_StrDTAct() {
-        if(_DTAct==LocalDateTime.MIN ) {
-            _StrDTAct="";
-            return _StrDTAct;
-        }
-        SimpleDateFormat sdf=new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        _StrDTAct= _DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss"));
-        return _StrDTAct;
-
-    }
-
-    public int get_Address() {
-        return _Address;
-    }
-
-    public void set_Address(int _Address) {
-        this._Address = _Address;
-    }
-
-    public void set_AddressHex(String _AddressHex) {
-        this._AddressHex = _AddressHex;
-    }
-
-    public String get_AddressHex() {
-        return "0x"+String.format("%04x",_Address).toUpperCase();
     }
 
     public EnumFormat get_Format() {
@@ -117,77 +253,6 @@ public class ClassChannel {
         this._Format = _Format;
     }
 
-    public float get_Koef() {
-        return _Koef;
-    }
-
-    public void set_Koef(float _Koef) {
-        this._Koef = _Koef;
-    }
-
-    public void set_StrBaseValue(String _StrBaseValue) {
-        this._StrBaseValue = _StrBaseValue;
-    }
-
-
-    public String get_StrBaseValue() {
-        if(_BaseValue==null || _BaseValue.length==0) return "";
-        StringBuilder res=new StringBuilder("0x");
-        String format="%04x";
-        if(_TypeRegistry==EnumTypeRegistry.CoilOutput || _TypeRegistry==EnumTypeRegistry.DiscreteInput){
-            format="%02x";
-        }
-        for(int i=0;i<_BaseValue.length;i++){
-            res.append(String.format(format,_BaseValue[i]).toUpperCase());
-        }
-        _StrBaseValue=res.toString();
-        return _StrBaseValue;
-    }
-
-    public double get_Value() {
-        return _Value;
-    }
-
-    public void set_Value(double value) {
-        _Value = convertMinus(value);
-        if(_Koef!=1) {
-            _Value*=(double) _Koef;
-        }
-        else {
-            var tt=Math.round(_Value);
-            _Value= Math.round(_Value);
-        }
-        if(_Accuracy>0) _Value=(double) Math.round(_Value*100)/100;
-        _DTAct=LocalDateTime.now();
-        if(_Name!="" && _Name!="Резерв"){
-            //MainWindow.DB.registrySaveValue(this);
-        }
-        TableView taView=MainWindow.mainWindow.getUserControlChannels();
-        if(taView==null) return;
-       int index=taView.getItems().indexOf(this);
-       if(index<0) return;
-        taView.getItems().set(index,this);
-       var elem=1;
-
-
-
-    }
-
-    public double get_Max() {
-        return _Max;
-    }
-
-    public void set_Max(double _Max) {
-        this._Max = _Max;
-    }
-
-    public double get_Min() {
-        return _Min;
-    }
-
-    public void set_Min(double _Min) {
-        this._Min = _Min;
-    }
 
     public EnumState get_State() {
         return _State;
@@ -221,9 +286,9 @@ public class ClassChannel {
         };
     }
 
-    public void set_TypeRegistryFullName(String _TypeRegistryFullName) {
-        this._TypeRegistryFullName = _TypeRegistryFullName;
-    }
+//    public void set_TypeRegistryFullName(String _TypeRegistryFullName) {
+//        this._TypeRegistryFullName = _TypeRegistryFullName;
+//    }
 
     public String get_TypeRegistryFullName() {
         return switch (_TypeRegistry){
@@ -247,14 +312,7 @@ public class ClassChannel {
         this._Device = _Device;
     }
 
-    public void set_DeviceName(String _DeviceName) {
-        this._DeviceName = _DeviceName;
-        _Device.set_Name(_DeviceName);
-    }
 
-    public String get_DeviceName() {
-        return _DeviceName;
-    }
 
     public int[] get_BaseValue() {
         return _BaseValue;
@@ -262,6 +320,8 @@ public class ClassChannel {
 
     public void set_BaseValue(int[] _BaseValue) {
         this._BaseValue = _BaseValue;
+        var str=get_StrBaseValue();
+        this._StrBaseValue.set(str);
     }
 
     public double get_PreviousValue() {
@@ -288,13 +348,7 @@ public class ClassChannel {
         this._Ext = _Ext;
     }
 
-    public int get_Accuracy() {
-        return _Accuracy;
-    }
 
-    public void set_Accuracy(int _Accuracy) {
-        this._Accuracy = _Accuracy;
-    }
 
     public double get_NValue() {
         return _NValue;
@@ -307,19 +361,25 @@ public class ClassChannel {
 
     public ClassChannel(){
         id=0;
-        _Name="Канал 1";
-        _Address=0;
+        _Name= new SimpleStringProperty("Канал 1");
+        _Address= new SimpleIntegerProperty(0);
         _TypeRegistry=EnumTypeRegistry.HoldingRegistry;
         _Device=new ClassDevice();
         _Format = EnumFormat.UINT;
-        _Koef = 1;
-        _Value = 0;
+        _Koef = new SimpleFloatProperty(1);
+        _Value = new SimpleDoubleProperty(0);
         _DTAct = LocalDateTime.MIN;
         _PreviousValue = Double.MIN_VALUE;
         _Archive = false;
-        _Accuracy=0;
+        _Accuracy= new SimpleIntegerProperty(0);
         _CountNumber =0;
         _BaseValue=new int[]{};
+        _Max=new SimpleDoubleProperty();
+        _Min=new SimpleDoubleProperty();
+        _AddressHex=new SimpleStringProperty();
+        _StrDTAct=new SimpleStringProperty();
+        _StrBaseValue=new SimpleStringProperty();
+        _DeviceName=new SimpleStringProperty();
     }
 
     //<editor-fold desc="Методы">
@@ -329,7 +389,7 @@ public class ClassChannel {
      * @param saveValue значение из БД
      */
     public void loadSaveValue(double saveValue){
-        _Value=saveValue;
+        _Value.setValue(saveValue);
     }
 
     public void sendValue(double value){

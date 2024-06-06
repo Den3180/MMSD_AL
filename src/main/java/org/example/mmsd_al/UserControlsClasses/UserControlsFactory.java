@@ -58,7 +58,7 @@ public class UserControlsFactory {
                 var curField=obj.getClass().getDeclaredField(variables[i]);
                 curField.setAccessible(true);
                 var nv=curField.get(obj);
-                tableView.getColumns().add((TableColumn<T, ?>) setColTable(obj,nv,headers[i],variables[i],tableView));
+                tableView.getColumns().add((TableColumn<T, ?>) setColTable(obj,nv,headers[i],variables[i]));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -84,13 +84,20 @@ public class UserControlsFactory {
      * @param <T>
      * @param <S>
      */
-    private static <T,S> TableColumn<T,S> setColTable(T obj1, S obj2, String hdr, String vrb,TableView tb){
+    private static <T,S> TableColumn<T,S> setColTable(T obj1, S obj2, String hdr, String vrb){
         TableColumn<T,S> col = new TableColumn<T,S>(hdr);
         col.setMinWidth(20);
         if(HEADERS_DEVICE[1].equals(hdr) && obj1 instanceof ClassDevice ||HEADES_CHANNEL[1].equals(hdr)){
             col.setPrefWidth(300);
             col.setMaxWidth(800);
         }
+        col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<T, S>, ObservableValue<S>>() {
+            @Override
+            public ObservableValue<S> call(TableColumn.CellDataFeatures<T, S> param) {
+                return col.getCellObservableValue(0);
+            }
+        });
+
          col.setCellValueFactory(new PropertyValueFactory<T,S>(vrb));
 
 //        col.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<S>() {
