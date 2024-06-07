@@ -1,10 +1,13 @@
 package org.example.mmsd_al.Classes;
 
 import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
+import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
+import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
 import com.intelligt.modbus.jlibmodbus.serial.SerialParameters;
 import com.intelligt.modbus.jlibmodbus.serial.SerialPort;
+import com.intelligt.modbus.jlibmodbus.serial.SerialPortException;
 import javafx.collections.ObservableList;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.DevicesClasses.ClassGroupRequest;
@@ -42,7 +45,7 @@ public class ClassModbus {
     }
     //</editor-fold>
 
-    public ClassModbus(){
+    public ClassModbus() {
         port=null;
         RTUMaster=null;
         Mode=eMode.None;
@@ -59,6 +62,7 @@ public class ClassModbus {
      */
     public boolean portOpen(){
 
+        if(RTUMaster!=null) RTUMaster=null;
         port=new SerialParameters();
         port.setDevice("COM7");
         port.setBaudRate(SerialPort.BaudRate.BAUD_RATE_9600);
@@ -106,7 +110,8 @@ public class ClassModbus {
 
             //List<ClassGroupRequest> groups=device.getGroups();
 
-            ReadGroupRegistry(device,RTUMaster);
+                ReadGroupRegistry(device,RTUMaster);
+
         }
     }
 
@@ -115,7 +120,7 @@ public class ClassModbus {
      * @param device текущее устройство
      * @param master текущий мастер(RTU,TCP,ASCII)
      */
-    private void ReadGroupRegistry(ClassDevice device, ModbusMaster master)            {
+    private void ReadGroupRegistry(ClassDevice device, ModbusMaster master){
 
         device.setInProcess(true);
         //int countGroup= device.getCounGroup();
@@ -125,33 +130,50 @@ public class ClassModbus {
 //            if(device.getCounGroup()<=0){
 //               device.setInProcess(false);
 //            }
+            device.packetSended();
             int numOfPoint = group.GetSize();
             try{
                     if (group.get_TypeRegistry() == ClassChannel.EnumTypeRegistry.InputRegistry && numOfPoint < numOfRegMax)
                     {
                         data = master.readInputRegisters(device.get_Address(), group.getStartAddress(),numOfPoint);
-                        if(data==null) continue;
+
                         System.out.println(device +" " +group.get_TypeRegistry() + " : " + Arrays.toString(data));
                     }
                     if(group.get_TypeRegistry()== ClassChannel.EnumTypeRegistry.HoldingRegistry && numOfPoint < numOfRegMax){
                         data = master.readHoldingRegisters(device.get_Address(), group.getStartAddress(),numOfPoint);
-                        if(data==null) continue;
+
                         System.out.println(device +" " +group.get_TypeRegistry() + " "+ group.GetSize() +" : " + Arrays.toString(data));
+                    }
+                    if(group.get_TypeRegistry()== ClassChannel.EnumTypeRegistry.CoilOutput && numOfPoint < numOfRegMax){
+                        dataBool=master.readCoils(device.get_Address(), group.getStartAddress(), numOfPoint);
+                        System.out.println(device +" " +group.get_TypeRegistry() + " "+ group.GetSize() +" : " + Arrays.toString(dataBool));
+                    }
+                    if(group.get_TypeRegistry()== ClassChannel.EnumTypeRegistry.DiscreteInput && numOfPoint < numOfRegMax){
+                        dataBool=master.readDiscreteInputs(device.get_Address(), group.getStartAddress(), numOfPoint);
+                        System.out.println(device +" " +group.get_TypeRegistry() + " "+ group.GetSize() +" : " + Arrays.toString(dataBool));
                     }
 
             } catch (Exception e) {
                 System.out.println("ReadGroupRegistry: "+ e.getMessage());
                 Mode=eMode.None;
+                device.PacketNotReceived();
                 if(!RTUMaster.isConnected()){
-                   portOpen();
+
+                    try {
+                        RTUMaster.connect();
+                        Mode=eMode.PortOpen;
+                    } catch (ModbusIOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
-                return;
+                continue;
             }
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            device.PacketReceived();
             switch (group.get_TypeRegistry()){
                 case InputRegistry,HoldingRegistry ->{
                     for (int j = 0; j < group.get_Channels().size(); j++)
@@ -161,6 +183,15 @@ public class ClassModbus {
                         channel.set_BaseValue(GetDataFromBuffer(Offset, channel.get_Format()));
                         channel.set_Value(GetDecimalFromBuffer(Offset, channel.get_Format()));
                     }
+                    data=new int[]{};
+                }
+                case CoilOutput,DiscreteInput ->{
+                    for (int j = 0; j < group.get_Channels().size(); j++){
+                        ClassChannel channel=group.get_Channels().get(j);
+                        int Offset= group.getOffset(j);
+                        channel.set_Value(dataBool[Offset]? 1:0);
+                    }
+                    dataBool=new boolean[] {};
                 }
             }
         }

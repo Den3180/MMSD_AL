@@ -432,16 +432,35 @@ public class ClassDevice {
         _WaitAnswer = false;
         _RxCounter++;
         if (_RxCounter > 10000) _RxCounter = 0;
+        this._PacketStatistics.set(_TxCounter+"/"+_RxCounter);
         //OnPropertyChanged("PacketStatistics");
         if (_LinkState != EnumLink.LinkYes)
         {
-            _LinkState = EnumLink.LinkYes;
             //OnPropertyChanged("LinkState");
             //OnPropertyChanged("LinkStateName");
+            _LinkState=EnumLink.LinkYes;
+            get_LinkStateName();
+//            _LinkStateName.setValue(_LinkStateName.get());
         }
         _PacketLost = 0;
         _DTAct = LocalDate.now();
     }
+
+    /**
+     * Счетчик потеряных пакетов.
+     */
+    public void PacketNotReceived() {
+        int PACKET_LOST_MAX = 1000;
+        int PACKET_LOST_ALARM = 3;
+        _WaitAnswer=false;
+        if(_PacketLost<PACKET_LOST_MAX) _PacketLost++;
+        if(_PacketLost<PACKET_LOST_ALARM) return;
+        if(_LinkState!=EnumLink.LinkNo){
+            _LinkState=EnumLink.LinkNo;
+            get_LinkStateName();
+        }
+    }
+
 
     /**
      * Сохранить профиль устройства в файл(XML-формат).

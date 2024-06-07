@@ -1,5 +1,6 @@
 package org.example.mmsd_al;
 
+import com.intelligt.modbus.jlibmodbus.serial.SerialPortException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -103,6 +104,7 @@ public class MainWindow {
                 break;
         }
 
+
         modbus=new ClassModbus();
         timerSec=new Timer(true);
         timerSec.schedule(new TimerTask() {
@@ -110,13 +112,14 @@ public class MainWindow {
             public void run() {
                 timerSec_Tick();
             }
-        },0,1000);
+        },500,5000);
     }
 
     @FXML
     public void button_Click(ActionEvent actionEvent) {
         Devices.get(0).set_Name("WWWW");
         Devices.get(0).set_LinkStateName("Известно");
+
     }
 
     /**
@@ -161,12 +164,14 @@ public class MainWindow {
         Platform.exit();
     }
 
+    int temp=0;
     private void timerSec_Tick(){
-        Platform.runLater(()-> lbTest.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH.mm.ss"))));
+        Platform.runLater(()-> lbTest.setText("Круг: "+ ++temp));
+//        Platform.runLater(()-> lbTest.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH.mm.ss"))));
 
         if(modbus.getMode()==ClassModbus.eMode.None){
             modbus.portOpen();
-            return;
+            //return;
         }
         modbus.Poll();
     }

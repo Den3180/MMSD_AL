@@ -4,8 +4,10 @@ package org.example.mmsd_al.UserControlsClasses;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.css.PseudoClass;
 import javafx.event.EventHandler;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -71,6 +73,38 @@ public class UserControlsFactory {
                 ((ClassChannel)el).set_CountNumber(++i);
             }
         }
+
+        Callback<TableView<T>, TableRow<T>> rowFactory=new Callback<TableView<T>, TableRow<T>>() {
+            @Override
+            public TableRow<T> call(TableView<T> param) {
+
+                    TableRow<T> row= new TableRow<T>(){
+                    @Override
+                    protected void updateItem(T user, boolean empty) {
+                        super.updateItem(user, empty);
+                        if (user == null || empty) {
+                            setStyle("");
+                        } else {
+                            if(user instanceof ClassDevice){
+                                if (((ClassDevice)user).get_Name().equals("WWWW")) {
+                                    setStyle("-fx-background-color: green;");
+                                }
+                                else {
+                                    setStyle("");
+                                }
+                            }
+                        }
+                    }
+                };
+//                    row.pseudoClassStateChanged(PseudoClass.getPseudoClass("highlighted"),
+//                            ((ClassDevice)list.get(0)).get_Address()==1);
+                    return row;
+            }
+        };
+
+        tableView.setRowFactory(rowFactory);
+        //tableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: salmon;");
+        //tableView.setStyle("-fx-background-color: #93f9b911;-fx-text-background-color: red;");
         return tableView;
     }
 
@@ -86,12 +120,14 @@ public class UserControlsFactory {
      */
     private static <T,S> TableColumn<T,S> setColTable(T obj1, S obj2, String hdr, String vrb){
         TableColumn<T,S> col = new TableColumn<T,S>(hdr);
+
         col.setMinWidth(20);
         if(HEADERS_DEVICE[1].equals(hdr) && obj1 instanceof ClassDevice ||HEADES_CHANNEL[1].equals(hdr)){
             col.setPrefWidth(300);
             col.setMaxWidth(800);
         }
-         col.setCellValueFactory(new PropertyValueFactory<T,S>(vrb));
+        col.setCellValueFactory(new PropertyValueFactory<T,S>(vrb));
+
 
 //        col.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<S>() {
 //            @Override

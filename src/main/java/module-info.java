@@ -16,6 +16,7 @@ open module org.example.mmsd_al {
     requires javafx.graphics;
     requires jlibmodbus;
     requires jssc;
+    requires javafx.base;
 
 
     exports org.example.mmsd_al;
