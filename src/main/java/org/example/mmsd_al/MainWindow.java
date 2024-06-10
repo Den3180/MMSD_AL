@@ -1,6 +1,5 @@
 package org.example.mmsd_al;
 
-import com.intelligt.modbus.jlibmodbus.serial.SerialPortException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,14 +20,11 @@ import org.example.mmsd_al.ServiceClasses.ClassMessage;
 import org.example.mmsd_al.Settings.ClassSettings;
 import org.example.mmsd_al.UserControlsClasses.TreeViewFactory;
 import org.example.mmsd_al.UserControlsClasses.UserControlsFactory;
+import org.example.mmsd_al.Windows.WindoWConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class MainWindow {
@@ -106,13 +102,13 @@ public class MainWindow {
 
 
         modbus=new ClassModbus();
-        timerSec=new Timer(true);
-        timerSec.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                timerSec_Tick();
-            }
-        },500,5000);
+//        timerSec=new Timer(true);
+//        timerSec.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                timerSec_Tick();
+//            }
+//        },500,5000);
     }
 
     @FXML
@@ -142,6 +138,8 @@ public class MainWindow {
             case "База данных...":
                 break;
             case "Параметры...":
+                WindoWConfig wConfig=new WindoWConfig();
+                wConfig.showWindow();
                 break;
             case "Создать БД...":
                 break;
@@ -178,9 +176,11 @@ public class MainWindow {
 
     public void tableDevice_MouseClicked(MouseEvent e){
         TableView sourse=(TableView) e.getSource();
-        ClassDevice device=(ClassDevice) sourse.getSelectionModel().getSelectedItems().get(0);
-        if(device ==null) return;
         if(e.getButton().equals(MouseButton.PRIMARY)){
+            var selestedElem=sourse.getSelectionModel().getSelectedItems();
+            if(selestedElem.size()==0) return;
+            ClassDevice device=(ClassDevice)selestedElem.get(0);
+            if(device ==null) return;
             if(e.getClickCount()==2){
                 userControlChannels=UserControlsFactory.createTable(FXCollections.observableArrayList(device.getChannels())
                         ,UserControlsFactory.HEADES_CHANNEL,

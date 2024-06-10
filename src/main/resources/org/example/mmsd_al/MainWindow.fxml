@@ -4,7 +4,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="600" prefWidth="800" style="-fx-border-color: grey; -fx-border-width: 2;" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mmsd_al.MainWindow">
+<BorderPane prefHeight="600" prefWidth="800" style="-fx-border-color: grey; -fx-border-width: 2;"
+            xmlns="http://javafx.com/javafx/17.0.2-ea"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.mmsd_al.MainWindow">
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
@@ -34,7 +37,8 @@
           <Menu mnemonicParsing="false" text="Конфигурация">
             <items>
               <MenuItem mnemonicParsing="false" text="База данных..." />
-              <MenuItem mnemonicParsing="false" text="Параметры..." />
+              <MenuItem mnemonicParsing="false" text="Параметры..."
+                        onAction="#menuItemClick"/>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Сервис">
