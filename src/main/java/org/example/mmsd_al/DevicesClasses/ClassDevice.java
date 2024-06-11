@@ -421,6 +421,7 @@ public class ClassDevice {
         _TxCounter++;
         if (_TxCounter > 10000) _TxCounter = 0;
         //OnPropertyChanged("PacketStatistics");
+        this._PacketStatistics.set(_TxCounter+"/"+_RxCounter);
         _WaitAnswer = true;
     }
 

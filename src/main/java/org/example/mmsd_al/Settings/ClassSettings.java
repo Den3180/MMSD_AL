@@ -93,6 +93,19 @@ public class ClassSettings implements Serializable {
         return new ClassSettings();
     }
 
+    @Override
+    public boolean equals(Object obj){
+        if(!(obj instanceof ClassSettings)) return false;
+        ClassSettings settings=(ClassSettings) obj;
+        return settings.portModbus==this.portModbus &&
+                settings.baudRate==this.baudRate &&
+                settings.dataBits==this.dataBits &&
+                settings.parity==this.parity &&
+                settings.stopBits==this.stopBits &&
+                settings.timeout==this.timeout;
+    }
+
+
     //region Setters and Getters
     public EnumTypeDB getTypeDB() {
         return typeDB;

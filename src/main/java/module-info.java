@@ -17,6 +17,7 @@ open module org.example.mmsd_al {
     requires jlibmodbus;
     requires jssc;
     requires javafx.base;
+    requires jdk.compiler;
 
 
     exports org.example.mmsd_al;

@@ -23,8 +23,10 @@ import org.example.mmsd_al.UserControlsClasses.UserControlsFactory;
 import org.example.mmsd_al.Windows.WindoWConfig;
 import org.jetbrains.annotations.NotNull;
 
+
 import java.io.File;
 import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainWindow {
@@ -100,15 +102,15 @@ public class MainWindow {
                 break;
         }
 
-
         modbus=new ClassModbus();
-//        timerSec=new Timer(true);
-//        timerSec.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                timerSec_Tick();
-//            }
-//        },500,5000);
+        timerSec=new Timer(true);
+        timerSec.schedule(new TimerTask() {
+            //TODO Переделать таймер в класс.
+            @Override
+            public void run() {
+                timerSec_Tick();
+            }
+        },500,5000);
     }
 
     @FXML
@@ -139,7 +141,22 @@ public class MainWindow {
                 break;
             case "Параметры...":
                 WindoWConfig wConfig=new WindoWConfig();
-                wConfig.showWindow();
+                if(wConfig.showWindow()){
+                    modbus.setPortParametres(modbus.setParametres(settings));
+                    try {
+                        Thread.sleep(1000);
+//                        timerSec.cancel();
+//                        timerSec.schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                timerSec_Tick();
+//                            }
+//                        },500,5000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    //modbus.portOpen();
+                }
                 break;
             case "Создать БД...":
                 break;
@@ -161,19 +178,21 @@ public class MainWindow {
         stage.close();
         Platform.exit();
     }
-
     int temp=0;
     private void timerSec_Tick(){
         Platform.runLater(()-> lbTest.setText("Круг: "+ ++temp));
 //        Platform.runLater(()-> lbTest.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH.mm.ss"))));
 
-        if(modbus.getMode()==ClassModbus.eMode.None){
-            modbus.portOpen();
-            //return;
+        switch (modbus.getMode()){
+            case None, PortClosed -> modbus.portOpen();
+            case PortOpen -> modbus.Poll();
         }
-        modbus.Poll();
     }
 
+    /**
+     * Клик мыши по таблице.
+     * @param e
+     */
     public void tableDevice_MouseClicked(MouseEvent e){
         TableView sourse=(TableView) e.getSource();
         if(e.getButton().equals(MouseButton.PRIMARY)){
@@ -191,6 +210,10 @@ public class MainWindow {
         }
     }
 
+    /**
+     * Клик мыши по дереву устройств.
+     * @param mouseEvent
+     */
     public void treeView_MouseClicked(MouseEvent mouseEvent) {
        TreeItem item= (TreeItem) treeView.getSelectionModel().getSelectedItems().get(0);
        var idNode=  ((Pair<Integer,String>)item.getValue()).getKey();

@@ -1,17 +1,16 @@
 package org.example.mmsd_al.Classes;
 
 import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
-import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
-import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
 import com.intelligt.modbus.jlibmodbus.serial.SerialParameters;
 import com.intelligt.modbus.jlibmodbus.serial.SerialPort;
-import com.intelligt.modbus.jlibmodbus.serial.SerialPortException;
 import javafx.collections.ObservableList;
+import jssc.SerialPortList;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.DevicesClasses.ClassGroupRequest;
 import org.example.mmsd_al.MainWindow;
+import org.example.mmsd_al.Settings.ClassSettings;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.Timer;
 public class ClassModbus {
 
     private eMode Mode;
-    private SerialParameters port;
+    private SerialParameters portParametres;
     private ModbusMaster RTUMaster;
     //Массив для считываемых из регистров данных.
     private int[] data;
@@ -33,6 +32,7 @@ public class ClassModbus {
     private boolean WaitAnswer; //only COM
     private final int numOfRegMax=125;
     private final int numOfRegMin=1;
+    private int timeOut=1000;
     public static Object locker = new Object();
 
     //<editor-fold desc="Setters/Getters">
@@ -43,10 +43,31 @@ public class ClassModbus {
     public eMode getMode() {
         return Mode;
     }
+
+    public void setPortParametres(SerialParameters portParametres) {
+        this.portParametres = portParametres;
+        portClose();
+    }
+
+    public SerialParameters setParametres(ClassSettings settings) {
+        String portName= SerialPortList.getPortNames()[settings.getPortModbus()];
+        SerialParameters portParametres =new SerialParameters();
+        portParametres.setDevice(portName);
+        portParametres.setBaudRate(SerialPort.BaudRate.getBaudRate(settings.getBaudRate()));
+        portParametres.setDataBits(settings.getDataBits());
+        portParametres.setParity(SerialPort.Parity.getParity(settings.getParity()));
+        portParametres.setStopBits(settings.getStopBits());
+        timeOut=settings.getTimeout();
+        return portParametres;
+    }
+
+
+
     //</editor-fold>
 
     public ClassModbus() {
-        port=null;
+        portParametres = setParametres(MainWindow.settings);
+        //setPortParametres(MainWindow.settings);
         RTUMaster=null;
         Mode=eMode.None;
         //TimerSec=new Timer(true);
@@ -61,17 +82,15 @@ public class ClassModbus {
      * @return
      */
     public boolean portOpen(){
-
-        if(RTUMaster!=null) RTUMaster=null;
-        port=new SerialParameters();
-        port.setDevice("COM7");
-        port.setBaudRate(SerialPort.BaudRate.BAUD_RATE_9600);
-        port.setDataBits(8);
-        port.setParity(SerialPort.Parity.NONE);
-        port.setStopBits(1);
         try {
-            RTUMaster = ModbusMasterFactory.createModbusMasterRTU(port);
-            RTUMaster.setResponseTimeout(1000);
+
+        if(RTUMaster!=null) {
+            RTUMaster.disconnect();
+            RTUMaster=null;
+        }
+
+            RTUMaster = ModbusMasterFactory.createModbusMasterRTU(portParametres);
+            RTUMaster.setResponseTimeout(timeOut);
             RTUMaster.connect();
         }
         catch (Exception ex){
@@ -89,6 +108,8 @@ public class ClassModbus {
         if (RTUMaster != null && RTUMaster.isConnected()) {
             try {
                 RTUMaster.disconnect();
+                System.out.println("Связь с RTUMaster: "+ RTUMaster.isConnected());
+                RTUMaster=null;
                 Mode=eMode.PortClosed;
             } catch (ModbusIOException e) {
                 throw new RuntimeException(e);
@@ -106,12 +127,11 @@ public class ClassModbus {
             //if(device.getCounGroup()>0) continue;
             //if (someDeviceInTheProcess(MainWindow.Devices, device)) continue;
             //if(device.getInProcess()==true) continue;
-
-
             //List<ClassGroupRequest> groups=device.getGroups();
 
+            if(RTUMaster.isConnected()){
                 ReadGroupRegistry(device,RTUMaster);
-
+            }
         }
     }
 
@@ -157,19 +177,19 @@ public class ClassModbus {
                 System.out.println("ReadGroupRegistry: "+ e.getMessage());
                 Mode=eMode.None;
                 device.PacketNotReceived();
-                if(!RTUMaster.isConnected()){
-
+                if(RTUMaster==null || !RTUMaster.isConnected()){
                     try {
-                        RTUMaster.connect();
-                        Mode=eMode.PortOpen;
-                    } catch (ModbusIOException ex) {
+                        portClose();
+                        Thread.sleep(timeOut);
+                        portOpen();
+                    } catch (InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }
                 }
                 continue;
             }
             try {
-                Thread.sleep(50);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
