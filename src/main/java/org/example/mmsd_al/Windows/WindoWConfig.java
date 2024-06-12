@@ -98,7 +98,7 @@ public class WindoWConfig {
         stage.setResizable(false);
         stage.setScene(scene);
         stage.showAndWait();
-        return (boolean)stage.getUserData();
+        return stage.getUserData()==null ? false: (boolean)stage.getUserData();
     }
 
     public void button_Click(ActionEvent actionEvent) {

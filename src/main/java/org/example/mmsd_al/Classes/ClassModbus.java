@@ -50,7 +50,10 @@ public class ClassModbus {
     }
 
     public SerialParameters setParametres(ClassSettings settings) {
-        String portName= SerialPortList.getPortNames()[settings.getPortModbus()];
+        int portInSettings= settings.getPortModbus();
+        String [] portList=SerialPortList.getPortNames();
+        if(portList.length==0) return null;
+        String portName=portList.length-1>=portInSettings ? portList[settings.getPortModbus()] : portList[0];
         SerialParameters portParametres =new SerialParameters();
         portParametres.setDevice(portName);
         portParametres.setBaudRate(SerialPort.BaudRate.getBaudRate(settings.getBaudRate()));
@@ -69,7 +72,7 @@ public class ClassModbus {
         portParametres = setParametres(MainWindow.settings);
         //setPortParametres(MainWindow.settings);
         RTUMaster=null;
-        Mode=eMode.None;
+        Mode=portParametres==null?eMode.NoPortInSystem : eMode.None;
         //TimerSec=new Timer(true);
     }
 
@@ -285,7 +288,8 @@ public class ClassModbus {
         PortOpen,
         RequestServerID,
         MasterInit,
-        PortClosed
+        PortClosed,
+        NoPortInSystem
     }
 
     public enum eFunction
