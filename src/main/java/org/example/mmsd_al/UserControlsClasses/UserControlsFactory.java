@@ -2,6 +2,7 @@ package org.example.mmsd_al.UserControlsClasses;
 
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
@@ -47,13 +48,14 @@ public class UserControlsFactory {
      * @param list источник данных
      * @param headers заголовки таблицы
      * @param variables переменные класса
-     * @param obj образец сласса
+     * @param obj образец класса
      * @return TableView
      * @param <T>
      */
     public static  <T> TableView<T> createTable(ObservableList<T> list, String[]headers, String[]variables, T obj){
         if(list.stream().count()==0) return new TableView<>();
         TableView<T> tableView=new TableView<>(list);
+        tableView.getStylesheets().add("style.css");
         //tableView.setEditable(true);
         for(int i=0;i<headers.length;i++){
             try {
@@ -73,36 +75,35 @@ public class UserControlsFactory {
                 ((ClassChannel)el).set_CountNumber(++i);
             }
         }
-
-        Callback<TableView<T>, TableRow<T>> rowFactory=new Callback<TableView<T>, TableRow<T>>() {
-            @Override
-            public TableRow<T> call(TableView<T> param) {
-
-                    TableRow<T> row= new TableRow<T>(){
-                    @Override
-                    protected void updateItem(T user, boolean empty) {
-                        super.updateItem(user, empty);
-                        if (user == null || empty) {
-                            setStyle("");
-                        } else {
-                            if(user instanceof ClassDevice){
-                                if (((ClassDevice)user).get_Name().equals("WWWW")) {
-                                    setStyle("-fx-background-color: green;");
-                                }
-                                else {
-                                    setStyle("");
-                                }
-                            }
-                        }
-                    }
+//TODO Сброс стиля при изменении количества столбцов. Исправить.
+        tableView.setRowFactory(userTable->{
+            PseudoClass up = PseudoClass.getPseudoClass("up");
+            TableRow<T> row = new TableRow<>();
+            if(obj instanceof ClassDevice){
+                ChangeListener<String> changeListener = (obs, oldPrice, newPrice) -> {
+                    //TODO Завенить строковый флаг на перечисление.
+                    row.pseudoClassStateChanged(up, newPrice.equals("На связи"));
+                    //row.pseudoClassStateChanged(down, newPrice.intValue() <= 45);
                 };
-//                    row.pseudoClassStateChanged(PseudoClass.getPseudoClass("highlighted"),
-//                            ((ClassDevice)list.get(0)).get_Address()==1);
-                    return row;
-            }
-        };
+                row.itemProperty().addListener((obs, previousUser, currentUser) -> {
+                    if (previousUser != null) {
+                        ((ClassDevice)previousUser)._LinkStateNameProperty().removeListener(changeListener);
+                    }
+                    if (currentUser != null) {
+                        ((ClassDevice)currentUser)._LinkStateNameProperty().addListener(changeListener);
+                        row.pseudoClassStateChanged(up, ((ClassDevice)currentUser)._LinkStateNameProperty().equals("На связи"));
+                        //row.pseudoClassStateChanged(down, currentUser.ageProperty().getValue() <= 45);
+                    } else {
+                        row.pseudoClassStateChanged(up, false);
+                        //row.pseudoClassStateChanged(down, false);
+                    }
+                });
 
-        tableView.setRowFactory(rowFactory);
+            }
+            return row;
+        });
+
+
         //tableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: salmon;");
         //tableView.setStyle("-fx-background-color: #93f9b911;-fx-text-background-color: red;");
         return tableView;

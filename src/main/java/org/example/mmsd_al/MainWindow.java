@@ -105,7 +105,6 @@ public class MainWindow {
         modbus=new ClassModbus();
         timerSec=new Timer(true);
         timerSec.schedule(new TimerTask() {
-            //TODO Переделать таймер в класс.
             @Override
             public void run() {
                 timerSec_Tick();

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import jssc.SerialPortList;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.MainWindow;
 
@@ -203,7 +204,16 @@ public class ClassDevice {
     }
 
     public void set_ComPort(String _ComPort) {
-        this._ComPort.set(_ComPort);
+        String [] portList= SerialPortList.getPortNames();
+        if(portList.length==0){
+            this._ComPort.set("нет");
+        }
+        else if(_ComPort.isEmpty()){
+            this._ComPort.set(portList[0]);
+        }
+        else{
+            this._ComPort.set( portList[Integer.valueOf(_ComPort)]);
+        }
     }
 
     public SimpleStringProperty _ComPortProperty() {
