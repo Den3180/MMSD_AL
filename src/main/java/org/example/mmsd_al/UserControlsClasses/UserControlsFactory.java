@@ -16,6 +16,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
+import org.example.mmsd_al.MainWindow;
 
 public class UserControlsFactory {
 
@@ -56,7 +57,7 @@ public class UserControlsFactory {
         if(list.stream().count()==0) return new TableView<>();
         TableView<T> tableView=new TableView<>(list);
         tableView.getStylesheets().add("style.css");
-        //tableView.setEditable(true);
+
         for(int i=0;i<headers.length;i++){
             try {
                 var curField=obj.getClass().getDeclaredField(variables[i]);
@@ -75,27 +76,38 @@ public class UserControlsFactory {
                 ((ClassChannel)el).set_CountNumber(++i);
             }
         }
-//TODO Сброс стиля при изменении количества столбцов. Исправить.
+
         tableView.setRowFactory(userTable->{
             PseudoClass up = PseudoClass.getPseudoClass("up");
+            PseudoClass down = PseudoClass.getPseudoClass("down");
             TableRow<T> row = new TableRow<>();
             if(obj instanceof ClassDevice){
                 ChangeListener<String> changeListener = (obs, oldPrice, newPrice) -> {
-                    //TODO Завенить строковый флаг на перечисление.
+
                     row.pseudoClassStateChanged(up, newPrice.equals("На связи"));
-                    //row.pseudoClassStateChanged(down, newPrice.intValue() <= 45);
+                    row.pseudoClassStateChanged(down, newPrice.equals("Нет связи")
+                    //row.pseudoClassStateChanged(up, oldPrice.equals("На связи"));
+                    //row.pseudoClassStateChanged(down, oldPrice.equals("Нет связи")
+
+                    );
                 };
                 row.itemProperty().addListener((obs, previousUser, currentUser) -> {
+
                     if (previousUser != null) {
                         ((ClassDevice)previousUser)._LinkStateNameProperty().removeListener(changeListener);
                     }
                     if (currentUser != null) {
                         ((ClassDevice)currentUser)._LinkStateNameProperty().addListener(changeListener);
-                        row.pseudoClassStateChanged(up, ((ClassDevice)currentUser)._LinkStateNameProperty().equals("На связи"));
-                        //row.pseudoClassStateChanged(down, currentUser.ageProperty().getValue() <= 45);
-                    } else {
+                        row.pseudoClassStateChanged(up, ((ClassDevice)currentUser)._LinkStateNameProperty().get().equals("На связи"));
+                        row.pseudoClassStateChanged(down, ((ClassDevice)currentUser)._LinkStateNameProperty().get().equals("Нет связи"));
+//                        var temp=((ClassDevice) currentUser).get_LinkStateName();
+//                        ClassDevice us=MainWindow.Devices.filtered (el->el.getId()==((ClassDevice)currentUser).getId()).get(0);
+//                        us.set_LinkStateName("");
+//                        us.set_LinkStateName(temp);
+                    }
+                    else {
                         row.pseudoClassStateChanged(up, false);
-                        //row.pseudoClassStateChanged(down, false);
+                        row.pseudoClassStateChanged(down, false);
                     }
                 });
 
@@ -103,9 +115,6 @@ public class UserControlsFactory {
             return row;
         });
 
-
-        //tableView.setStyle("-fx-selection-bar: green; -fx-selection-bar-non-focused: salmon;");
-        //tableView.setStyle("-fx-background-color: #93f9b911;-fx-text-background-color: red;");
         return tableView;
     }
 

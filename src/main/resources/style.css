@@ -1,8 +1,8 @@
 .table-row-cell:up 
 {
-    -fx-background-color: greenyellow;
+    -fx-background-color: #9acd32;
 }
 
 .table-row-cell:down {
-    -fx-background-color: #A30029;
+    -fx-background-color: #fa8072;
 }
