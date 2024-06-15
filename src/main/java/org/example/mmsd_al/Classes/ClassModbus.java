@@ -85,6 +85,7 @@ public class ClassModbus {
      * @return
      */
     public boolean portOpen(){
+        if(Mode==eMode.NoPortInSystem) return false;
         try {
 
         if(RTUMaster!=null) {
