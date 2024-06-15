@@ -85,7 +85,8 @@ public class ClassModbus {
      * @return
      */
     public boolean portOpen(){
-        if(Mode==eMode.NoPortInSystem) return false;
+        //TODO Отображение порта, если он вдруг внезапно появился.
+        //if(Mode==eMode.NoPortInSystem) return false;
         try {
 
         if(RTUMaster!=null) {

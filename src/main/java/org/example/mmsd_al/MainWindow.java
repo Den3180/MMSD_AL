@@ -163,7 +163,7 @@ public class MainWindow {
                         throw new RuntimeException(e);
                     }
                     //modbus.portOpen();
-                }
+                }//TODO Смена портов в таблице устройств в соответсвии с выбраным портом.
                 break;
             case "Создать БД...":
                 break;
