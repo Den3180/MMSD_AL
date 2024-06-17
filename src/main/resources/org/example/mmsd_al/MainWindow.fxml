@@ -45,7 +45,7 @@
             <items>
               <MenuItem mnemonicParsing="false" text="Создать БД..." />
               <MenuItem mnemonicParsing="false" text="Отправить архив..." />
-              <MenuItem mnemonicParsing="false" text="Загрузить архив..." />
+              <MenuItem mnemonicParsing="false" text="Загрузить архив..." onAction="#menuItemClick"/>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Справка">

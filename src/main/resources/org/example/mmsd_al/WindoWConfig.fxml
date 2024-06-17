@@ -7,10 +7,17 @@
 
 <?import javafx.scene.control.skin.SplitPaneSkin.Content?>
 <?import java.lang.String?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="282.0" prefWidth="322.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mmsd_al.Windows.WindoWConfig">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="282.0" prefWidth="322.0" xmlns="http://javafx.com/javafx/17.0.2-ea"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mmsd_al.Windows.WindoWConfig">
 
    <children>
-      <GridPane alignment="CENTER" layoutX="31.0" layoutY="10.0" prefHeight="150.0" prefWidth="220.0" style="-fx-border-color: black; -fx-border-width: 1;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+      <GridPane alignment="CENTER" layoutX="31.0" layoutY="10.0" prefHeight="150.0"
+                prefWidth="220.0" style="-fx-border-color: black; -fx-border-width: 1;"
+                AnchorPane.bottomAnchor="5.0"
+                AnchorPane.leftAnchor="5.0"
+                AnchorPane.rightAnchor="5.0"
+                AnchorPane.topAnchor="5.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

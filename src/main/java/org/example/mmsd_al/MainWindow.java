@@ -21,6 +21,7 @@ import org.example.mmsd_al.Settings.ClassSettings;
 import org.example.mmsd_al.UserControlsClasses.TreeViewFactory;
 import org.example.mmsd_al.UserControlsClasses.UserControlsFactory;
 import org.example.mmsd_al.Windows.WindoWConfig;
+import org.example.mmsd_al.Windows.WindowImportArchive;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -53,10 +54,6 @@ public class MainWindow {
     private TableView userControlDevices;
     private TableView userControlChannels;
 
-    public TableView getUserControlChannels(){
-        return this.userControlChannels;
-    }
-
     @FXML
     private Label lbTest;
 
@@ -76,9 +73,13 @@ public class MainWindow {
             ClassMessage.showMessage("База данных","СУБД","БД не доступна!\nПроверьте конфигурацию",
                     Alert.AlertType.CONFIRMATION);
         }
-        Devices= FXCollections.observableArrayList(DB.devicesLoad());
+        //Получить список устройств из базы данных.
+        Devices= (FXCollections.observableArrayList(DB.devicesLoad()));
+        //Установка порта в таблице устройств.
+        Devices.forEach(el->el.set_ComPort(String.valueOf(settings.getPortModbus())));
+        //Все каналы устройств в БД.
         Channels=FXCollections.observableArrayList(DB.registriesLoad(0));
-
+        //Разбивка каналов по устройствам.
         for(ClassDevice dev : Devices){
             dev.setChannels(Channels.stream().filter(el->el.get_Device().getId()==dev.getId())
                     .sorted(new ChannelCompareTypeReg().thenComparing(new ChannelCompareAddress())).toList());
@@ -102,9 +103,15 @@ public class MainWindow {
                 userControlDevices.setOnMouseClicked(this::tableDevice_MouseClicked);
                 break;
         }
-
         modbus=new ClassModbus();
-        timerSec=new Timer(true);
+        startTimerPoll();
+    }
+
+    /**
+     * запуск таймера основног опроса.
+     */
+    private void startTimerPoll(){
+        timerSec=new Timer("Poll",true);
         timerSec.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -115,8 +122,6 @@ public class MainWindow {
 
     @FXML
     public void button_Click(ActionEvent actionEvent) {
-//        Devices.get(0).set_Name("WWWW");
-//        Devices.get(0).set_LinkStateName("Известно");
         ObservableList cols=userControlDevices.getColumns();
         var fact=userControlDevices.getRowFactory();
         TableColumn col=(TableColumn)cols.get(0);
@@ -152,24 +157,21 @@ public class MainWindow {
                     modbus.setPortParametres(modbus.setParametres(settings));
                     try {
                         Thread.sleep(1000);
-//                        timerSec.cancel();
-//                        timerSec.schedule(new TimerTask() {
-//                            @Override
-//                            public void run() {
-//                                timerSec_Tick();
-//                            }
-//                        },500,5000);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
-                    //modbus.portOpen();
-                }//TODO Смена портов в таблице устройств в соответсвии с выбраным портом.
+                }
+                Devices.forEach(el->el.set_ComPort(String.valueOf(settings.getPortModbus())));
                 break;
             case "Создать БД...":
                 break;
             case "Отправить архив...":
                 break;
             case "Загрузить архив...":
+                timerSec.cancel();
+                WindowImportArchive windowChooseNote=new WindowImportArchive();
+                windowChooseNote.showWindow();
+                startTimerPoll();
                 break;
             case "О программе...":
                 break;
