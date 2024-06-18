@@ -1,6 +1,8 @@
 package org.example.mmsd_al.Classes;
 
 import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
+import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
+import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
 import com.intelligt.modbus.jlibmodbus.serial.SerialParameters;
@@ -33,7 +35,6 @@ public class ClassModbus {
     private final int numOfRegMax=125;
     private final int numOfRegMin=1;
     private int timeOut=1000;
-    public static Object locker = new Object();
 
     //<editor-fold desc="Setters/Getters">
     public void setMode(eMode mode) {
@@ -283,6 +284,13 @@ public class ClassModbus {
         return null;
     }
 
+    /**
+     * Получить мастер Модбаса.
+     * @return
+     */
+    public ModbusMaster getModbusMaster() {
+        return RTUMaster;
+    }
 
 
     public enum eMode{

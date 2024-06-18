@@ -169,8 +169,10 @@ public class MainWindow {
                 break;
             case "Загрузить архив...":
                 timerSec.cancel();
-                WindowImportArchive windowChooseNote=new WindowImportArchive();
-                windowChooseNote.showWindow();
+                //WindowImportArchive windowChooseNote=new WindowImportArchive(new Object());
+                //windowChooseNote.
+                //windowChooseNote.showWindow(new Object());
+                WindowImportArchive.showWindow(modbus.getModbusMaster());
                 startTimerPoll();
                 break;
             case "О программе...":

@@ -5,7 +5,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane focusTraversable="true" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mmsd_al.Windows.WindowImportArchive">
+<AnchorPane focusTraversable="true" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.mmsd_al.Windows.WindowImportArchive">
     <VBox alignment="CENTER" prefWidth="322.0" style="-fx-border-color: black; -fx-border-width: 1;" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3" AnchorPane.topAnchor="3">
         <children>
             <GridPane alignment="CENTER">
@@ -48,7 +49,7 @@
                             <Font size="14.0" />
                         </font>
                     </Label>
-               <TextField fx:id="availableRecords" promptText="нет данных" GridPane.columnIndex="1" GridPane.rowIndex="1">
+               <TextField fx:id="availableRecords" editable="false" promptText="нет данных" GridPane.columnIndex="1" GridPane.rowIndex="1">
                   <GridPane.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </GridPane.margin>
@@ -83,7 +84,7 @@
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </GridPane.margin>
                </Label>
-               <ComboBox fx:id="devArchive" prefWidth="150.0" GridPane.columnIndex="1">
+               <ComboBox fx:id="devArchiveComboBox" prefWidth="150.0" GridPane.columnIndex="1">
                   <GridPane.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </GridPane.margin>
@@ -93,14 +94,28 @@
                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
             </padding>
             </GridPane>
-            <Button alignment="TOP_CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#click_Button" text="Применить" textAlignment="CENTER">
-                <font>
-                    <Font size="14.0" />
-                </font>
-            <VBox.margin>
-               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-            </VBox.margin>
-            </Button>
+         <HBox alignment="CENTER">
+            <children>
+                  <Button alignment="TOP_CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false"
+                          onAction="#click_Button" prefHeight="30.0" prefWidth="91.0" text="Применить" textAlignment="CENTER">
+                      <font>
+                          <Font size="14.0" />
+                      </font>
+                  <HBox.margin>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </HBox.margin>
+                  </Button>
+               <Button alignment="TOP_CENTER" cancelButton="true" contentDisplay="CENTER" mnemonicParsing="false"
+                       onAction="#click_Button" prefHeight="30.0" prefWidth="91.0" text="Отмена">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <HBox.margin>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </HBox.margin>
+               </Button>
+            </children>
+         </HBox>
         </children>
         <opaqueInsets>
             <Insets />
