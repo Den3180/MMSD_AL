@@ -187,7 +187,7 @@ public class ClassModbus {
                     try {
                         portClose();
                         Thread.sleep(timeOut);
-                        portOpen();
+                        //portOpen();
                     } catch (InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }

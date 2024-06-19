@@ -172,7 +172,7 @@ public class MainWindow {
                 //WindowImportArchive windowChooseNote=new WindowImportArchive(new Object());
                 //windowChooseNote.
                 //windowChooseNote.showWindow(new Object());
-                WindowImportArchive.showWindow(modbus.getModbusMaster());
+                WindowImportArchive.showWindow(modbus);
                 startTimerPoll();
                 break;
             case "О программе...":

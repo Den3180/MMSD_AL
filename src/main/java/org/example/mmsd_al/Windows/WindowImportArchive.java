@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
 import org.example.mmsd_al.Archive.ClassDeviceArchive;
+import org.example.mmsd_al.Classes.ClassModbus;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
 import org.example.mmsd_al.StartApplication;
@@ -33,7 +34,7 @@ public class WindowImportArchive  {
     private int addressRegAI = 53;
     private int endPos;
     private int deviceAddress;
-    private ModbusMaster master;
+    private ClassModbus modbus;
 
     @FXML
     private ComboBox devArchiveComboBox;
@@ -45,11 +46,11 @@ public class WindowImportArchive  {
     private TextField startRecords;
 
 
-    public WindowImportArchive(ModbusMaster master){
-        this.master = master;
+    public WindowImportArchive(ClassModbus modbus){
+        this.modbus = modbus;
         deviceWithArchive= FXCollections.observableArrayList(MainWindow.Devices.filtered(
                 dev->dev.get_Model().equals(ClassDevice.EnumModel.BKM_5)));
-        deviceArchive = new ClassDeviceArchive(this.master);
+        deviceArchive = new ClassDeviceArchive(this.modbus);
         endPos=0;
     }
 
@@ -67,11 +68,11 @@ public class WindowImportArchive  {
         }
     }
 
-    public static boolean showWindow(ModbusMaster master) {
+    public static boolean showWindow(ClassModbus modbus) {
         Stage stage = new Stage();
         Scene scene;
         FXMLLoader fxmlLoader = new FXMLLoader(StartApplication.class.getResource("WindowImportArchive.fxml"));
-        fxmlLoader.setControllerFactory(call->new WindowImportArchive(master));
+        fxmlLoader.setControllerFactory(call->new WindowImportArchive(modbus));
         try {
             scene = new Scene(fxmlLoader.load());
         } catch (IOException e) {
@@ -92,6 +93,7 @@ public class WindowImportArchive  {
         if(button.isCancelButton()){
             Window window= (button.getScene()).getWindow();
             ((Stage)window).close();
+            return;
         }
         getDeviceArchive();
     }
@@ -99,8 +101,8 @@ public class WindowImportArchive  {
     private void getDeviceArchive(){
         int startPos= Integer.parseInt(startRecords.getText());
         int endpos=startPos+Integer.valueOf(countLoadRecords.getText());
-        while(startPos<endpos){
+        //while(startPos<endpos){
             deviceArchive.ReadArchive_30(deviceAddress,startPos);
-        }
+        //}
     }
 }
