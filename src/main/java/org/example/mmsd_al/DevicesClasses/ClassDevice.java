@@ -204,15 +204,17 @@ public class ClassDevice {
     }
 
     public void set_ComPort(String _ComPort) {
+        if(_ComPort.isEmpty()) _ComPort="0";
         String [] portList= SerialPortList.getPortNames();
-        if(portList.length==0){
+        int portIndex=Integer.valueOf(_ComPort);
+        if(portList.length==0 ){
             this._ComPort.set("нет");
         }
-        else if(_ComPort.isEmpty()){
+        else if(portIndex>portList.length-1){
             this._ComPort.set(portList[0]);
         }
         else{
-            this._ComPort.set( portList[Integer.valueOf(_ComPort)]);
+            this._ComPort.set( portList[portIndex]);
         }
     }
 

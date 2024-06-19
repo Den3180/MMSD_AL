@@ -55,14 +55,7 @@ public class ClassDeviceArchive {
     public int[] GetCountNoteArchive(int devAddress, int startReg){
         try {
                 dataArr=master.readHoldingRegisters(devAddress,startReg,1);
-
                 modbus.portClose();
-            try {
-                Thread.sleep(1000);
-
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
             return dataArr;
         } catch (ModbusProtocolException e) {
             throw new RuntimeException(e);
