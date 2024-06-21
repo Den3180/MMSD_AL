@@ -32,7 +32,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Properties;
 
 import static java.util.stream.StreamSupport.stream;
 
@@ -40,10 +42,19 @@ public class ClassDeviceArchive {
     private int [] dataArr;
     private ModbusMaster master;
     private ClassModbus modbus;
+    private String portName;
+    private static ArrayList<int []> note_30;
+
 
     public ClassDeviceArchive(ClassModbus modbus){
         this.master= modbus.getModbusMaster();
         this.modbus=modbus;
+        portName=modbus.getPortParametres().getDevice();
+        note_30=new ArrayList<>();
+    }
+
+    public ArrayList<int []> getNote_30(){
+        return  note_30;
     }
 
     /**
@@ -56,7 +67,8 @@ public class ClassDeviceArchive {
         try {
                 dataArr=master.readHoldingRegisters(devAddress,startReg,1);
                 modbus.portClose();
-            return dataArr;
+                modbus.getPortParametres().setDevice("");
+                return dataArr;
         } catch (ModbusProtocolException e) {
             throw new RuntimeException(e);
         } catch (ModbusNumberException e) {
@@ -68,75 +80,36 @@ public class ClassDeviceArchive {
 
     public void ReadArchive_30(int addressDev, int startPos){
 
-        SerialPort serialPort=new SerialPort("COM7");
+        SerialPort serialPort=new SerialPort(portName);
         try {
+            if(!serialPort.isOpened())
             serialPort.openPort();
             serialPort.setParams(SerialPort.BAUDRATE_9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
             if(!serialPort.isOpened()) return;
-
             int mask = SerialPort.MASK_RXCHAR;
             serialPort.setEventsMask(mask);
-
-            serialPort.addEventListener(new SerialPortEventListener() {
-                @Override
-                public void serialEvent(SerialPortEvent serialPortEvent) {
-                    if(serialPortEvent.getEventValue()>0){
-                        try {
-                            int size=serialPortEvent.getEventValue();
-                            byte [] mess=new byte[size];
-                            mess=serialPortEvent.getPort().readBytes();
-                        }
-                        catch (Exception ex){
-                            System.out.println(ex.getMessage());
-                        }
-                    }
-                }
-            });
-
-
-
-            byte [] arrayByte= DataUtils.toByteArray((short) startPos);
-            int [] record=new int[arrayByte.length];
-            for (int i = 0; i < arrayByte.length; i++) {
-                if(arrayByte[i]>=0){
-                    record[arrayByte.length - i-1]=arrayByte[i];
-                }
-                else{
-                    record[arrayByte.length - i-1]=arrayByte[i] & 0xFF;
-                }
-            }
-            byte [] b=new byte[4];
-            b[0]=(byte) addressDev;
-            b[1]=0x1E;
-            b[2]=arrayByte[1];
-            b[3]=arrayByte[0];
-//            b[2]=record[0];
-//            b[3]=record[1];
-//            int crc=CRC16.calc(DataUtils.toByteArray(b));
-            int crc=CRC16.calc(b);
-            byte [] crcbyte= DataUtils.toByteArray((short)crc);
-            byte [] mes=new byte[b.length+crcbyte.length];
-
-            for (int i = 0; i < mes.length; i++) {
-                if(i< b.length){
-                    mes[i]=b[i];
-                }
-                else{
-                    mes[i]=crcbyte[0];
-                    mes[i+1]=crcbyte[1];
-                    break;
-                }
-            }
-            serialPort.writeBytes(mes);
-
+            serialPort.addEventListener(new SerialPortReader(serialPort, note_30));
+                byte [] record=DataUtils.toByteArray((short)startPos);
+                byte [] b=new byte[4];
+                b[0]=(byte)addressDev;
+                b[1]=0x1E;
+                b[2]=record[0];
+                b[3]=record[1];
+                int crc=CRC16.calc(b);
+                byte [] crcArr=DataUtils.toByteArray((short)crc);
+                byte [] mess =Arrays.copyOf(b,b.length+2);
+                mess[4]=crcArr[1];
+                mess[5]=crcArr[0];
+                serialPort.writeBytes(mess);
         } catch (SerialPortException e) {
             try {
-                serialPort.closePort();
+                if(serialPort.isOpened()){
+                    serialPort.closePort();
+                }
             } catch (SerialPortException ex) {
                 throw new RuntimeException(ex);
             }
             throw new RuntimeException(e);
         }
-
     }
 }

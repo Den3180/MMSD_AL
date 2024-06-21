@@ -1,6 +1,5 @@
 package org.example.mmsd_al.Windows;
 
-import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -14,11 +13,12 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.util.Callback;
+import jssc.SerialPortList;
 import org.example.mmsd_al.Archive.ClassDeviceArchive;
 import org.example.mmsd_al.Classes.ClassModbus;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
+import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.StartApplication;
 
 import java.io.IOException;
@@ -35,6 +35,7 @@ public class WindowImportArchive  {
     private int endPos;
     private int deviceAddress;
     private ClassModbus modbus;
+    ClassDevice device;
 
     @FXML
     private ComboBox devArchiveComboBox;
@@ -58,7 +59,7 @@ public class WindowImportArchive  {
     public void initialize(){
         devArchiveComboBox.setItems(deviceWithArchive);
         devArchiveComboBox.getSelectionModel().select(0);
-        ClassDevice device=(ClassDevice) devArchiveComboBox.getSelectionModel().getSelectedItem();
+        device=(ClassDevice) devArchiveComboBox.getSelectionModel().getSelectedItem();
         deviceAddress=device.get_Address();
         int [] dataNoteCount=deviceArchive.GetCountNoteArchive(deviceAddress,addressRegAO);
         availableRecords.setText(String.valueOf(dataNoteCount[0]));
@@ -90,19 +91,23 @@ public class WindowImportArchive  {
     @FXML
     public void click_Button(ActionEvent actionEvent) {
         Button button=(Button) actionEvent.getSource();
-        if(button.isCancelButton()){
-            Window window= (button.getScene()).getWindow();
-            ((Stage)window).close();
-            return;
+        Window window= (button.getScene()).getWindow();
+        ((Stage)window).close();
+        if(!button.isCancelButton()){
+            getDeviceArchive();
         }
-        getDeviceArchive();
+        var currentPort=MainWindow.settings.getPortModbus();
+        modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
     }
 
     private void getDeviceArchive(){
+
         int startPos= Integer.parseInt(startRecords.getText());
         int endpos=startPos+Integer.valueOf(countLoadRecords.getText());
-        //while(startPos<endpos){
+        while(startPos<endpos){
             deviceArchive.ReadArchive_30(deviceAddress,startPos);
-        //}
+            startPos++;
+            ClassDelay.delay(500);
+        }
     }
 }

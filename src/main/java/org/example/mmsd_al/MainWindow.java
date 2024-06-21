@@ -107,6 +107,7 @@ public class MainWindow {
         startTimerPoll();
     }
 
+
     /**
      * запуск таймера основног опроса.
      */
@@ -169,9 +170,6 @@ public class MainWindow {
                 break;
             case "Загрузить архив...":
                 timerSec.cancel();
-                //WindowImportArchive windowChooseNote=new WindowImportArchive(new Object());
-                //windowChooseNote.
-                //windowChooseNote.showWindow(new Object());
                 WindowImportArchive.showWindow(modbus);
                 startTimerPoll();
                 break;

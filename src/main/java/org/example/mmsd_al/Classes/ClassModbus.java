@@ -18,6 +18,7 @@ import jssc.SerialPortList;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.DevicesClasses.ClassGroupRequest;
 import org.example.mmsd_al.MainWindow;
+import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.Settings.ClassSettings;
 
 import java.util.Arrays;
@@ -41,8 +42,15 @@ public class ClassModbus {
     private final int numOfRegMax=125;
     private final int numOfRegMin=1;
     private int timeOut=1000;
+    private boolean canPoll;
 
     //<editor-fold desc="Setters/Getters">
+
+
+    public SerialParameters getPortParametres() {
+        return portParametres;
+    }
+
     public void setMode(eMode mode) {
         this.Mode = mode;
     }
@@ -77,6 +85,7 @@ public class ClassModbus {
 
     public ClassModbus() {
         portParametres = setParametres(MainWindow.settings);
+        canPoll=true;
         //setPortParametres(MainWindow.settings);
         RTUMaster=null;
         Mode=portParametres==null?eMode.NoPortInSystem : eMode.None;
@@ -155,6 +164,7 @@ public class ClassModbus {
     private void ReadGroupRegistry(ClassDevice device, ModbusMaster master){
 
         device.setInProcess(true);
+        //int countBadRequest=0;
         //int countGroup= device.getCounGroup();
         for(ClassGroupRequest group : device.getGroup()){
 
@@ -189,22 +199,9 @@ public class ClassModbus {
                 System.out.println("ReadGroupRegistry: "+ e.getMessage());
                 Mode=eMode.None;
                 device.PacketNotReceived();
-                if(RTUMaster==null || !RTUMaster.isConnected()){
-                    try {
-                        portClose();
-                        Thread.sleep(timeOut);
-                        portOpen();
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-                continue;
+                return;
             }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            ClassDelay.delay(100);
             device.PacketReceived();
             switch (group.get_TypeRegistry()){
                 case InputRegistry,HoldingRegistry ->{
@@ -247,27 +244,26 @@ public class ClassModbus {
     }
 
     private int[] GetDataFromBuffer(int offset, ClassChannel.EnumFormat format) {
-
         int[] d=new int[]{0};
         if(data==null) return d;
-        switch (format){
-            case UINT, SINT ->{
-                d=new int[1];
-                d[0]=data[offset];
-            }
-            case UInt32,Float ->{
-                d = new int[2];
-                d[0] = data[offset];
-                d[1] = data[offset + 1];
-            }
-            case swFloat -> {
-                d = new int[2];
-                d[0] = data[offset+1];
-                d[1] = data[offset];
-            }
+    switch (format){
+        case UINT, SINT ->{
+            d=new int[1];
+            d[0]=data[offset];
         }
-        return d;
+        case UInt32,Float ->{
+            d = new int[2];
+            d[0] = data[offset];
+            d[1] = data[offset + 1];
+        }
+        case swFloat -> {
+            d = new int[2];
+            d[0] = data[offset+1];
+            d[1] = data[offset];
+        }
     }
+    return d;
+}
 
     /**
      * Проверка, ведет ли какое нибудь устройство опрос в текущий момент.
@@ -296,6 +292,14 @@ public class ClassModbus {
      */
     public ModbusMaster getModbusMaster() {
         return RTUMaster;
+    }
+
+    public boolean isCanPoll() {
+        return canPoll;
+    }
+
+    public void setCanPoll(boolean canPoll) {
+        this.canPoll = canPoll;
     }
 
 
