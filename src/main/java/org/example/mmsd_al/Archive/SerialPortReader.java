@@ -1,9 +1,6 @@
 package org.example.mmsd_al.Archive;
 
-import jssc.SerialPort;
-import jssc.SerialPortEvent;
-import jssc.SerialPortEventListener;
-import jssc.SerialPortException;
+import jssc.*;
 import org.example.mmsd_al.MainWindow;
 
 import java.util.ArrayList;
@@ -11,21 +8,28 @@ import java.util.Arrays;
 
 public class SerialPortReader implements SerialPortEventListener {
     private SerialPort serialPort;
-    private ArrayList<int []> note_30;
+    private ArrayList<int []> note;
+    private int typeCommand;
 
-    public SerialPortReader(SerialPort serialPort, ArrayList<int []> note_30) {
+    public SerialPortReader(SerialPort serialPort, ArrayList<int []> note,int typeCommand) {
         this.serialPort = serialPort;
-        this.note_30=note_30;
+        this.note=note;
+        this.typeCommand=typeCommand;
+
     }
 
     @Override
     public void serialEvent(SerialPortEvent serialPortEvent) {
+        //TODO Проверка пакетов на кол-во байт и на КС. Если проверка не пройдена - запрос заново
+        // либо всей группы пакетов, либо только поврежденного. Продумать алгоритм.
         if (serialPortEvent.isRXCHAR()) {
             if (serialPortEvent.getEventValue() > 0) {
                 try {
-                    int[] buffer = serialPort.readIntArray();
-                    note_30.add(buffer);
-                    System.out.println(Arrays.toString(buffer));
+                    if(typeCommand==30) {
+                       int [] buffer = serialPort.readIntArray();
+                        note.add(buffer);
+                        System.out.println(Arrays.toString(buffer));
+                    }
                 } catch (SerialPortException ex) {
                     ex.printStackTrace();
                 }

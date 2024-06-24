@@ -96,6 +96,7 @@ public class WindowImportArchive  {
         if(!button.isCancelButton()){
             getDeviceArchive();
         }
+        deviceArchive.processAndSaveArchive();
         var currentPort=MainWindow.settings.getPortModbus();
         modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
     }
@@ -105,9 +106,25 @@ public class WindowImportArchive  {
         int startPos= Integer.parseInt(startRecords.getText());
         int endpos=startPos+Integer.valueOf(countLoadRecords.getText());
         while(startPos<endpos){
-            deviceArchive.ReadArchive_30(deviceAddress,startPos);
+            deviceArchive.readArchive_30(deviceAddress,startPos);
             startPos++;
             ClassDelay.delay(500);
+        }
+        startPos=Integer.parseInt(startRecords.getText());
+        int countNotCurr=0;
+        var note_30=deviceArchive.getNote_30();
+        while(startPos<endpos){
+                int [] noteHeader=note_30.get(countNotCurr);
+                countNotCurr++;
+            int sizeBlockNote = noteHeader[4] * 100 + noteHeader[5];
+            int numBlocks = sizeBlockNote % 200 == 0 ? sizeBlockNote / 200 : sizeBlockNote / 200 + 1;
+            int countBlock = 0;
+            while (countBlock < numBlocks){
+                deviceArchive.readArchive_31(deviceAddress,startPos,countBlock);
+                countBlock++;
+                ClassDelay.delay(500);
+            }
+            startPos++;
         }
     }
 }
