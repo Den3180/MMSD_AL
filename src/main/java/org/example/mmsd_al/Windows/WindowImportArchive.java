@@ -96,7 +96,7 @@ public class WindowImportArchive  {
         if(!button.isCancelButton()){
             getDeviceArchive();
         }
-        deviceArchive.processAndSaveArchive();
+        deviceArchive.processArchive();
         var currentPort=MainWindow.settings.getPortModbus();
         modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
     }

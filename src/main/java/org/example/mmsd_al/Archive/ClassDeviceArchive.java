@@ -6,11 +6,16 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.utils.CRC16;
 import com.intelligt.modbus.jlibmodbus.utils.DataUtils;
+import javafx.scene.control.Alert;
 import jssc.*;
 import org.example.mmsd_al.Classes.ClassModbus;
 import org.example.mmsd_al.ServiceClasses.ClassDelay;
+import org.example.mmsd_al.ServiceClasses.ClassMessage;
 
-import java.lang.reflect.Array;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -169,7 +174,10 @@ public class ClassDeviceArchive {
         }
     }
 
-    public void processAndSaveArchive(){
+    /**
+     * Обработка полученных блоков архива.
+     */
+    public void processArchive(){
     //TODO Сделать проверку контрольных сумм.
     // Если проверка не пройдена, то отбрасывается вся запись.
         List<Integer> res=new ArrayList<Integer>();
@@ -218,6 +226,26 @@ public class ClassDeviceArchive {
                 throw new RuntimeException(e);
             }
             //TODO Сохранить архив в файл(бинарный). Окно оповещения.
+        }
+        if(saveArchive(resTotal)){
+            ClassMessage.showMessage(
+                    "Архив",
+                    "Сохранение архива",
+                    "Архив сохранен",
+                    Alert.AlertType.INFORMATION);
+        }
+    }
+
+    private boolean saveArchive(ArrayList<Integer[]> resTotal){
+        try(FileOutputStream fout=new FileOutputStream("arch_dev.dat")) {
+            try(ObjectOutputStream out=new ObjectOutputStream(fout)){
+                out.writeObject(resTotal);
+                return true;
+            }
+        } catch (FileNotFoundException e) {
+            return false;
+        } catch (IOException e) {
+            return false;
         }
     }
 }
