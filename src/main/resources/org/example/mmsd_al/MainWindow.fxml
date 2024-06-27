@@ -28,29 +28,29 @@
               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Выход..." />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Вид">
+          <Menu mnemonicParsing="false" text="Вид" >
             <items>
-              <MenuItem mnemonicParsing="false" text="Устройства..." />
-              <MenuItem mnemonicParsing="false" text="Каналы данных..." />
+              <MenuItem mnemonicParsing="false" text="Устройства..." onAction="#menuItemClick"/>
+              <MenuItem mnemonicParsing="false" text="Каналы данных..." onAction="#menuItemClick"/>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Конфигурация">
             <items>
-              <MenuItem mnemonicParsing="false" text="База данных..." />
+              <MenuItem mnemonicParsing="false" text="База данных..." onAction="#menuItemClick"/>
               <MenuItem mnemonicParsing="false" text="Параметры..."
                         onAction="#menuItemClick"/>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Сервис">
             <items>
-              <MenuItem mnemonicParsing="false" text="Создать БД..." />
-              <MenuItem mnemonicParsing="false" text="Отправить архив..." />
+              <MenuItem mnemonicParsing="false" text="Создать БД..." onAction="#menuItemClick"/>
+              <MenuItem mnemonicParsing="false" text="Отправить архив..." onAction="#menuItemClick"/>
               <MenuItem mnemonicParsing="false" text="Загрузить архив..." onAction="#menuItemClick"/>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Справка">
             <items>
-              <MenuItem mnemonicParsing="false" text="О программе..." />
+              <MenuItem mnemonicParsing="false" text="О программе..." onAction="#menuItemClick"/>
             </items>
           </Menu>
         </menus>

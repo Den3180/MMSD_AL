@@ -26,15 +26,15 @@ public class ClassMessage {
 
         List<ButtonType> buttonTypeList=new ArrayList<>();
         switch (type){
-            case CONFIRMATION :
-                     buttonTypeList.add(new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
-                     buttonTypeList.add(new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE));
-              break;
             case WARNING:
             case ERROR:
             case INFORMATION:
             case NONE:
                 buttonTypeList.add(new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
+                break;
+            case CONFIRMATION :
+                buttonTypeList.add(new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
+                buttonTypeList.add(new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE));
                 break;
         }
         return buttonTypeList;

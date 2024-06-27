@@ -6,16 +6,14 @@ import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.utils.CRC16;
 import com.intelligt.modbus.jlibmodbus.utils.DataUtils;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import jssc.*;
 import org.example.mmsd_al.Classes.ClassModbus;
 import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -188,7 +186,7 @@ public class ClassDeviceArchive {
             countNote_31++;
             if(note[7]==(int)'P'){
                 i=11;
-                if(res.size()>0){
+                if(!res.isEmpty()){
                     resTotal.add(res.toArray(new Integer[0]));
                     res.clear();
                 }
@@ -217,7 +215,7 @@ public class ClassDeviceArchive {
                     }
                     i+=2;
                 }
-                if (res.size() > 0 && countNote_31==note_31.size())
+                if (!res.isEmpty() && countNote_31==note_31.size())
                 {
                     resTotal.add(res.toArray(new Integer[0]));
                     res.clear();
@@ -225,17 +223,22 @@ public class ClassDeviceArchive {
             } catch (NumberFormatException e) {
                 throw new RuntimeException(e);
             }
-            //TODO Сохранить архив в файл(бинарный). Окно оповещения.
         }
         if(saveArchive(resTotal)){
+            Platform.runLater(()->
             ClassMessage.showMessage(
                     "Архив",
                     "Сохранение архива",
                     "Архив сохранен",
-                    Alert.AlertType.INFORMATION);
+                    Alert.AlertType.INFORMATION));
         }
     }
 
+    /**
+     * Сохранить архив в файл.
+     * @param resTotal
+     * @return
+     */
     private boolean saveArchive(ArrayList<Integer[]> resTotal){
         try(FileOutputStream fout=new FileOutputStream("arch_dev.dat")) {
             try(ObjectOutputStream out=new ObjectOutputStream(fout)){
@@ -246,6 +249,26 @@ public class ClassDeviceArchive {
             return false;
         } catch (IOException e) {
             return false;
+        }
+    }
+
+    /**
+     * Загрузить архив из файла.
+     * @return
+     */
+    public static ArrayList<Integer[]> loadArchive(){
+        ArrayList<Integer[]> archive;
+        try(FileInputStream fin=new FileInputStream(new File("arch_dev.dat"))){
+            try (ObjectInputStream oin = new ObjectInputStream(fin)){
+                archive=(ArrayList<Integer[]>)oin.readObject();
+                return archive;
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

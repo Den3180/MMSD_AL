@@ -10,6 +10,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.example.mmsd_al.Archive.ClassDeviceArchive;
 import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareAddress;
 import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareTypeReg;
 import org.example.mmsd_al.Classes.ClassChannel;
@@ -21,11 +22,13 @@ import org.example.mmsd_al.Settings.ClassSettings;
 import org.example.mmsd_al.UserControlsClasses.TreeViewFactory;
 import org.example.mmsd_al.UserControlsClasses.UserControlsFactory;
 import org.example.mmsd_al.Windows.WindoWConfig;
+import org.example.mmsd_al.Windows.WindowExportArchive;
 import org.example.mmsd_al.Windows.WindowImportArchive;
 import org.jetbrains.annotations.NotNull;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -147,10 +150,13 @@ public class MainWindow {
                 exitApp();
                 break;
             case "Устройства...":
+                ClassMessage.showMessage("Устройства","","Меню не настроено", Alert.AlertType.CONFIRMATION);
                 break;
             case "Каналы данных...":
+                ClassMessage.showMessage("Каналы данных","","Меню не настроено", Alert.AlertType.CONFIRMATION);
                 break;
             case "База данных...":
+                ClassMessage.showMessage("База данных","","Меню не настроено", Alert.AlertType.CONFIRMATION);
                 break;
             case "Параметры...":
                 WindoWConfig wConfig=new WindoWConfig();
@@ -165,8 +171,15 @@ public class MainWindow {
                 Devices.forEach(el->el.set_ComPort(String.valueOf(settings.getPortModbus())));
                 break;
             case "Создать БД...":
+                ClassMessage.showMessage("Создать БД","","Меню не настроено", Alert.AlertType.CONFIRMATION);
                 break;
             case "Отправить архив...":
+                ArrayList<Integer[]> archive= ClassDeviceArchive.loadArchive();
+                if(archive==null || archive.isEmpty()){
+                    ClassMessage.showMessage("Архив","","Нет доступного архива", Alert.AlertType.ERROR);
+                    break;
+                }
+                WindowExportArchive.showWindow();
                 break;
             case "Загрузить архив...":
                 timerSec.cancel();
@@ -174,6 +187,7 @@ public class MainWindow {
                 startTimerPoll();
                 break;
             case "О программе...":
+                ClassMessage.showMessage("О программе","","Меню не настроено", Alert.AlertType.CONFIRMATION);
                 break;
         }
     }
