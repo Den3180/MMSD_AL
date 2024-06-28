@@ -179,7 +179,7 @@ public class MainWindow {
                     ClassMessage.showMessage("Архив","","Нет доступного архива", Alert.AlertType.ERROR);
                     break;
                 }
-                WindowExportArchive.showWindow();
+                WindowExportArchive.showWindow(archive);
                 break;
             case "Загрузить архив...":
                 timerSec.cancel();

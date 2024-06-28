@@ -1,5 +1,6 @@
 package org.example.mmsd_al.Archive;
 
+import com.fasterxml.jackson.databind.SerializationConfig;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
 import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
@@ -14,6 +15,7 @@ import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
 
 import java.io.*;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -270,5 +272,42 @@ public class ClassDeviceArchive {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean sendArchiveDevice(ArrayList<Integer[]> resTotal, String ip, int port){
+
+        List<int[]> newArr=new ArrayList<>();
+        for (Integer[] integers : resTotal) {
+            int[] arrtemp = new int[integers.length];
+            var arrRestotal = integers;
+            for (int j = 0; j < arrRestotal.length; j++) {
+                arrtemp[j] = arrRestotal[j];
+            }
+            newArr.add(arrtemp);
+        }
+
+//        byte [] arrForSend;
+//        try (ByteArrayOutputStream  bos = new ByteArrayOutputStream();
+//             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+//            oos.writeObject(newArr);
+//            arrForSend=bos.toByteArray();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+
+
+        try{
+            Socket client = new Socket(ip, port);
+            ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
+            out.flush();
+            out.writeObject(newArr);
+//            out.writeObject(resTotal);
+            out.flush();
+            System.out.println("Send!!!");
+            client.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage() + " "+ "Method: sendArchiveDevice");
+        }
+        return true;
     }
 }
