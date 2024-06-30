@@ -49,6 +49,8 @@ public class MainWindow {
     public static int count=0;
 
     @FXML
+    public MenuItem loadArchivBtnMenu;
+    @FXML
     private TreeView treeView;
     @FXML
     private MenuBar mainMenu;
@@ -108,6 +110,9 @@ public class MainWindow {
         }
         modbus=new ClassModbus();
         startTimerPoll();
+        if(modbus.getMode()== ClassModbus.eMode.NoPortInSystem){
+            loadArchivBtnMenu.setDisable(true);
+        }
     }
 
 

@@ -4,16 +4,12 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="600" prefWidth="800" style="-fx-border-color: grey; -fx-border-width: 2;"
-            xmlns="http://javafx.com/javafx/17.0.2-ea"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.mmsd_al.MainWindow">
+<BorderPane prefHeight="600" prefWidth="800" style="-fx-border-color: grey; -fx-border-width: 2;" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mmsd_al.MainWindow">
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
           <Button mnemonicParsing="false" onAction="#button_Click" text="Button" />
-            <Label fx:id="lbTest" alignment="CENTER" contentDisplay="CENTER" prefHeight="50"
-                   prefWidth="300" text="Test" textAlignment="CENTER" textFill="#bc2525">
+            <Label fx:id="lbTest" alignment="CENTER" contentDisplay="CENTER" prefHeight="50" prefWidth="300" text="Test" textAlignment="CENTER" textFill="#bc2525">
                <font>
                   <Font size="14.0" />
                </font></Label>
@@ -21,47 +17,34 @@
       </ToolBar>
    </bottom>
    <top>
-      <MenuBar fx:id="mainMenu" BorderPane.alignment="CENTER">
-        <menus>
-          <Menu mnemonicParsing="false" text="Файл">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Выход..." />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Вид" >
-            <items>
-              <MenuItem mnemonicParsing="false" text="Устройства..." onAction="#menuItemClick"/>
-              <MenuItem mnemonicParsing="false" text="Каналы данных..." onAction="#menuItemClick"/>
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Конфигурация">
-            <items>
-              <MenuItem mnemonicParsing="false" text="База данных..." onAction="#menuItemClick"/>
-              <MenuItem mnemonicParsing="false" text="Параметры..."
-                        onAction="#menuItemClick"/>
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Сервис">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Создать БД..." onAction="#menuItemClick"/>
-              <MenuItem mnemonicParsing="false" text="Отправить архив..." onAction="#menuItemClick"/>
-              <MenuItem mnemonicParsing="false" text="Загрузить архив..." onAction="#menuItemClick"/>
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Справка">
-            <items>
-              <MenuItem mnemonicParsing="false" text="О программе..." onAction="#menuItemClick"/>
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
+       <MenuBar fx:id="mainMenu" BorderPane.alignment="CENTER">
+           <Menu mnemonicParsing="false" text="Файл">
+               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Выход..."/>
+           </Menu>
+           <Menu mnemonicParsing="false" text="Вид">
+               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Устройства..."/>
+               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Каналы данных..."/>
+           </Menu>
+           <Menu mnemonicParsing="false" text="Конфигурация">
+               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="База данных..."/>
+               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Параметры..."/>
+           </Menu>
+           <Menu mnemonicParsing="false" text="Сервис">
+               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Создать БД..."/>
+               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Отправить архив..."/>
+               <MenuItem fx:id="loadArchivBtnMenu" mnemonicParsing="false" onAction="#menuItemClick"
+                         text="Загрузить архив..."/>
+           </Menu>
+           <Menu mnemonicParsing="false" text="Справка">
+               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="О программе..."/>
+           </Menu>
+       </MenuBar>
    </top>
    <center>
-      <SplitPane fx:id="sPane" dividerPositions="0.5" BorderPane.alignment="CENTER">
-        <items>
-          <TreeView fx:id="treeView" maxWidth="300.0" minWidth="100.0" onMouseClicked="#treeView_MouseClicked" prefWidth="200.0" />
-            <Pane prefHeight="200.0" prefWidth="200.0" />
-      </items>
-      </SplitPane>
+       <SplitPane fx:id="sPane" dividerPositions="0.5" BorderPane.alignment="CENTER">
+           <TreeView fx:id="treeView" maxWidth="300.0" minWidth="100.0" onMouseClicked="#treeView_MouseClicked"
+                     prefWidth="200.0"/>
+           <Pane prefHeight="200.0" prefWidth="200.0"/>
+       </SplitPane>
    </center>
         </BorderPane>
