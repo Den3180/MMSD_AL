@@ -63,12 +63,8 @@ public class ClassDeviceArchive {
                 modbus.portClose();
                 modbus.getPortParametres().setDevice("");
                 return dataArr;
-        } catch (ModbusProtocolException e) {
-            throw new RuntimeException(e);
-        } catch (ModbusNumberException e) {
-            throw new RuntimeException(e);
-        } catch (ModbusIOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            return new int[]{0};
         }
     }
 

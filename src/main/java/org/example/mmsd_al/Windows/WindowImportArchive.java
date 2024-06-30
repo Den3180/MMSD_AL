@@ -40,7 +40,7 @@ public class WindowImportArchive  {
     @FXML
     private ComboBox devArchiveComboBox;
     @FXML
-    private TextField availableRecords;
+    public TextField availableRecords;
     @FXML
     private TextField countLoadRecords;
     @FXML
@@ -95,6 +95,9 @@ public class WindowImportArchive  {
         ((Stage)window).close();
         if(!button.isCancelButton()){
             getDeviceArchive();
+        }
+        else{
+            return;
         }
         deviceArchive.processArchive();
         var currentPort=MainWindow.settings.getPortModbus();

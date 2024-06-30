@@ -8,7 +8,9 @@
 <AnchorPane focusTraversable="true" 
             xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.mmsd_al.Windows.WindowImportArchive">
-    <VBox alignment="CENTER" prefWidth="322.0" style="-fx-border-color: black; -fx-border-width: 1;" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3" AnchorPane.topAnchor="3">
+    <VBox alignment="CENTER" prefWidth="322.0" style="-fx-border-color: black; -fx-border-width: 1;"
+          AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0"
+          AnchorPane.rightAnchor="3" AnchorPane.topAnchor="3">
         <children>
             <GridPane alignment="CENTER">
                 <columnConstraints>
