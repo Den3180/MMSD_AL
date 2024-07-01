@@ -15,6 +15,7 @@ import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
 
 import java.io.*;
+import java.net.Inet4Address;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -206,6 +207,10 @@ public class ClassDeviceArchive {
                     if(i<note.length-2){
                         var val1=DataUtils.toHexString((byte) note[i]);
                         var val2=DataUtils.toHexString((byte) note[i+1]);
+                        if(val2.startsWith("0")){
+                            String temp= val2.substring(1);
+                            val2=new String(temp);
+                        }
                         String unionVal=new String(val1+val2);
                         Integer valArchive = Integer.valueOf(unionVal, 16);
                         valArchive = valArchive > 32767 ? valArchive - 65535 - 1 : valArchive;
@@ -272,38 +277,21 @@ public class ClassDeviceArchive {
 
     public static boolean sendArchiveDevice(ArrayList<Integer[]> resTotal, String ip, int port){
 
-        List<int[]> newArr=new ArrayList<>();
-        for (Integer[] integers : resTotal) {
-            int[] arrtemp = new int[integers.length];
-            var arrRestotal = integers;
-            for (int j = 0; j < arrRestotal.length; j++) {
-                arrtemp[j] = arrRestotal[j];
-            }
-            newArr.add(arrtemp);
-        }
-
-//        byte [] arrForSend;
-//        try (ByteArrayOutputStream  bos = new ByteArrayOutputStream();
-//             ObjectOutputStream oos = new ObjectOutputStream(bos)) {
-//            oos.writeObject(newArr);
-//            arrForSend=bos.toByteArray();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-
-
-        try{
+        try {
             Socket client = new Socket(ip, port);
-            ObjectOutputStream out = new ObjectOutputStream(client.getOutputStream());
-            out.flush();
-            out.writeObject(newArr);
-//            out.writeObject(resTotal);
-            out.flush();
-            System.out.println("Send!!!");
+            DataOutputStream outwriter=new DataOutputStream(client.getOutputStream());
+            for (var el : resTotal){
+                for (int i = 0; i < el.length; i++) {
+                    outwriter.writeInt(el[i]);
+                }
+                outwriter.flush();
+            }
             client.close();
+
         } catch (Exception e) {
             System.out.println(e.getMessage() + " "+ "Method: sendArchiveDevice");
         }
+
         return true;
     }
 }

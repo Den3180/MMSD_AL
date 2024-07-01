@@ -63,6 +63,5 @@ public class WindowExportArchive {
         String ip=iptmp==null || iptmp.isEmpty()? "127.0.0.1" : iptmp;
         int port=porttmp==null || porttmp.isEmpty()? 0 : Integer.parseInt(this.port.getText());
         ClassDeviceArchive.sendArchiveDevice(resTotal,ip,port);
-
     }
 }

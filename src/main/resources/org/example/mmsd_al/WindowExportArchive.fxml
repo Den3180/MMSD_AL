@@ -37,7 +37,7 @@
                             <Font size="14.0" />
                         </font>
                     </Label>
-                    <TextField fx:id="ip" editable="false" promptText="127.0.0.1" text="127.0.0.1" GridPane.columnIndex="1">
+                    <TextField fx:id="ip" promptText="127.0.0.1" text="127.0.0.1" GridPane.columnIndex="1">
                         <GridPane.margin>
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                         </GridPane.margin>
