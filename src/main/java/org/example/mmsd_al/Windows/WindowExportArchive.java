@@ -49,7 +49,7 @@ public class WindowExportArchive {
     }
 
     public void click_Button(ActionEvent actionEvent) {
-        //TODO Дописать отправку по сокету.
+
         Button button=(Button) actionEvent.getSource();
         Window window= (button.getScene()).getWindow();
         ((Stage)window).close();

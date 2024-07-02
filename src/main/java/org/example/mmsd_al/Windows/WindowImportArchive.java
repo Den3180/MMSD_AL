@@ -106,6 +106,7 @@ public class WindowImportArchive  {
 
     private void getDeviceArchive(){
 
+        //TODO Добавить блок try-catch. Выход за границы массива происходит.
         int startPos= Integer.parseInt(startRecords.getText());
         int endpos=startPos+Integer.valueOf(countLoadRecords.getText());
         while(startPos<endpos){
