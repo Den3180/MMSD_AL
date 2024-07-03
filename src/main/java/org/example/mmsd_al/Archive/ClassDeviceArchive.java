@@ -69,6 +69,8 @@ public class ClassDeviceArchive {
         }
     }
 
+    public final static Object locker=new Object();
+
     /**
      * Чтение сведений об архиве.
      * @param addressDev адресс устройства

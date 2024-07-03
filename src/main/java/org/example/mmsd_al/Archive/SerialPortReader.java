@@ -27,8 +27,10 @@ public class SerialPortReader implements SerialPortEventListener {
                 try {
                     if(typeCommand==30) {
                        int [] buffer = serialPort.readIntArray();
-                        note.add(buffer);
-                        System.out.println(Arrays.toString(buffer));
+                       synchronized (ClassDeviceArchive.locker){
+                           note.add(buffer);
+                           System.out.println(Arrays.toString(buffer));
+                       }
                     }
                 } catch (SerialPortException ex) {
                     ex.printStackTrace();
