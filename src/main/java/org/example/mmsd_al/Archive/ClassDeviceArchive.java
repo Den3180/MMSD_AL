@@ -31,6 +31,9 @@ public class ClassDeviceArchive {
     private static ArrayList<int []> note_30;
     private static ArrayList<int []> note_31;
     private static ArrayList<Integer []> resTotal;
+    private SerialPort serialPort;
+    public final static Object locker=new Object();
+
 
 
     public ClassDeviceArchive(ClassModbus modbus){
@@ -42,22 +45,23 @@ public class ClassDeviceArchive {
         resTotal=new ArrayList<>();
 
     }
-
     public ArrayList<int []> getNote_30(){
         return  note_30;
     }
+
     public ArrayList<int []> getNote_31(){
         return  note_31;
     }
+
     public ArrayList<Integer []> getResTotal(){
         return  resTotal;
     }
 
     /**
      * Получить сведения о количестве записей в БКМ.
-     * @param devAddress
-     * @param startReg
-     * @return
+     * @param devAddress адрес устройства.
+     * @param startReg стартовый регистр.
+     * @return int[]
      */
     public int[] GetCountNoteArchive(int devAddress, int startReg){
         try {
@@ -71,8 +75,9 @@ public class ClassDeviceArchive {
         }
     }
 
-    public final static Object locker=new Object();
-    private SerialPort serialPort;
+    /**
+     * Закрыть порт передачи архива.
+     */
     public void closeSerialPort(){
         try {
             if(serialPort.isOpened()) serialPort.closePort();

@@ -115,6 +115,7 @@ public class ClassModbus {
             RTUMaster.connect();
         }
         catch (Exception ex){
+            //TODO Обработать исключение когда порт занят.
             return false;
         }
         Mode=eMode.PortOpen;
