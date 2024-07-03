@@ -94,14 +94,10 @@ public class WindowImportArchive  {
         Window window= (button.getScene()).getWindow();
         ((Stage)window).close();
         if(!button.isCancelButton()){
-            getDeviceArchive();
+            Thread thread=new Thread(this::getDeviceArchive);
+            thread.setDaemon(true);
+            thread.start();
         }
-        else{
-            return;
-        }
-        deviceArchive.processArchive();
-        var currentPort=MainWindow.settings.getPortModbus();
-        modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
     }
 
     private void getDeviceArchive(){
@@ -112,7 +108,7 @@ public class WindowImportArchive  {
         while(startPos<endpos){
             deviceArchive.readArchive_30(deviceAddress,startPos);
             startPos++;
-            ClassDelay.delay(500);
+            //ClassDelay.delay(500);
         }
         startPos=Integer.parseInt(startRecords.getText());
         int countNotCurr=0;
@@ -126,9 +122,12 @@ public class WindowImportArchive  {
             while (countBlock < numBlocks){
                 deviceArchive.readArchive_31(deviceAddress,startPos,countBlock);
                 countBlock++;
-                ClassDelay.delay(500);
+                //ClassDelay.delay(500);
             }
             startPos++;
         }
+        deviceArchive.processArchive();
+        var currentPort=MainWindow.settings.getPortModbus();
+        modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
     }
 }

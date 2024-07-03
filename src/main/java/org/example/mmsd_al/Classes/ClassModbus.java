@@ -196,6 +196,12 @@ public class ClassModbus {
                     }
 
             } catch (Exception e) {
+                if(e instanceof ModbusProtocolException){
+                    var modbusProtocolException=(ModbusProtocolException) e;
+                    var exeption= modbusProtocolException.getException();
+                    if(exeption.getValue()==2) continue;
+                }
+
                 System.out.println("ReadGroupRegistry: "+ e.getMessage());
                 Mode=eMode.None;
                 device.PacketNotReceived();

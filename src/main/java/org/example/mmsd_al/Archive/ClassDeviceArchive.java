@@ -89,7 +89,7 @@ public class ClassDeviceArchive {
             int mask = SerialPort.MASK_RXCHAR;
             serialPort.setEventsMask(mask);
             //Добавить слушателя в отдельном потоке.
-            serialPort.addEventListener(new SerialPortReader(serialPort, note_30,30));
+            //serialPort.addEventListener(new SerialPortReader(serialPort, note_30,30));
             //Сборка пакета команды.
                 byte [] record=DataUtils.toByteArray((short)startPos);
                 byte [] b=new byte[4];
@@ -104,6 +104,17 @@ public class ClassDeviceArchive {
                 mess[5]=crcArr[0];
                 //Запись в порт.
                 serialPort.writeBytes(mess);
+
+            ClassDelay.delay(500);
+            //Чтение данных.
+            var dataBlock = serialPort.readIntArray();
+            System.out.println(Arrays.toString(dataBlock));
+            //Сохранение в необработанном виде.
+            note_30.add(dataBlock);
+
+            if(serialPort.isOpened())
+                serialPort.closePort();
+
         } catch (SerialPortException e) {
             try {
                 if(serialPort.isOpened()){
