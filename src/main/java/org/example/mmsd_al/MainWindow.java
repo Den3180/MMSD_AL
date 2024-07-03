@@ -243,8 +243,10 @@ public class MainWindow {
      * @param mouseEvent
      */
     public void treeView_MouseClicked(MouseEvent mouseEvent) {
-       TreeItem item= (TreeItem) treeView.getSelectionModel().getSelectedItems().get(0);
-       var idNode=  ((Pair<Integer,String>)item.getValue()).getKey();
+        var listItems=treeView.getSelectionModel().getSelectedItems();
+        if(listItems.isEmpty()) return;
+        TreeItem item = (TreeItem) listItems.get(0);
+        var idNode=  ((Pair<Integer,String>)item.getValue()).getKey();
         if(idNode == 0){
             sPane.getItems().set(1,userControlDevices);
        }

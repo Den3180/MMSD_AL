@@ -40,6 +40,7 @@ public class ClassDeviceArchive {
         note_30=new ArrayList<>();
         note_31=new ArrayList<>();
         resTotal=new ArrayList<>();
+
     }
 
     public ArrayList<int []> getNote_30(){
@@ -63,6 +64,7 @@ public class ClassDeviceArchive {
                 dataArr=master.readHoldingRegisters(devAddress,startReg,1);
                 modbus.portClose();
                 modbus.getPortParametres().setDevice("");
+                serialPort=new SerialPort(portName);
                 return dataArr;
         } catch (Exception e) {
             return new int[]{0};
@@ -70,6 +72,14 @@ public class ClassDeviceArchive {
     }
 
     public final static Object locker=new Object();
+    private SerialPort serialPort;
+    public void closeSerialPort(){
+        try {
+            if(serialPort.isOpened()) serialPort.closePort();
+        } catch (SerialPortException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Чтение сведений об архиве.
@@ -79,9 +89,9 @@ public class ClassDeviceArchive {
     public void readArchive_30(int addressDev, int startPos){
 
         //Открытие и настройка порта.
-        SerialPort serialPort=new SerialPort(portName);
         try {
             if(!serialPort.isOpened()) {
+                //serialPort=new SerialPort(portName);
                 serialPort.openPort();
             }
             serialPort.setParams(SerialPort.BAUDRATE_9600,SerialPort.DATABITS_8,SerialPort.STOPBITS_1,SerialPort.PARITY_NONE);
@@ -112,8 +122,8 @@ public class ClassDeviceArchive {
             //Сохранение в необработанном виде.
             note_30.add(dataBlock);
 
-            if(serialPort.isOpened())
-                serialPort.closePort();
+//            if(serialPort.isOpened())
+//                serialPort.closePort();
 
         } catch (SerialPortException e) {
             try {
@@ -135,7 +145,7 @@ public class ClassDeviceArchive {
      */
     public void readArchive_31(int address, int numRecords, int numBlock){
 
-        SerialPort serialPort=new SerialPort(portName);
+        //SerialPort serialPort=new SerialPort(portName);
         try {
             //Открытие и настройка порта.
             if(!serialPort.isOpened()) {
@@ -170,14 +180,15 @@ public class ClassDeviceArchive {
             //Сохранение в необработанном виде.
             note_31.add(dataBlock);
 
-            if(serialPort.isOpened())
-                serialPort.closePort();
+//            if(serialPort.isOpened())
+//                serialPort.closePort();
         } catch (SerialPortException e) {
             try {
                 if(serialPort.isOpened()){
                     serialPort.closePort();
                 }
             } catch (SerialPortException ex) {
+
                 throw new RuntimeException(ex);
             }
             throw new RuntimeException(e);

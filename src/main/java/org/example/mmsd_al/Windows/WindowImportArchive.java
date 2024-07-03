@@ -3,6 +3,7 @@ package org.example.mmsd_al.Windows;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -13,6 +14,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import jssc.SerialPortList;
 import org.example.mmsd_al.Archive.ClassDeviceArchive;
 import org.example.mmsd_al.Classes.ClassModbus;
@@ -22,6 +24,7 @@ import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.StartApplication;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class WindowImportArchive  {
 
@@ -37,6 +40,8 @@ public class WindowImportArchive  {
     private ClassModbus modbus;
     ClassDevice device;
 
+    @FXML
+    public Button apply;
     @FXML
     private ComboBox devArchiveComboBox;
     @FXML
@@ -55,6 +60,8 @@ public class WindowImportArchive  {
         endPos=0;
     }
 
+    int [] dataNoteCount=null;
+
     @FXML
     public void initialize(){
         devArchiveComboBox.setItems(deviceWithArchive);
@@ -66,6 +73,11 @@ public class WindowImportArchive  {
         if(availableRecords.getText()!="нет данных"){
             countLoadRecords.setText("0");
             startRecords.setText("0");
+        }
+        if(Objects.equals(availableRecords.getText(), "0")) {
+            apply.setDisable(true);
+            countLoadRecords.setDisable(true);
+            startRecords.setDisable(true);
         }
     }
 
@@ -79,6 +91,13 @@ public class WindowImportArchive  {
         } catch (IOException e) {
             return false;
         }
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                var currentPort=MainWindow.settings.getPortModbus();
+                modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
+            }
+        });
         stage.setTitle("Загрузка архива");
         stage.getIcons().add(new Image("/about.png"));
         stage.initModality(Modality.WINDOW_MODAL);
@@ -97,6 +116,10 @@ public class WindowImportArchive  {
             Thread thread=new Thread(this::getDeviceArchive);
             thread.setDaemon(true);
             thread.start();
+        }
+        else {
+            var currentPort=MainWindow.settings.getPortModbus();
+            modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
         }
     }
 
@@ -126,6 +149,7 @@ public class WindowImportArchive  {
             }
             startPos++;
         }
+        deviceArchive.closeSerialPort();
         deviceArchive.processArchive();
         var currentPort=MainWindow.settings.getPortModbus();
         modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);

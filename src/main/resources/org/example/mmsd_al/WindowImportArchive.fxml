@@ -99,7 +99,7 @@
             </GridPane>
          <HBox alignment="CENTER">
             <children>
-                  <Button alignment="TOP_CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false"
+                  <Button fx:id="apply" alignment="TOP_CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false"
                           onAction="#click_Button" prefHeight="30.0" prefWidth="91.0" text="Применить" textAlignment="CENTER">
                       <font>
                           <Font size="14.0" />
