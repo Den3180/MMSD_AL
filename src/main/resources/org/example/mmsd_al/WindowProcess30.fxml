@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mmsd_al.Windows.WindowProcess30">
+   <children>
+      <VBox alignment="CENTER" layoutX="250.0" layoutY="79.0" prefHeight="100.0" prefWidth="300.0" style="-fx-border-color: black; -fx-border-width: 1;" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0">
+         <children>
+            <ProgressBar fx:id="pBar" prefWidth="280.0" progress="0.0">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </ProgressBar>
+            <Label fx:id="lab" text="0%" textAlignment="CENTER">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </Label>
+         </children></VBox>
+   </children>
+</AnchorPane>

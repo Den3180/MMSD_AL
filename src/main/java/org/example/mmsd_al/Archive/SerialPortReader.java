@@ -20,8 +20,7 @@ public class SerialPortReader implements SerialPortEventListener {
 
     @Override
     public void serialEvent(SerialPortEvent serialPortEvent) {
-        //TODO Проверка пакетов на кол-во байт и на КС. Если проверка не пройдена - запрос заново
-        // либо всей группы пакетов, либо только поврежденного. Продумать алгоритм.
+
         if (serialPortEvent.isRXCHAR()) {
             if (serialPortEvent.getEventValue() > 0) {
                 try {

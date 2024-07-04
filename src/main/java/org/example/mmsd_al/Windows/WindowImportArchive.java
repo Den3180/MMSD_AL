@@ -1,5 +1,7 @@
 package org.example.mmsd_al.Windows;
 
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -123,16 +125,28 @@ public class WindowImportArchive  {
         }
     }
 
+
+   private SimpleStringProperty sp=new SimpleStringProperty();
+
     private void getDeviceArchive(){
 
         //TODO Добавить блок try-catch. Выход за границы массива происходит.
         int startPos= Integer.parseInt(startRecords.getText());
         int endpos=startPos+Integer.valueOf(countLoadRecords.getText());
+        //Platform.runLater(WindowProcess30::showWindow);
+        WindowProcess30 windowProcess30=new WindowProcess30(this);
+        Platform.runLater(()->windowProcess30.showWindow(windowProcess30));
+
         while(startPos<endpos){
             deviceArchive.readArchive_30(deviceAddress,startPos);
+            int finalStartPos = startPos;
+             Platform.runLater(()->sp.set(String.valueOf(finalStartPos)));
+            //Platform.runLater(()->windowProcess30.lab.setText(String.valueOf(finalStartPos)));
             startPos++;
-            //ClassDelay.delay(500);
         }
+
+        Platform.runLater(()->windowProcess30.getStage().close());
+//        Platform.runLater(()->WindowProcess30.stage.close());
         startPos=Integer.parseInt(startRecords.getText());
         int countNotCurr=0;
         var note_30=deviceArchive.getNote_30();
@@ -145,7 +159,7 @@ public class WindowImportArchive  {
             while (countBlock < numBlocks){
                 deviceArchive.readArchive_31(deviceAddress,startPos,countBlock);
                 countBlock++;
-                //ClassDelay.delay(500);
+
             }
             startPos++;
         }
@@ -153,5 +167,17 @@ public class WindowImportArchive  {
         deviceArchive.processArchive();
         var currentPort=MainWindow.settings.getPortModbus();
         modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
+    }
+
+    public String getSp() {
+        return sp.get();
+    }
+
+    public SimpleStringProperty spProperty() {
+        return sp;
+    }
+
+    public void setSp(String sp) {
+        this.sp.set(sp);
     }
 }

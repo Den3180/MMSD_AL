@@ -204,8 +204,7 @@ public class ClassDeviceArchive {
      * Обработка полученных блоков архива.
      */
     public void processArchive(){
-    //TODO Сделать проверку контрольных сумм.
-    // Если проверка не пройдена, то отбрасывается вся запись.
+
         List<Integer> res=new ArrayList<Integer>();
         int countNote_31 = 0;
         for(int [] note:note_31){

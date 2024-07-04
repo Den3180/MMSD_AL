@@ -202,6 +202,7 @@ public class MainWindow {
      * Закрыть приложение.
      */
     private void exitApp(){
+        modbus.portClose();
         DB.closeDB();
         stage.close();
         Platform.exit();
