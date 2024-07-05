@@ -129,18 +129,6 @@ public class MainWindow {
         },500,5000);
     }
 
-    @FXML
-    public void button_Click(ActionEvent actionEvent) {
-        ObservableList cols=userControlDevices.getColumns();
-        var fact=userControlDevices.getRowFactory();
-        TableColumn col=(TableColumn)cols.get(0);
-        col.setVisible(false);
-        if (fact != null) {
-
-        }
-
-    }
-
     /**
      * Обработчик кнопок главного меню.
      * @param actionEvent
@@ -209,7 +197,7 @@ public class MainWindow {
     }
     int temp=0;
     private void timerSec_Tick(){
-        Platform.runLater(()-> lbTest.setText("Круг: "+ ++temp));
+        //Platform.runLater(()-> lbTest.setText("Круг: "+ ++temp));
 //        Platform.runLater(()-> lbTest.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH.mm.ss"))));
 
         switch (modbus.getMode()){

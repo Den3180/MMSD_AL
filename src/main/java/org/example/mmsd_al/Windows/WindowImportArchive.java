@@ -1,7 +1,7 @@
 package org.example.mmsd_al.Windows;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,6 +27,7 @@ import org.example.mmsd_al.StartApplication;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class WindowImportArchive  {
 
@@ -126,58 +127,64 @@ public class WindowImportArchive  {
     }
 
 
-   private SimpleStringProperty sp=new SimpleStringProperty();
+
+     private SimpleIntegerProperty intprop=new SimpleIntegerProperty(0);
 
     private void getDeviceArchive(){
 
         //TODO Добавить блок try-catch. Выход за границы массива происходит.
         int startPos= Integer.parseInt(startRecords.getText());
-        int endpos=startPos+Integer.valueOf(countLoadRecords.getText());
-        //Platform.runLater(WindowProcess30::showWindow);
+        numRecords=Integer.valueOf(countLoadRecords.getText());
+        int endpos=startPos+numRecords;
         WindowProcess30 windowProcess30=new WindowProcess30(this);
         Platform.runLater(()->windowProcess30.showWindow(windowProcess30));
 
+        AtomicInteger finalStartPos = new AtomicInteger();
         while(startPos<endpos){
             deviceArchive.readArchive_30(deviceAddress,startPos);
-            int finalStartPos = startPos;
-             Platform.runLater(()->sp.set(String.valueOf(finalStartPos)));
-            //Platform.runLater(()->windowProcess30.lab.setText(String.valueOf(finalStartPos)));
+            Platform.runLater(()->setIntprop(finalStartPos.get()));
+            finalStartPos.getAndIncrement();
             startPos++;
         }
 
-        Platform.runLater(()->windowProcess30.getStage().close());
-//        Platform.runLater(()->WindowProcess30.stage.close());
         startPos=Integer.parseInt(startRecords.getText());
         int countNotCurr=0;
         var note_30=deviceArchive.getNote_30();
         while(startPos<endpos){
-                int [] noteHeader=note_30.get(countNotCurr);
-                countNotCurr++;
+            int [] noteHeader=note_30.get(countNotCurr);
+            countNotCurr++;
             int sizeBlockNote = noteHeader[4] * 100 + noteHeader[5];
             int numBlocks = sizeBlockNote % 200 == 0 ? sizeBlockNote / 200 : sizeBlockNote / 200 + 1;
             int countBlock = 0;
             while (countBlock < numBlocks){
                 deviceArchive.readArchive_31(deviceAddress,startPos,countBlock);
                 countBlock++;
-
             }
+            Platform.runLater(()->setIntprop(finalStartPos.get()));
+            finalStartPos.getAndIncrement();
             startPos++;
         }
+            ClassDelay.delay(1000);
+        Platform.runLater(()->windowProcess30.getStage().close());
         deviceArchive.closeSerialPort();
         deviceArchive.processArchive();
         var currentPort=MainWindow.settings.getPortModbus();
         modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
     }
 
-    public String getSp() {
-        return sp.get();
+    public int getIntprop() {
+        return intprop.get();
     }
 
-    public SimpleStringProperty spProperty() {
-        return sp;
+    public SimpleIntegerProperty intpropProperty() {
+        return intprop;
     }
 
-    public void setSp(String sp) {
-        this.sp.set(sp);
+    public void setIntprop(int intprop) {
+        this.intprop.set(intprop);
+    }
+
+    public int getNumRecords() {
+        return numRecords;
     }
 }
