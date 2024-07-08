@@ -28,7 +28,12 @@ import org.jetbrains.annotations.NotNull;
 
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -45,9 +50,14 @@ public class MainWindow {
     private Stage stage=StartApplication.stage;
     private File dbFile;
     private Timer timerSec;
+    private Timer timerMainTime;
     public static Object locker = new Object();
     public static int count=0;
 
+    @FXML
+    public Label deviceName;
+    @FXML
+    public Label lbTime;
     @FXML
     public MenuItem loadArchivBtnMenu;
     @FXML
@@ -58,9 +68,6 @@ public class MainWindow {
     private SplitPane sPane;
     private TableView userControlDevices;
     private TableView userControlChannels;
-
-    @FXML
-    private Label lbTest;
 
     public void initialize(){
         mainWindow=this;
@@ -105,19 +112,34 @@ public class MainWindow {
                 userControlDevices = UserControlsFactory.createTable(Devices, UserControlsFactory.HEADERS_DEVICE,
                         UserControlsFactory.VARIABLES_DEVICE, new ClassDevice());
                 sPane.getItems().set(1,userControlDevices);
+                deviceName.setText("Не выбрано");
                 userControlDevices.setOnMouseClicked(this::tableDevice_MouseClicked);
                 break;
         }
         modbus=new ClassModbus();
+        mainTimereApp();
         startTimerPoll();
         if(modbus.getMode()== ClassModbus.eMode.NoPortInSystem){
             loadArchivBtnMenu.setDisable(true);
         }
     }
 
+    /**
+     * Таймер основного времени.
+     */
+    private void mainTimereApp(){
+        timerMainTime=new Timer("MainTime",true);
+        timerMainTime.schedule(new TimerTask() {
+            @Override
+            public void run() {//
+                SimpleDateFormat formater = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
+                Platform.runLater(()-> lbTime.setText(formater.format(new Date())));
+            }
+        },0,1000);
+    }
 
     /**
-     * запуск таймера основног опроса.
+     * Запуск таймера основног опроса.
      */
     private void startTimerPoll(){
         timerSec=new Timer("Poll",true);
@@ -185,7 +207,6 @@ public class MainWindow {
         }
     }
 
-
     /**
      * Закрыть приложение.
      */
@@ -195,11 +216,11 @@ public class MainWindow {
         stage.close();
         Platform.exit();
     }
-    int temp=0;
-    private void timerSec_Tick(){
-        //Platform.runLater(()-> lbTest.setText("Круг: "+ ++temp));
-//        Platform.runLater(()-> lbTest.setText(LocalTime.now().format(DateTimeFormatter.ofPattern("HH.mm.ss"))));
 
+    /**
+     * Основной таймер опроса устройств.
+     */
+    private void timerSec_Tick(){
         switch (modbus.getMode()){
             case None, PortClosed -> modbus.portOpen();
             case PortOpen -> modbus.Poll();
@@ -238,12 +259,14 @@ public class MainWindow {
         var idNode=  ((Pair<Integer,String>)item.getValue()).getKey();
         if(idNode == 0){
             sPane.getItems().set(1,userControlDevices);
+            deviceName.setText("Не выбрано");
        }
        else{
            var ch=Channels.stream().filter(e->e.get_Device().getId()==idNode).toList();
             userControlChannels=UserControlsFactory.createTable(FXCollections.observableArrayList(ch),UserControlsFactory.HEADES_CHANNEL,
                                                                UserControlsFactory.VARIABLES_CHANNEL,new ClassChannel());
             sPane.getItems().set(1,userControlChannels);
-       }
+            deviceName.setText(item.getValue().toString());
+        }
     }
 }
