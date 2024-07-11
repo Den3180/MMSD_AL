@@ -68,7 +68,7 @@
    <center>
        <SplitPane fx:id="sPane" dividerPositions="0.5" BorderPane.alignment="CENTER">
            <TreeView fx:id="treeView" maxWidth="300.0" minWidth="100.0" onMouseClicked="#treeView_MouseClicked" prefWidth="200.0" />
-           <Pane prefHeight="200.0" prefWidth="200.0" />
+           <Pane prefHeight="200.0" prefWidth="200.0"/>
        </SplitPane>
    </center>
         </BorderPane>

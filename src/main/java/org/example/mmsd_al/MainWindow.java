@@ -165,7 +165,7 @@ public class MainWindow {
                 exitApp();
                 break;
             case "Устройства...":
-                ClassMessage.showMessage("Устройства","","Меню не настроено", Alert.AlertType.CONFIRMATION);
+                sPane.getItems().set(1,userControlDevices);
                 break;
             case "Каналы данных...":
                 ClassMessage.showMessage("Каналы данных","","Меню не настроено", Alert.AlertType.CONFIRMATION);
@@ -268,5 +268,8 @@ public class MainWindow {
             sPane.getItems().set(1,userControlChannels);
             deviceName.setText(item.getValue().toString());
         }
+
     }
+
+
 }

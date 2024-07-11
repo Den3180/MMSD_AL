@@ -7,16 +7,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.event.EventHandler;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
+
+
 
 public class UserControlsFactory {
 
@@ -56,8 +57,9 @@ public class UserControlsFactory {
     public static  <T> TableView<T> createTable(ObservableList<T> list, String[]headers, String[]variables, T obj){
         if(list.stream().count()==0) return new TableView<>();
         TableView<T> tableView=new TableView<>(list);
+        //Установка стилей.
         tableView.getStylesheets().add("style.css");
-
+        //Настройка заголовков столбцов, ширины столбцов.
         for(int i=0;i<headers.length;i++){
             try {
                 var curField=obj.getClass().getDeclaredField(variables[i]);
@@ -112,9 +114,11 @@ public class UserControlsFactory {
                 });
 
             }
+            //row.setContextMenu(ContextMenuFactory.ContextMenuDevice(obj));
             return row;
         });
 
+        tableView.setContextMenu(ContextMenuFactory.ContextMenuDevice(tableView));
         return tableView;
     }
 
