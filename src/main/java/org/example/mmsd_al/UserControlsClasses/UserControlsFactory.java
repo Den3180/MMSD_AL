@@ -118,7 +118,7 @@ public class UserControlsFactory {
             return row;
         });
 
-        tableView.setContextMenu(ContextMenuFactory.ContextMenuDevice(tableView));
+        tableView.setContextMenu(ContextMenuFactory.ContextMenuDevice(tableView,obj));
         return tableView;
     }
 
