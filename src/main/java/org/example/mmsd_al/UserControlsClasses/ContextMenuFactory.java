@@ -24,11 +24,12 @@ public class ContextMenuFactory {
             }
         });
         menuItem2.setOnAction(event -> {
-            var selectedElems=tableView.getSelectionModel();
+            TableView.TableViewSelectionModel selectedElems=tableView.getSelectionModel();
             if(selectedElems.isEmpty()) {
                 ClassMessage.showMessage("Устройство","","Устройство не выбрано!", Alert.AlertType.CONFIRMATION);
                 return;
             }
+            ClassDevice dev=(ClassDevice)selectedElems.getSelectedItems().get(0);
             if(obj instanceof ClassDevice){
                 WindowDevice.showWindow();
             } else if (obj instanceof ClassChannel) {
