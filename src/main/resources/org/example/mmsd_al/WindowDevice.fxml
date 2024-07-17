@@ -260,8 +260,7 @@
                         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                      </HBox.margin>
                   </Button>
-                  <Button alignment="CENTER" cancelButton="true" contentDisplay="CENTER" defaultButton="true"
-                          mnemonicParsing="false" onAction="#btn_Click" prefWidth="91.0" text="Отмена">
+                  <Button alignment="CENTER" cancelButton="true" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#btn_Click" prefWidth="91.0" text="Отмена">
                      <HBox.margin>
                         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                      </HBox.margin>
