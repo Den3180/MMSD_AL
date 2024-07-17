@@ -86,10 +86,29 @@ public class ClassDevice {
         return counGroup;
     }
 
+    /**
+     * Получить название модели устройства в строковом варианте.
+     * @return String
+     */
     public String get_ModelName() {
-        return _ModelName.get();
+        return switch (_Model){
+            case BKM_3  ->  "БКМ-3";
+            case BKM_4  ->  "БКМ-4";
+            case SKZ    ->  "СКЗ";
+            case SKZ_IP ->  "СКЗ-ИП";
+            case BSZ    ->  "БСЗЭ";
+            case USIKP  ->  "УСИКП";
+            case BKM_5  ->  "БКМ-5";
+            case KIP    ->  "КИП";
+            case MMPR   ->  "ММПР";
+            default     ->  "не известно";
+        };
     }
 
+    /**
+     * Установить строковое представление модели.
+     * @param model
+     */
     public void set_ModelName(EnumModel model) {
         String modName = switch (model){
             case None -> "";
@@ -392,8 +411,13 @@ public class ClassDevice {
             case USIKP: return "УСИКП";
             case BKM_5:return "БКМ-5";
             case KIP:return "КИП";
+            case MMPR:return "ММПР";
             default: return "не известно";
         }
+    }
+
+    public EnumModel [] getModelList(){
+        return EnumModel.values();
     }
 
 
@@ -588,9 +612,27 @@ public class ClassDevice {
         USIKP,
         BKM_5,
         KIP,
-        MMPR
+        MMPR;
 
-
+       public static ArrayList<String> getModelList(){
+           ArrayList<String> lst=new ArrayList<>();
+           for(var item : EnumModel.values()){
+               String str= switch (item){
+                   case BKM_3  ->  "БКМ-3";
+                   case BKM_4  ->  "БКМ-4";
+                   case SKZ    ->  "СКЗ";
+                   case SKZ_IP ->  "СКЗ-ИП";
+                   case BSZ    ->  "БСЗЭ";
+                   case USIKP  ->  "УСИКП";
+                   case BKM_5  ->  "БКМ-5";
+                   case KIP    ->  "КИП";
+                   case MMPR   ->  "ММПР";
+                   default     ->  "не известно";
+               };
+               lst.add(str);
+           }
+           return lst;
+       }
     }
     //endregion
 }

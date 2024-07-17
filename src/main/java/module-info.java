@@ -18,6 +18,7 @@ open module org.example.mmsd_al {
     requires jssc;
     requires javafx.base;
     requires jdk.compiler;
+    requires transitive org.xerial.sqlitejdbc;
 
 
     exports org.example.mmsd_al;

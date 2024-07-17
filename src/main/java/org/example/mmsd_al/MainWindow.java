@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 import org.example.mmsd_al.Archive.ClassDeviceArchive;
@@ -77,13 +78,24 @@ public class MainWindow {
         if(!dbFile.exists()){
            ButtonType buttonType= ClassMessage.showMessage("База данных","СУБД","Файл БД не доступен!\nСоздать БД?",
                                       Alert.AlertType.CONFIRMATION);
-           if(buttonType.getButtonData()== ButtonBar.ButtonData.OK_DONE){
+           if(buttonType.getButtonData()== ButtonBar.ButtonData.YES){
                ClassDB.create(null);
+           } else if (buttonType.getButtonData() == ButtonBar.ButtonData.NO) {
+               FileChooser fileChooser=new FileChooser();
+               fileChooser.setTitle("База данных");
+               fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("База данных","*.db"));
+               File dbFile= fileChooser.showOpenDialog(stage.getOwner());
+               if(dbFile!=null){
+                   settings.setdB(dbFile.getAbsolutePath());
+                   settings.save();
+               }
            }
         }
         if(!DB.open(settings)){
-            ClassMessage.showMessage("База данных","СУБД","БД не доступна!\nПроверьте конфигурацию",
-                    Alert.AlertType.CONFIRMATION);
+            ClassMessage.showMessage("База данных","СУБД","БД не доступна! Программа будет закрыта." +
+                            "\nПроверьте конфигурацию.",
+                    Alert.AlertType.ERROR);
+            exitApp();
         }
         //Получить список устройств из базы данных.
         Devices= (FXCollections.observableArrayList(DB.devicesLoad()));
@@ -168,10 +180,25 @@ public class MainWindow {
                 sPane.getItems().set(1,userControlDevices);
                 break;
             case "Каналы данных...":
-                ClassMessage.showMessage("Каналы данных","","Меню не настроено", Alert.AlertType.CONFIRMATION);
+                ClassMessage.showMessage("Каналы данных","","Меню не настроено", Alert.AlertType.INFORMATION);
                 break;
             case "База данных...":
-                ClassMessage.showMessage("База данных","","Меню не настроено", Alert.AlertType.CONFIRMATION);
+                FileChooser fileChooser=new FileChooser();
+                fileChooser.setTitle("База данных");
+                fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("База данных","*.db"));
+                File dbFile= fileChooser.showOpenDialog(stage.getOwner());
+                if(dbFile!=null){
+                    settings.setdB(dbFile.getAbsolutePath());
+                    settings.save();
+                }
+                else{
+                    ClassMessage.showMessage("База данных","СУБД","БД не доступна! Программа будет закрыта." +
+                                    "\nПроверьте конфигурацию.",
+                            Alert.AlertType.ERROR);
+                }
+                ClassMessage.showMessage("База данных","",
+                        "Подключение к БД будет выполнено после перезапуска программы.", Alert.AlertType.INFORMATION);
+                exitApp();
                 break;
             case "Параметры...":
                 WindoWConfig wConfig=new WindoWConfig();
@@ -186,7 +213,7 @@ public class MainWindow {
                 Devices.forEach(el->el.set_ComPort(String.valueOf(settings.getPortModbus())));
                 break;
             case "Создать БД...":
-                ClassMessage.showMessage("Создать БД","","Меню не настроено", Alert.AlertType.CONFIRMATION);
+                ClassMessage.showMessage("Создать БД","","Меню не настроено", Alert.AlertType.INFORMATION);
                 break;
             case "Отправить архив...":
                 ArrayList<Integer[]> archive= ClassDeviceArchive.loadArchive();
@@ -202,7 +229,7 @@ public class MainWindow {
                 startTimerPoll();
                 break;
             case "О программе...":
-                ClassMessage.showMessage("О программе","","Меню не настроено", Alert.AlertType.CONFIRMATION);
+                ClassMessage.showMessage("О программе","","Меню не настроено", Alert.AlertType.INFORMATION);
                 break;
         }
     }

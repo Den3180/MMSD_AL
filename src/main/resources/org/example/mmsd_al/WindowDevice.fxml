@@ -35,7 +35,7 @@
             <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Наименование">
+            <Label fx:id="ll" text="Наименование">
                <font>
                   <Font size="14.0" />
                </font>
@@ -43,7 +43,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
             </Label>
-            <TextField promptText="БКМ" GridPane.columnIndex="1">
+            <TextField fx:id="nameDev" promptText="БКМ" GridPane.columnIndex="1">
                <font>
                   <Font size="14.0" />
                </font>
@@ -69,7 +69,7 @@
             </Label>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                <children>
-                  <TextField>
+                  <TextField fx:id="picket_km">
                      <HBox.margin>
                         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                      </HBox.margin>
@@ -82,7 +82,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <TextField>
+                  <TextField fx:id="picket_m">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -98,7 +98,7 @@
                   <Insets />
                </GridPane.margin>
             </HBox>
-            <TextField promptText="00.000000" GridPane.columnIndex="1" GridPane.rowIndex="2">
+            <TextField fx:id="latitude" promptText="00.000000" GridPane.columnIndex="1" GridPane.rowIndex="2">
                <font>
                   <Font size="14.0" />
                </font>
@@ -122,7 +122,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
             </Label>
-            <TextField promptText="00.000000" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <TextField fx:id="longitude" promptText="00.000000" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <font>
                   <Font size="14.0" />
                </font>
@@ -130,7 +130,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
             </TextField>
-            <TextField GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <TextField fx:id="elevation" GridPane.columnIndex="1" GridPane.rowIndex="4">
                <GridPane.margin>
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
@@ -146,7 +146,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
             </Label>
-            <ComboBox maxWidth="180.0" minHeight="-Infinity" promptText="БКМ" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5">
+            <ComboBox fx:id="model" maxWidth="180.0" minHeight="-Infinity" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5">
                <GridPane.margin>
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
@@ -154,7 +154,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </padding>
             </ComboBox>
-            <ComboBox maxWidth="180.0" prefWidth="150.0" promptText="Modbus RTU" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="6">
+            <ComboBox fx:id="protocol" maxWidth="180.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="6">
                <GridPane.margin>
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
@@ -178,7 +178,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
             </Label>
-            <TextField promptText="127.0.0.1" GridPane.columnIndex="1" GridPane.rowIndex="7">
+            <TextField fx:id="ipAddress" promptText="127.0.0.1" GridPane.columnIndex="1" GridPane.rowIndex="7">
                <font>
                   <Font size="14.0" />
                </font>
@@ -218,7 +218,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
             </Label>
-            <TextField layoutX="137.0" layoutY="299.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+            <TextField fx:id="ipPort" layoutX="137.0" layoutY="299.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
                <font>
                   <Font size="14.0" />
                </font>
@@ -226,7 +226,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
             </TextField>
-            <TextField layoutX="134.0" layoutY="339.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+            <TextField fx:id="address" layoutX="134.0" layoutY="339.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
                <font>
                   <Font size="14.0" />
                </font>
@@ -234,7 +234,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
             </TextField>
-            <TextField layoutX="134.0" layoutY="379.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+            <TextField fx:id="txtSIM" layoutX="134.0" layoutY="379.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
                <font>
                   <Font size="14.0" />
                </font>
@@ -242,7 +242,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
             </TextField>
-            <TextField layoutX="134.0" layoutY="419.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+            <TextField fx:id="period" layoutX="134.0" layoutY="419.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
                <font>
                   <Font size="14.0" />
                </font>
@@ -252,7 +252,7 @@
             </TextField>
             <HBox alignment="CENTER" GridPane.columnSpan="2" GridPane.rowIndex="12">
                <children>
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Применить">
+                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#btn_Click" text="Применить">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -260,8 +260,8 @@
                         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                      </HBox.margin>
                   </Button>
-                  <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefWidth="91.0" text="Отмена"
-                          defaultButton="true" cancelButton="true">
+                  <Button alignment="CENTER" cancelButton="true" contentDisplay="CENTER" defaultButton="true"
+                          mnemonicParsing="false" onAction="#btn_Click" prefWidth="91.0" text="Отмена">
                      <HBox.margin>
                         <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                      </HBox.margin>

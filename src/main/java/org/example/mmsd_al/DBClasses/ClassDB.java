@@ -117,14 +117,16 @@ public class ClassDB {
      * @return boolean
      */
     public boolean open(ClassSettings settings){
+        File dbFile=new File(settings.getdB());
+        if(!dbFile.exists()) return false;
         try {
-            conn= DriverManager.getConnection("jdbc:sqlite:"+settings.getdB());
-            statement=conn.createStatement();
-            return true;
+                conn= DriverManager.getConnection("jdbc:sqlite:"+settings.getdB());
+                statement=conn.createStatement();
         }
         catch (Exception ex){
             return false;
         }
+        return true;
     }
     //</editor-fold>
 
@@ -164,12 +166,17 @@ public class ClassDB {
         return "нет данных";
     }
 
+    /**
+     * Закрыть базу.
+     */
     public void closeDB(){
+
         try {
+            if(conn==null || conn.isClosed()) return;
             statement.close();
             conn.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
     }
 
@@ -208,6 +215,35 @@ public class ClassDB {
         }
         return lst;
     }
+
+    public boolean deviceAdd(ClassDevice device)
+    {
+        var r=device.get_Protocol().ordinal();
+        String query="INSERT INTO dev (name, prot, period, ip_adr, ip_port, address, port, sim,"
+                + " model, lat, longt, elev, picket)"
+                + "VALUES('"+device.get_Name()+"',"
+                            +device.get_Protocol().ordinal()+","
+                            +device.get_Period()+",'"
+                            +device.get_IPAddress()+"',"
+                            +device.get_IPPort()+","
+                            +device.get_Address()+",'"
+                            +new String("")+"','" //Колонку COM порта в базе не заполнять.
+                            +device.get_SIM()+"',"
+                            +device.get_Model().ordinal()+","
+                            +device.get_Latitude()+","
+                            +device.get_Longitude()+","
+                            +device.get_Elevation()+",'"
+                            +device.get_Picket()+"')";
+
+        try{
+            statement.executeUpdate(query);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return true;
+    }
+
+
 
     //</editor-fold>
 

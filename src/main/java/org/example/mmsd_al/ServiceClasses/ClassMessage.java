@@ -33,8 +33,8 @@ public class ClassMessage {
                 buttonTypeList.add(new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
                 break;
             case CONFIRMATION :
-                buttonTypeList.add(new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
-                buttonTypeList.add(new ButtonType("Отмена", ButtonBar.ButtonData.CANCEL_CLOSE));
+                buttonTypeList.add(new ButtonType("Да", ButtonBar.ButtonData.YES));
+                buttonTypeList.add(new ButtonType("Нет", ButtonBar.ButtonData.NO));
                 break;
         }
         return buttonTypeList;

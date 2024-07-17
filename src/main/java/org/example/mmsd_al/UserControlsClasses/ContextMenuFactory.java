@@ -3,6 +3,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
@@ -18,22 +19,22 @@ public class ContextMenuFactory {
         MenuItem menuItem3 = new MenuItem("Удалить...");
         menuItem1.setOnAction(event ->{
             if(obj instanceof ClassDevice){
-                WindowDevice.showWindow();
+                WindowDevice.showWindow(null);
             } else if (obj instanceof ClassChannel) {
-                ClassMessage.showMessage("Канал","","Канал не выбран!", Alert.AlertType.CONFIRMATION);
+                ClassMessage.showMessage("Канал","","Канал не выбран!", Alert.AlertType.ERROR);
             }
         });
         menuItem2.setOnAction(event -> {
-            TableView.TableViewSelectionModel selectedElems=tableView.getSelectionModel();
+            TableViewSelectionModel selectedElems=tableView.getSelectionModel();
             if(selectedElems.isEmpty()) {
-                ClassMessage.showMessage("Устройство","","Устройство не выбрано!", Alert.AlertType.CONFIRMATION);
+                ClassMessage.showMessage("Устройство","","Устройство не выбрано!", Alert.AlertType.ERROR);
                 return;
             }
             ClassDevice dev=(ClassDevice)selectedElems.getSelectedItems().get(0);
             if(obj instanceof ClassDevice){
-                WindowDevice.showWindow();
+                WindowDevice.showWindow(dev);
             } else if (obj instanceof ClassChannel) {
-                ClassMessage.showMessage("Канал","","Канал не выбран!", Alert.AlertType.CONFIRMATION);
+                ClassMessage.showMessage("Канал","","Канал не выбран!", Alert.AlertType.ERROR);
             }
         });
         menuItem3.setOnAction(event -> {
@@ -43,7 +44,7 @@ public class ContextMenuFactory {
                 return;
             }
             if(obj instanceof ClassDevice){
-                WindowDevice.showWindow();
+                WindowDevice.showWindow(null);
             } else if (obj instanceof ClassChannel) {
                 ClassMessage.showMessage("Канал","","Канал не выбран!", Alert.AlertType.CONFIRMATION);
             }
