@@ -190,15 +190,10 @@ public class MainWindow {
                 if(dbFile!=null){
                     settings.setdB(dbFile.getAbsolutePath());
                     settings.save();
+                    ClassMessage.showMessage("База данных","",
+                            "Подключение к БД будет выполнено после перезапуска программы.", Alert.AlertType.INFORMATION);
+                    exitApp();
                 }
-                else{
-                    ClassMessage.showMessage("База данных","СУБД","БД не доступна! Программа будет закрыта." +
-                                    "\nПроверьте конфигурацию.",
-                            Alert.AlertType.ERROR);
-                }
-                ClassMessage.showMessage("База данных","",
-                        "Подключение к БД будет выполнено после перезапуска программы.", Alert.AlertType.INFORMATION);
-                exitApp();
                 break;
             case "Параметры...":
                 WindoWConfig wConfig=new WindoWConfig();

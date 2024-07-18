@@ -125,16 +125,20 @@ public class WindowDevice {
         }
         //Добавить устройтсво.
         if(device.getId()==0){
-            MainWindow.DB.deviceAdd(device);
+            MainWindow.DB.deviceAdd(setDevice());
         }
         else{
-int i=0;
+            int i=0;
         }
         ((Stage)window).close();
     }
 
     private ClassDevice setDevice(){
         ClassDevice dev=new ClassDevice();
+        device.set_Name(nameDev.getText());
+        device.set_Picket("ПК"+picket_km.getText()+"+"+picket_m.getText());
+        var lat=latitude.getText().isEmpty() ? 0D:Double.parseDouble(latitude.getText());
+        device.set_Latitude(lat);
         return dev;
     }
 }
