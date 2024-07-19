@@ -216,9 +216,13 @@ public class ClassDB {
         return lst;
     }
 
+    /**
+     * Добавить устройство в БД.
+     * @param device
+     * @return
+     */
     public boolean deviceAdd(ClassDevice device)
     {
-        var r=device.get_Protocol().ordinal();
         String query="INSERT INTO dev (name, prot, period, ip_adr, ip_port, address, port, sim,"
                 + " model, lat, longt, elev, picket)"
                 + "VALUES('"+device.get_Name()+"',"
@@ -238,7 +242,57 @@ public class ClassDB {
         try{
             statement.executeUpdate(query);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Редактировать устройство в БД.
+     * @param device
+     * @return
+     */
+    public boolean deviceEdit(ClassDevice device){
+        String query="UPDATE dev SET name='"+device.get_Name()+"'," +
+                "prot="+device.get_Protocol().ordinal()+"," +
+                "period="+device.get_Period()+"," +
+                "ip_adr='"+device.get_IPAddress()+"'," +
+                "ip_port="+device.get_IPPort()+"," +
+                "address="+device.get_Address()+"," +
+                "port='"+new String("")+"',"+
+                "sim='"+device.get_SIM()+"'," +
+                "model="+device.get_Model().ordinal()+"," +
+                "lat="+device.get_Latitude()+"," +
+                "longt="+device.get_Longitude()+"," +
+                "elev="+device.get_Elevation()+"," +
+                "picket='"+device.get_Picket()+"' " +
+                "WHERE rowid="+device.getId();
+        try{
+            statement.executeUpdate(query);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Удалить устройство из БД.
+     * @param device
+     * @return
+     */
+    public boolean deviceDel(ClassDevice device){
+
+        String queryDev="DELETE FROM dev WHERE rowid ="+device.getId();
+        String queryCh="DELETE FROM reg WHERE dev="+device.getId();
+        try{
+            statement.executeUpdate(queryDev);
+        } catch (Exception e) {
+            return false;
+        }
+        try{
+            statement.executeUpdate(queryCh);
+        } catch (Exception e) {
+            return false;
         }
         return true;
     }

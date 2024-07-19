@@ -29,7 +29,7 @@ public class ClassDevice {
     private List<ClassGroupRequest> groups;
 
     private SimpleStringProperty _Name;
-    private int _Address;
+    private SimpleIntegerProperty _Address;
     private EnumProtocol _Protocol;
     private SimpleIntegerProperty _Period;
     private SimpleStringProperty _IPAddress;
@@ -111,7 +111,7 @@ public class ClassDevice {
      */
     public void set_ModelName(EnumModel model) {
         String modName = switch (model){
-            case None -> "";
+            case None -> "нет";
             case BKM_3 -> "БКМ-3";
             case BKM_4 -> "БКМ-4";
             case SKZ -> "СКЗ";
@@ -170,11 +170,15 @@ public class ClassDevice {
     }
 
     public int get_Address() {
-        return _Address;
+        return _Address.get();
     }
 
     public void set_Address(int _Address) {
-        this._Address = _Address;
+        this._Address.set(_Address);
+    }
+
+    public SimpleIntegerProperty _AddressProperty(){
+        return  _Address;
     }
 
     public EnumProtocol get_Protocol() {
@@ -433,7 +437,7 @@ public class ClassDevice {
         _Period=new SimpleIntegerProperty(60);
         _IPAddress=new SimpleStringProperty("192.168.0.1");
         _IPPort=502;
-        _Address=1;
+        _Address=new SimpleIntegerProperty(1);
         _LinkState=EnumLink.Unknown;
         _ComPort = new SimpleStringProperty();
         _SIM =new SimpleStringProperty();

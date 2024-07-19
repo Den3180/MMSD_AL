@@ -139,18 +139,21 @@ public class ClassModbus {
         }
     }
 
+    /**
+     * Опрос устройств.
+     */
     public void Poll(){
-        for(ClassDevice device : MainWindow.Devices){
 
-            if(device.get_Protocol()==ClassDevice.EnumProtocol.SMS) continue;
-            if(device.getChannels().isEmpty()) continue;
-            if(RTUMaster==null) continue;
-            if(device.get_Period()==0) continue;
-            //if(device.getCounGroup()>0) continue;
-            //if (someDeviceInTheProcess(MainWindow.Devices, device)) continue;
-            //if(device.getInProcess()==true) continue;
-            //List<ClassGroupRequest> groups=device.getGroups();
-
+        for(int i=0; i<MainWindow.Devices.size();i++){
+        ClassDevice device = MainWindow.Devices.get(i);
+        if(device.get_Protocol()==ClassDevice.EnumProtocol.SMS) continue;
+        if(device.getChannels().isEmpty()) continue;
+        if(RTUMaster==null) continue;
+        if(device.get_Period()==0) continue;
+        //if(device.getCounGroup()>0) continue;
+        //if (someDeviceInTheProcess(MainWindow.Devices, device)) continue;
+        //if(device.getInProcess()==true) continue;
+        //List<ClassGroupRequest> groups=device.getGroups();
             if(RTUMaster.isConnected()){
                 ReadGroupRegistry(device,RTUMaster);
             }

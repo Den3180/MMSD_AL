@@ -266,6 +266,7 @@ public class MainWindow {
                         UserControlsFactory.VARIABLES_CHANNEL,
                         new ClassChannel());
                 sPane.getItems().set(1,userControlChannels);
+                deviceName.setText(device.get_Name());
             }
         }
     }

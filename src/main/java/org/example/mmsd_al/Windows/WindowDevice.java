@@ -6,22 +6,17 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
+import org.example.mmsd_al.ServiceClasses.ClassMessage;
 import org.example.mmsd_al.StartApplication;
-import org.sqlite.core.DB;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Properties;
 
 public class WindowDevice {
 
@@ -123,22 +118,56 @@ public class WindowDevice {
             ((Stage)window).close();
             return;
         }
-        //Добавить устройтсво.
+        //Добавить устройстсво.
         if(device.getId()==0){
-            MainWindow.DB.deviceAdd(setDevice());
+            ClassDevice dev= setDevice();
+            boolean res= MainWindow.DB.deviceAdd(dev);
+            if(res){
+                MainWindow.Devices.add(dev);
+                ClassMessage.showMessage("Устройство","Добавление устройства","Устройство добавлено!",
+                        Alert.AlertType.INFORMATION);
+            }
+            else{
+                ClassMessage.showMessage("Устройство","Добавление устройства","Ошибка! Устройство не добавлено!",
+                        Alert.AlertType.ERROR);
+            }
         }
         else{
-            int i=0;
+           boolean res=MainWindow.DB.deviceEdit(setDevice());
+           if(!res){
+               ClassMessage.showMessage("Устройство","Изменение устройства","Ошибка! Устройство не изменено!",
+                       Alert.AlertType.ERROR);
+           }
         }
         ((Stage)window).close();
     }
 
+    /**
+     * Заполнение полей устройства.
+     * @return
+     */
     private ClassDevice setDevice(){
-        ClassDevice dev=new ClassDevice();
+        if(device.getId()==0){
+            device.setCountNumber(MainWindow.Devices.size()+1);
+        }
         device.set_Name(nameDev.getText());
-        device.set_Picket("ПК"+picket_km.getText()+"+"+picket_m.getText());
-        var lat=latitude.getText().isEmpty() ? 0D:Double.parseDouble(latitude.getText());
-        device.set_Latitude(lat);
-        return dev;
+        if(!picket_km.getText().isEmpty() && !picket_m.getText().isEmpty()){
+            device.set_Picket("ПК"+picket_km.getText()+"+"+picket_m.getText());
+        }
+        else{
+            device.set_Picket("");
+        }
+        device.set_Latitude(latitude.getText().isEmpty() ? 0D:Double.parseDouble(latitude.getText()));
+        device.set_Longitude(longitude.getText().isEmpty() ? 0D:Double.parseDouble(longitude.getText()));
+        device.set_Elevation(elevation.getText().isEmpty() ? 0D:Double.parseDouble(elevation.getText()));
+        device.set_Model((ClassDevice.EnumModel.values()[model.getSelectionModel().getSelectedIndex()]));
+        device.set_Protocol((ClassDevice.EnumProtocol.values()[protocol.getSelectionModel().getSelectedIndex()]));
+        device.set_IPAddress(ipAddress.getText());
+        device.set_IPPort(ipPort.getText().isEmpty() ? 502 : Integer.parseInt(ipPort.getText()));
+        device.set_Address(address.getText().isEmpty() ? 1 : Integer.parseInt(address.getText()));
+        device.set_SIM(txtSIM.getText());
+        device.set_Period(period.getText().isEmpty() ? 0 : Integer.parseInt(period.getText()));
+        device.set_ComPort(String.valueOf(MainWindow.settings.getPortModbus()));
+        return device;
     }
 }

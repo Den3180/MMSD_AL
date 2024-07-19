@@ -6,6 +6,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
+import org.example.mmsd_al.ServiceClasses.ClassDeleteDialog;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
 import org.example.mmsd_al.Windows.WindowDevice;
 
@@ -44,7 +45,7 @@ public class ContextMenuFactory {
                 return;
             }
             if(obj instanceof ClassDevice){
-                WindowDevice.showWindow(null);
+                ClassDeleteDialog.deleteObj(selectedElems.getSelectedItem());
             } else if (obj instanceof ClassChannel) {
                 ClassMessage.showMessage("Канал","","Канал не выбран!", Alert.AlertType.CONFIRMATION);
             }
