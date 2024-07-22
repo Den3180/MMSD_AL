@@ -180,7 +180,10 @@ public class MainWindow {
                 sPane.getItems().set(1,userControlDevices);
                 break;
             case "Каналы данных...":
-                ClassMessage.showMessage("Каналы данных","","Меню не настроено", Alert.AlertType.INFORMATION);
+                userControlChannels=UserControlsFactory.createTable(Channels,UserControlsFactory.HEADES_CHANNEL,
+                        UserControlsFactory.VARIABLES_CHANNEL, new ClassChannel());
+                userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
+                sPane.getItems().set(1,userControlChannels);
                 break;
             case "База данных...":
                 FileChooser fileChooser=new FileChooser();
@@ -208,6 +211,7 @@ public class MainWindow {
                 Devices.forEach(el->el.set_ComPort(String.valueOf(settings.getPortModbus())));
                 break;
             case "Создать БД...":
+                //TODO Соэдать базу данных.
                 ClassMessage.showMessage("Создать БД","","Меню не настроено", Alert.AlertType.INFORMATION);
                 break;
             case "Отправить архив...":
@@ -224,6 +228,7 @@ public class MainWindow {
                 startTimerPoll();
                 break;
             case "О программе...":
+                //TODO Написать окно "О программе".
                 ClassMessage.showMessage("О программе","","Меню не настроено", Alert.AlertType.INFORMATION);
                 break;
         }
@@ -259,16 +264,21 @@ public class MainWindow {
             var selestedElem=sourse.getSelectionModel().getSelectedItems();
             if(selestedElem.size()==0) return;
             ClassDevice device=(ClassDevice)selestedElem.get(0);
+            deviceName.setText(device.get_Name());
             if(device ==null) return;
             if(e.getClickCount()==2){
                 userControlChannels=UserControlsFactory.createTable(FXCollections.observableArrayList(device.getChannels())
                         ,UserControlsFactory.HEADES_CHANNEL,
                         UserControlsFactory.VARIABLES_CHANNEL,
                         new ClassChannel());
+                userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
                 sPane.getItems().set(1,userControlChannels);
-                deviceName.setText(device.get_Name());
             }
         }
+    }
+
+    private void channels_MouseClicked(MouseEvent e){
+        int i=0;
     }
 
     /**
@@ -289,6 +299,7 @@ public class MainWindow {
             userControlChannels=UserControlsFactory.createTable(FXCollections.observableArrayList(ch),UserControlsFactory.HEADES_CHANNEL,
                                                                UserControlsFactory.VARIABLES_CHANNEL,new ClassChannel());
             sPane.getItems().set(1,userControlChannels);
+            userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
             deviceName.setText(item.getValue().toString());
         }
 

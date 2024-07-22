@@ -249,8 +249,8 @@ public class ClassDB {
 
     /**
      * Редактировать устройство в БД.
-     * @param device
-     * @return
+     * @param device текущее устройство
+     * @return true - если нет ошибок редактирования, иначе -  false
      */
     public boolean deviceEdit(ClassDevice device){
         String query="UPDATE dev SET name='"+device.get_Name()+"'," +
@@ -328,15 +328,18 @@ public class ClassDB {
               channel.set_Address(resultSet.getInt("adr"));
               channel.set_Format(ClassChannel.EnumFormat.values()[resultSet.getInt("format")]);
               channel.set_Koef(resultSet.getFloat("k"));
-              channel.set_Max(resultSet.getDouble("vmax"));
-              channel.set_Min(resultSet.getDouble("vmin"));
-              channel.set_Archive(resultSet.getBoolean("rec"));
-              channel.get_Device().setId(resultSet.getInt("dev"));
-              channel.set_DeviceName(resultSet.getString("d_name"));
-              channel.get_Device().set_Address(resultSet.getInt("d_adr"));
-              channel.set_Ext(resultSet.getInt("ext"));
-              channel.set_Accuracy(resultSet.getInt("accuracy"));
-              String tempDate=resultSet.getString("dt");
+
+                channel.set_Max(resultSet.getObject("vmax")==null ? Double.NaN : resultSet.getDouble("vmax"));
+                channel.set_Min(resultSet.getObject("vmin")==null ? Double.NaN : resultSet.getDouble("vmin"));
+                channel.set_Ext(resultSet.getObject("ext")==null ? Integer.MAX_VALUE : resultSet.getInt("ext"));
+                channel.set_Accuracy(resultSet.getObject("accuracy")==null ? Integer.MAX_VALUE : resultSet.getInt("accuracy"));
+                channel.set_NValue(resultSet.getObject("nval")==null ? Double.NaN : resultSet.getDouble("nval"));
+
+                channel.get_Device().setId(resultSet.getInt("dev"));
+                channel.set_DeviceName(resultSet.getString("d_name"));
+                channel.get_Device().set_Address(resultSet.getInt("d_adr"));
+                channel.set_Archive(resultSet.getBoolean("rec"));
+                String tempDate=resultSet.getString("dt");
                 if(tempDate!=null) {
                     channel.set_DTAct(LocalDateTime.parse(tempDate,DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                 }
@@ -347,7 +350,6 @@ public class ClassDB {
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
-
         return lst;
     }
 
@@ -363,6 +365,27 @@ public class ClassDB {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Добавить регистр в базу данных.
+     * @param channel выбранный регистр.
+     * @return true - нет ошибок добавления, иначе - false.
+     */
+    public boolean registryAdd(ClassChannel channel){
+        String query="INSERT INTO reg (name, dev, type, adr, format, k, vmax, vmin, rec, ext, accuracy)" +
+                "VALUES(" +
+                ""+channel.get_Name()+"," +
+                ""+channel.get_Device().getId()+"," +
+                ""+channel.get_TypeRegistry().ordinal()+"," +
+                ""+channel.get_Address()+"," +
+                ""+channel.get_Format().ordinal()+"," +
+                ""+channel.get_Koef()+"," +
+                "" +
+                ")";
+
+
+        return true;
     }
     //</editor-fold>
 

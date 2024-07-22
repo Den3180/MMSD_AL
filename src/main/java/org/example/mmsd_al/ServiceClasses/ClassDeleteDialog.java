@@ -22,15 +22,19 @@ public class ClassDeleteDialog {
         }
     }
 
+    /**
+     * Удаление устройства.
+     * @param device устройство
+     */
     private static void deleteDevice(ClassDevice device){
 
         ButtonType res= ClassMessage.showMessage("Устройство","Удаление",
                 "Удалить устройство: "+device.get_Name()+"?", Alert.AlertType.CONFIRMATION);
         if(res.getButtonData()== ButtonBar.ButtonData.YES){
             if(MainWindow.DB.deviceDel(device)){
+                MainWindow.Devices.remove(device);
                 ClassMessage.showMessage("Устройство","Удаление",
                         "Устройство: "+device.get_Name()+" удалено.", Alert.AlertType.INFORMATION);
-                MainWindow.Devices.remove(device);
             }
             else {
                 ClassMessage.showMessage("Устройство","Удаление",
@@ -40,6 +44,6 @@ public class ClassDeleteDialog {
     }
 
     private static void deleteChannel(ClassChannel channel){
-
+          //TODO Удаление канала написать.
     }
 }

@@ -1,9 +1,6 @@
 package org.example.mmsd_al.Classes;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleFloatProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.*;
 import javafx.scene.control.TableView;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
@@ -37,13 +34,18 @@ public class ClassChannel {
     private SimpleStringProperty _DeviceName;
     private int[] _BaseValue;
     private double _PreviousValue;
-    private boolean _Archive;
+    private SimpleBooleanProperty _Archive;
     private int _Ext;
     private SimpleIntegerProperty _Accuracy;
     private double _NValue;
     private int _CountNumber;
     private SimpleStringProperty _StrBaseValue;
     private SimpleStringProperty _StrDTAct;
+
+    private SimpleStringProperty minStr;
+    private SimpleStringProperty maxStr;
+    private SimpleStringProperty accuracyStr;
+    private SimpleStringProperty valueStr;
 
 
 
@@ -174,6 +176,10 @@ public class ClassChannel {
         if(_Accuracy.get()>0){
             _Value.set((double) Math.round(_Value.get()*100)/100);
         }
+        else {
+            valueStr.set(String.valueOf((int)get_Value()));
+        }
+
         _DTAct=LocalDateTime.now();
         _StrDTAct.set(_DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss")));
 
@@ -195,6 +201,7 @@ public class ClassChannel {
 
     public void set_Accuracy(int _Accuracy) {
         this._Accuracy.set(_Accuracy);
+        setAccuracyStr(_Accuracy==Integer.MAX_VALUE ? "" : String.valueOf(_Accuracy));
     }
 
     public double get_Max() {
@@ -207,6 +214,7 @@ public class ClassChannel {
 
     public void set_Max(double _Max) {
         this._Max.set(_Max);
+        setMaxStr(((Double)_Max).isNaN() ? "" : String.valueOf(_Max));
     }
 
     public double get_Min() {
@@ -219,11 +227,8 @@ public class ClassChannel {
 
     public void set_Min(double _Min) {
         this._Min.set(_Min);
+        setMinStr(((Double)_Min).isNaN() ? "" : String.valueOf(_Min));
     }
-
-
-
-
 
     public void set_CountNumber(int _CountNumber) {
         this._CountNumber = _CountNumber;
@@ -337,13 +342,7 @@ public class ClassChannel {
         this._PreviousValue = _PreviousValue;
     }
 
-    public boolean get_Archive(){
-        return this._Archive;
-    }
 
-    public void set_Archive(boolean _Archive) {
-        this._Archive = _Archive;
-    }
 
     public int get_Ext() {
         return _Ext;
@@ -375,7 +374,7 @@ public class ClassChannel {
         _Value = new SimpleDoubleProperty(0);
         _DTAct = LocalDateTime.MIN;
         _PreviousValue = Double.MIN_VALUE;
-        _Archive = false;
+        _Archive=new SimpleBooleanProperty(false);
         _Accuracy= new SimpleIntegerProperty(0);
         _CountNumber =0;
         _BaseValue=new int[]{};
@@ -385,6 +384,11 @@ public class ClassChannel {
         _StrDTAct=new SimpleStringProperty();
         _StrBaseValue=new SimpleStringProperty();
         _DeviceName=new SimpleStringProperty();
+
+        minStr=new SimpleStringProperty();
+        maxStr=new SimpleStringProperty();
+        accuracyStr=new SimpleStringProperty();
+        valueStr=new SimpleStringProperty();
     }
 
     //<editor-fold desc="Методы">
@@ -395,6 +399,9 @@ public class ClassChannel {
      */
     public void loadSaveValue(double saveValue){
         _Value.setValue(saveValue);
+        if(get_Koef()==1){
+            valueStr.set(String.valueOf((int)saveValue));
+        }
     }
 
     public void sendValue(double value){
@@ -408,6 +415,66 @@ public class ClassChannel {
             return val - 65535 - 1;
         }
         return val;
+    }
+
+    public boolean is_Archive() {
+        return _Archive.get();
+    }
+
+    public SimpleBooleanProperty _ArchiveProperty() {
+        return _Archive;
+    }
+
+    public void set_Archive(boolean _Archive) {
+        this._Archive.set(_Archive);
+    }
+
+    public String getMinStr() {
+        return minStr.get();
+    }
+
+    public SimpleStringProperty minStrProperty() {
+        return minStr;
+    }
+
+    public void setMinStr(String minStr) {
+        this.minStr.set(minStr);
+    }
+
+    public String getMaxStr() {
+        return maxStr.get();
+    }
+
+    public SimpleStringProperty maxStrProperty() {
+        return maxStr;
+    }
+
+    public void setMaxStr(String maxStr) {
+        this.maxStr.set(maxStr);
+    }
+
+    public String getAccuracyStr() {
+        return accuracyStr.get();
+    }
+
+    public SimpleStringProperty accuracyStrProperty() {
+        return accuracyStr;
+    }
+
+    public void setAccuracyStr(String accuracyStr) {
+        this.accuracyStr.set(accuracyStr);
+    }
+
+    public String getValueStr() {
+        return valueStr.get();
+    }
+
+    public SimpleStringProperty valueStrProperty() {
+        return valueStr;
+    }
+
+    public void setValueStr(String valueStr) {
+        this.valueStr.set(valueStr);
     }
     //</editor-fold>
 

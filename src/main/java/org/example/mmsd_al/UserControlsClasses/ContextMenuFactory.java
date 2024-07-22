@@ -8,6 +8,7 @@ import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.ServiceClasses.ClassDeleteDialog;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
+import org.example.mmsd_al.Windows.WindowChannel;
 import org.example.mmsd_al.Windows.WindowDevice;
 
 public class ContextMenuFactory {
@@ -22,7 +23,7 @@ public class ContextMenuFactory {
             if(obj instanceof ClassDevice){
                 WindowDevice.showWindow(null);
             } else if (obj instanceof ClassChannel) {
-                ClassMessage.showMessage("Канал","","Канал не выбран!", Alert.AlertType.ERROR);
+                WindowChannel.showWindow(null);
             }
         });
         menuItem2.setOnAction(event -> {
@@ -31,11 +32,12 @@ public class ContextMenuFactory {
                 ClassMessage.showMessage("Устройство","","Устройство не выбрано!", Alert.AlertType.ERROR);
                 return;
             }
-            ClassDevice dev=(ClassDevice)selectedElems.getSelectedItems().get(0);
             if(obj instanceof ClassDevice){
+                var dev=(ClassDevice)selectedElems.getSelectedItems().get(0);
                 WindowDevice.showWindow(dev);
             } else if (obj instanceof ClassChannel) {
-                ClassMessage.showMessage("Канал","","Канал не выбран!", Alert.AlertType.ERROR);
+                var channel=(ClassChannel) selectedElems.getSelectedItems().get(0);
+                WindowChannel.showWindow(channel);
             }
         });
         menuItem3.setOnAction(event -> {
@@ -44,11 +46,7 @@ public class ContextMenuFactory {
                 ClassMessage.showMessage("Устройство","","Устройство не выбрано!", Alert.AlertType.CONFIRMATION);
                 return;
             }
-            if(obj instanceof ClassDevice){
-                ClassDeleteDialog.deleteObj(selectedElems.getSelectedItem());
-            } else if (obj instanceof ClassChannel) {
-                ClassMessage.showMessage("Канал","","Канал не выбран!", Alert.AlertType.CONFIRMATION);
-            }
+            ClassDeleteDialog.deleteObj(selectedElems.getSelectedItem());
         });
         contextMenu.getItems().setAll(menuItem1,menuItem2,menuItem3);
         return contextMenu;

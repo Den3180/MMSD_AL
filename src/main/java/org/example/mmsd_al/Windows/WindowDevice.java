@@ -33,9 +33,9 @@ public class WindowDevice {
     @FXML
     private TextField elevation;
     @FXML
-    private ComboBox model;
+    private ComboBox<String> model;
     @FXML
-    private ComboBox protocol;
+    private ComboBox<ClassDevice.EnumProtocol> protocol;
     @FXML
     private TextField ipAddress;
     @FXML
@@ -67,6 +67,7 @@ public class WindowDevice {
             model.getSelectionModel().selectFirst();
             protocol.getSelectionModel().selectFirst();
             device=new ClassDevice();
+            nameDev.setText("Устройство");
             return;
         }
         //Заполнение полей(режим редактировать).
@@ -90,6 +91,11 @@ public class WindowDevice {
         }
     }
 
+    /**
+     * Открыть окно устройств.
+     * @param device текущее устройство
+     * @return true - окно открыто, false - ошибка открытия окна
+     */
     public static boolean showWindow(ClassDevice device){
 
         Stage stage = new Stage();
