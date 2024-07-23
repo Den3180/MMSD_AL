@@ -271,6 +271,7 @@ public class MainWindow {
                         ,UserControlsFactory.HEADES_CHANNEL,
                         UserControlsFactory.VARIABLES_CHANNEL,
                         new ClassChannel());
+                userControlChannels.setUserData(device);
                 userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
                 sPane.getItems().set(1,userControlChannels);
             }

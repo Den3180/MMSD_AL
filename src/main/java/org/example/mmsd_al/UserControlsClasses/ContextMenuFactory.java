@@ -6,8 +6,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
+import org.example.mmsd_al.MainWindow;
 import org.example.mmsd_al.ServiceClasses.ClassDeleteDialog;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
+import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareTypeReg;
 import org.example.mmsd_al.Windows.WindowChannel;
 import org.example.mmsd_al.Windows.WindowDevice;
 
@@ -23,7 +25,12 @@ public class ContextMenuFactory {
             if(obj instanceof ClassDevice){
                 WindowDevice.showWindow(null);
             } else if (obj instanceof ClassChannel) {
-                WindowChannel.showWindow(null);
+                ClassDevice dev=(ClassDevice) tableView.getUserData();
+                ClassChannel ch=new ClassChannel();
+                ch.set_Device(dev);
+                WindowChannel.showWindow(ch);
+                tableView.getItems().add(MainWindow.Channels.get(MainWindow.Channels.size()-1));
+                //tableView.getItems().sort(new ChannelCompareTypeReg());
             }
         });
         menuItem2.setOnAction(event -> {

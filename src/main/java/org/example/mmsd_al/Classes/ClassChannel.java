@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 
 import java.sql.Date;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,7 +48,7 @@ public class ClassChannel {
     private SimpleStringProperty accuracyStr;
     private SimpleStringProperty valueStr;
 
-
+    private  boolean isParamControl;
 
 
     //<editor-fold desc="Setters and Getters">
@@ -169,26 +170,23 @@ public class ClassChannel {
     }
 
     public void set_Value(double value) {
+
+        DecimalFormat decimalFormat=new DecimalFormat();
         this._Value.set(convertMinus(value));
         if(_Koef.get()!=1) {
             _Value.set(_Value.get()*(double)_Koef.get());
         }
         if(_Accuracy.get()>0){
-            _Value.set((double) Math.round(_Value.get()*100)/100);
+            decimalFormat.applyPattern("#." + "#".repeat(Math.max(0, _Accuracy.get())));
+            valueStr.set(decimalFormat.format(_Value.get()));
         }
         else {
-            valueStr.set(String.valueOf((int)get_Value()));
+            decimalFormat.applyPattern("#.#####");
+            valueStr.set(String.valueOf(decimalFormat.format(_Value.get())));
         }
 
         _DTAct=LocalDateTime.now();
         _StrDTAct.set(_DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss")));
-
-
-//        if(_Name.get()!="" && _Name.get()!="Резерв"){
-//            Thread thread=new Thread(()->MainWindow.DB.registrySaveValue(this));
-//            thread.setDaemon(true);
-//            thread.start();
-//        }
     }
 
     public int get_Accuracy() {
@@ -214,7 +212,7 @@ public class ClassChannel {
 
     public void set_Max(double _Max) {
         this._Max.set(_Max);
-        setMaxStr(((Double)_Max).isNaN() ? "" : String.valueOf(_Max));
+        setMaxStr(((Double)_Max).isNaN() || !this.isParamControl ? "" : String.valueOf(_Max));
     }
 
     public double get_Min() {
@@ -227,7 +225,7 @@ public class ClassChannel {
 
     public void set_Min(double _Min) {
         this._Min.set(_Min);
-        setMinStr(((Double)_Min).isNaN() ? "" : String.valueOf(_Min));
+        setMinStr(((Double)_Min).isNaN() || !this.isParamControl ? "" : String.valueOf(_Min));
     }
 
     public void set_CountNumber(int _CountNumber) {
@@ -263,7 +261,6 @@ public class ClassChannel {
         this._Format = _Format;
     }
 
-
     public EnumState get_State() {
         return _State;
     }
@@ -296,10 +293,6 @@ public class ClassChannel {
         };
     }
 
-//    public void set_TypeRegistryFullName(String _TypeRegistryFullName) {
-//        this._TypeRegistryFullName = _TypeRegistryFullName;
-//    }
-
     public String get_TypeRegistryFullName() {
         return switch (_TypeRegistry){
             case Unknown ->  "не известно";
@@ -322,8 +315,6 @@ public class ClassChannel {
         this._Device = _Device;
     }
 
-
-
     public int[] get_BaseValue() {
         return _BaseValue;
     }
@@ -342,8 +333,6 @@ public class ClassChannel {
         this._PreviousValue = _PreviousValue;
     }
 
-
-
     public int get_Ext() {
         return _Ext;
     }
@@ -352,69 +341,12 @@ public class ClassChannel {
         this._Ext = _Ext;
     }
 
-
-
     public double get_NValue() {
         return _NValue;
     }
 
     public void set_NValue(double _NValue) {
         this._NValue = _NValue;
-    }
-//</editor-fold>
-
-    public ClassChannel(){
-        id=0;
-        _Name= new SimpleStringProperty("Канал 1");
-        _Address= new SimpleIntegerProperty(0);
-        _TypeRegistry=EnumTypeRegistry.HoldingRegistry;
-        _Device=new ClassDevice();
-        _Format = EnumFormat.UINT;
-        _Koef = new SimpleFloatProperty(1);
-        _Value = new SimpleDoubleProperty(0);
-        _DTAct = LocalDateTime.MIN;
-        _PreviousValue = Double.MIN_VALUE;
-        _Archive=new SimpleBooleanProperty(false);
-        _Accuracy= new SimpleIntegerProperty(0);
-        _CountNumber =0;
-        _BaseValue=new int[]{};
-        _Max=new SimpleDoubleProperty();
-        _Min=new SimpleDoubleProperty();
-        _AddressHex=new SimpleStringProperty();
-        _StrDTAct=new SimpleStringProperty();
-        _StrBaseValue=new SimpleStringProperty();
-        _DeviceName=new SimpleStringProperty();
-
-        minStr=new SimpleStringProperty();
-        maxStr=new SimpleStringProperty();
-        accuracyStr=new SimpleStringProperty();
-        valueStr=new SimpleStringProperty();
-    }
-
-    //<editor-fold desc="Методы">
-
-    /**
-     * Заполнение значений каналов при первой выгрузки из базы данных.
-     * @param saveValue значение из БД
-     */
-    public void loadSaveValue(double saveValue){
-        _Value.setValue(saveValue);
-        if(get_Koef()==1){
-            valueStr.set(String.valueOf((int)saveValue));
-        }
-    }
-
-    public void sendValue(double value){
-
-    }
-
-    private double convertMinus(double val){
-
-        if (val>32767)
-        {
-            return val - 65535 - 1;
-        }
-        return val;
     }
 
     public boolean is_Archive() {
@@ -476,6 +408,84 @@ public class ClassChannel {
     public void setValueStr(String valueStr) {
         this.valueStr.set(valueStr);
     }
+
+    public boolean isParamControl() {
+        return isParamControl;
+    }
+
+    public void setParamControl(boolean paramControl) {
+        isParamControl = paramControl;
+    }
+
+//</editor-fold>
+
+    public ClassChannel(){
+        id=0;
+        _Name= new SimpleStringProperty("Канал 1");
+        _Address= new SimpleIntegerProperty(0);
+        _TypeRegistry=EnumTypeRegistry.HoldingRegistry;
+        _Device=new ClassDevice();
+        _Format = EnumFormat.UINT;
+        _Koef = new SimpleFloatProperty(1);
+        _Value = new SimpleDoubleProperty(0);
+        _DTAct = LocalDateTime.MIN;
+        _PreviousValue = Double.MIN_VALUE;
+        _Archive=new SimpleBooleanProperty(false);
+        _Accuracy= new SimpleIntegerProperty(0);
+        _CountNumber =0;
+        _BaseValue=new int[]{};
+        _Max=new SimpleDoubleProperty();
+        _Min=new SimpleDoubleProperty();
+        _AddressHex=new SimpleStringProperty();
+        _StrDTAct=new SimpleStringProperty();
+        _StrBaseValue=new SimpleStringProperty();
+        _DeviceName=new SimpleStringProperty();
+
+        minStr=new SimpleStringProperty();
+        maxStr=new SimpleStringProperty();
+        accuracyStr=new SimpleStringProperty();
+        valueStr=new SimpleStringProperty();
+
+        isParamControl=false;
+    }
+
+    //<editor-fold desc="Методы">
+
+    /**
+     * Заполнение значений каналов при первой выгрузки из базы данных.
+     * @param saveValue значение из БД
+     */
+    public void loadSaveValue(double saveValue){
+
+        DecimalFormat decimalFormat=new DecimalFormat();
+        if(get_Koef()!=1){
+            saveValue*=get_Koef();
+        }
+        _Value.setValue(saveValue);
+        if(_Accuracy.get()>0){
+            decimalFormat.applyPattern("#." + "#".repeat(Math.max(0, _Accuracy.get())));
+            valueStr.set(decimalFormat.format(_Value.get()));
+        }
+        else{
+            decimalFormat.applyPattern("#.#####");
+            valueStr.set(String.valueOf(decimalFormat.format(_Value.get())));
+        }
+    }
+
+    public void sendValue(double value){
+
+    }
+
+    private double convertMinus(double val){
+
+        if (val>32767)
+        {
+            return val - 65535 - 1;
+        }
+        return val;
+    }
+
+
     //</editor-fold>
 
     //<editor-fold desc="Перечисления">

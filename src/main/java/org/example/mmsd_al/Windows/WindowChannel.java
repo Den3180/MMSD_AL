@@ -1,5 +1,6 @@
 package org.example.mmsd_al.Windows;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -66,13 +67,13 @@ public class WindowChannel {
         regType.setItems(typeRegistries);
         format.setItems(formats);
         //Проверка на наличие канала(режим добавить).
-        if(channel==null){
-            listDevice.getSelectionModel().selectFirst();
+        if(channel.getId()==0){
+            listDevice.getSelectionModel().select(channel.get_Device());
             regType.getSelectionModel().selectFirst();
             format.getSelectionModel().selectFirst();
             min.setDisable(true);
             max.setDisable(true);
-            channel=new ClassChannel();
+            //this.channel=new ClassChannel();
             return;
         }
         //Заполнение окна в режиме редактировать.
@@ -84,7 +85,7 @@ public class WindowChannel {
         koef.setText(String.valueOf(channel.get_Koef()));
 
         if(((Double)channel.get_Max()).isNaN()){
-            max.setText("");
+            //max.setText("");
             chMax.setSelected(false);
             max.setDisable(true);
         }
@@ -95,7 +96,7 @@ public class WindowChannel {
         }
 
         if(((Double)channel.get_Min()).isNaN()){
-            min.setText("");
+            //min.setText("");
             chMin.setSelected(false);
             min.setDisable(true);
         }
@@ -147,7 +148,9 @@ public class WindowChannel {
         int y=0;
         //Добавить регистр.
         if(channel.getId()==0){
-
+            MainWindow.DB.registryAdd(ch);
+            ch.set_StrDTAct(ch.get_StrDTAct());
+            MainWindow.Channels.add(ch);
         }
         //Редактировать регистр.
         else{
@@ -162,14 +165,18 @@ public class WindowChannel {
         channel.set_DTAct(this.channel.get_DTAct());
         channel.set_Name(channelName.getText().isEmpty() ? "Канал" : channelName.getText());
         channel.set_Device(this.channel.get_Device());
+        //TODO Настроить тип регистра.
         channel.set_TypeRegistry(this.channel.get_TypeRegistry());
         channel.set_Address(address.getText().isEmpty() ? 0 : Integer.parseInt(address.getText()));
         channel.set_Koef(koef.getText().isEmpty() ? 1 : Float.parseFloat(koef.getText()));
-        channel.set_Max(max.getText().isEmpty() ? 1 : Double.parseDouble(max.getText()));
-        channel.set_Max(min.getText().isEmpty() ? 1 : Double.parseDouble(min.getText()));
-        channel.set_Accuracy(accuracy.getText().isEmpty() ? 1 : Integer.parseInt(accuracy.getText()));
-        channel.set_Ext(ext.getText().isEmpty() ? 0 : Integer.parseInt(ext.getText()));
+        channel.setParamControl(this.channel.isParamControl());
+        channel.set_Max(max.getText().isEmpty() ? Double.NaN : Double.parseDouble(max.getText()));
+        channel.set_Min(min.getText().isEmpty() ? Double.NaN : Double.parseDouble(min.getText()));
+        channel.set_Accuracy(accuracy.getText().isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(accuracy.getText()));
+        channel.set_Ext(ext.getText().isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(ext.getText()));
         channel.set_Archive(chArchive.isSelected());
+        channel.set_DeviceName(channel.get_Device().get_Name());
+        //channel.set_Device(listDevice);
         return channel;
     }
 
@@ -178,11 +185,12 @@ public class WindowChannel {
     public void chBox_Clicked(ActionEvent actionEvent) {
 
         CheckBox checkBox=(CheckBox) actionEvent.getSource();
-        if(checkBox.getId()=="1"){
+        boolean res=checkBox.isSelected();
+        channel.setParamControl(res);
+            chMax.setSelected(res);
+            chMin.setSelected(res);
+            max.setDisable(!res);
+            min.setDisable(!res);
 
-        }
-        else{
-
-        }
     }
 }

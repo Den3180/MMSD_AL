@@ -244,6 +244,14 @@ public class ClassDB {
         } catch (Exception e) {
             return false;
         }
+        try {
+            ResultSet resultSet=statement.executeQuery("SELECT last_insert_rowid()");
+            while(resultSet.next()){
+                device.setId(resultSet.getInt("last_insert_rowid()"));
+            }
+        }catch (Exception e){
+
+        }
         return true;
     }
 
@@ -277,8 +285,8 @@ public class ClassDB {
 
     /**
      * Удалить устройство из БД.
-     * @param device
-     * @return
+     * @param device - текущее устройство.
+     * @return - возврат true, если удаление успешно, иначе false.
      */
     public boolean deviceDel(ClassDevice device){
 
@@ -332,7 +340,7 @@ public class ClassDB {
                 channel.set_Max(resultSet.getObject("vmax")==null ? Double.NaN : resultSet.getDouble("vmax"));
                 channel.set_Min(resultSet.getObject("vmin")==null ? Double.NaN : resultSet.getDouble("vmin"));
                 channel.set_Ext(resultSet.getObject("ext")==null ? Integer.MAX_VALUE : resultSet.getInt("ext"));
-                channel.set_Accuracy(resultSet.getObject("accuracy")==null ? Integer.MAX_VALUE : resultSet.getInt("accuracy"));
+                channel.set_Accuracy(resultSet.getObject("accuracy")==null ? 0 : resultSet.getInt("accuracy"));
                 channel.set_NValue(resultSet.getObject("nval")==null ? Double.NaN : resultSet.getDouble("nval"));
 
                 channel.get_Device().setId(resultSet.getInt("dev"));
@@ -344,7 +352,6 @@ public class ClassDB {
                     channel.set_DTAct(LocalDateTime.parse(tempDate,DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                 }
                 channel.loadSaveValue(resultSet.getDouble("val"));
-
                 lst.add(channel);
             }
         } catch (Exception ex) {
@@ -373,18 +380,33 @@ public class ClassDB {
      * @return true - нет ошибок добавления, иначе - false.
      */
     public boolean registryAdd(ClassChannel channel){
-        String query="INSERT INTO reg (name, dev, type, adr, format, k, vmax, vmin, rec, ext, accuracy)" +
-                "VALUES(" +
-                ""+channel.get_Name()+"," +
-                ""+channel.get_Device().getId()+"," +
-                ""+channel.get_TypeRegistry().ordinal()+"," +
-                ""+channel.get_Address()+"," +
-                ""+channel.get_Format().ordinal()+"," +
-                ""+channel.get_Koef()+"," +
-                "" +
+        String query= "INSERT INTO reg (name, dev, type, adr, format, k, vmax, vmin, rec, ext, accuracy)" +
+                "VALUES('"
+                +channel.get_Name()+"'," +
+                channel.get_Device().getId()+"," +
+                channel.get_TypeRegistry().ordinal()+"," +
+                channel.get_Address()+","+
+                channel.get_Format().ordinal()+"," +channel.get_Koef()+"," +
+                (channel.isParamControl() ? channel.get_Max() : null)+","+
+                (channel.isParamControl() ? channel.get_Min() : null)+","+
+                (channel.is_Archive() ? 1 : 0)+","+
+                (channel.get_Ext()==Integer.MAX_VALUE ? null : channel.get_Ext())+","+
+                (channel.get_Accuracy()==Integer.MAX_VALUE ? null :channel.get_Accuracy())+
                 ")";
+        try{
+            statement.executeUpdate(query);
+        } catch (Exception e) {
+            return false;
+        }
 
+        try {
+            ResultSet resultSet=statement.executeQuery("SELECT last_insert_rowid()");
+            while(resultSet.next()){
+                channel.setId(resultSet.getInt("last_insert_rowid()"));
+            }
+        }catch (Exception e){
 
+        }
         return true;
     }
     //</editor-fold>

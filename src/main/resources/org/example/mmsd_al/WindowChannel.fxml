@@ -120,7 +120,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
                <children>
-                      <TextField fx:id="min" promptText="1">
+                      <TextField fx:id="min" promptText="1" text="0">
                           <font>
                               <Font size="14.0" />
                           </font>
@@ -238,7 +238,7 @@
                   <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
                </GridPane.margin>
                <children>
-                  <TextField fx:id="max" promptText="1">
+                  <TextField fx:id="max" promptText="1" text="0">
                      <font>
                         <Font size="14.0" />
                      </font>
