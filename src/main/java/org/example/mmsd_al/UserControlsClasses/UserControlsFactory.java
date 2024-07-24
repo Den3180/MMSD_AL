@@ -56,7 +56,7 @@ public class UserControlsFactory {
      * @param <T> текущий тип
      */
     public static  <T> TableView<T> createTable(ObservableList<T> list, String[]headers, String[]variables, T obj){
-        if((long) list.size() ==0) return new TableView<>();
+
         TableView<T> tableView=new TableView<>(list);
         //Установка стилей.
         tableView.getStylesheets().add("style.css");
