@@ -10,6 +10,8 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 public class ClassDB {
 
@@ -327,21 +329,26 @@ public class ClassDB {
         try {
             ResultSet resultSet= statement.executeQuery(cmd.toString());
 
+            Predicate<Object> pr= Objects::nonNull;
             while (resultSet.next()){
-              ClassChannel channel=new ClassChannel();
-              channel.set_CountNumber(lst.size()+1);
-              channel.setId(resultSet.getInt("rowid"));
-              channel.set_Name(resultSet.getString("name"));
-              channel.set_TypeRegistry(ClassChannel.EnumTypeRegistry.values()[resultSet.getInt("type")]);
-              channel.set_Address(resultSet.getInt("adr"));
-              channel.set_Format(ClassChannel.EnumFormat.values()[resultSet.getInt("format")]);
-              channel.set_Koef(resultSet.getFloat("k"));
+                ClassChannel channel=new ClassChannel();
+                channel.set_CountNumber(lst.size()+1);
+                channel.setId(resultSet.getInt("rowid"));
+                channel.set_Name(resultSet.getString("name"));
+                channel.set_TypeRegistry(ClassChannel.EnumTypeRegistry.values()[resultSet.getInt("type")]);
+                channel.set_Address(resultSet.getInt("adr"));
+                channel.set_Format(ClassChannel.EnumFormat.values()[resultSet.getInt("format")]);
+                channel.set_Koef(resultSet.getFloat("k"));
+
+                channel.setParamControl(pr.test(resultSet.getObject("vmax")));
+                channel.setParamControl(pr.test(resultSet.getObject("vmin")));
 
                 channel.set_Max(resultSet.getObject("vmax")==null ? Double.NaN : resultSet.getDouble("vmax"));
                 channel.set_Min(resultSet.getObject("vmin")==null ? Double.NaN : resultSet.getDouble("vmin"));
                 channel.set_Ext(resultSet.getObject("ext")==null ? Integer.MAX_VALUE : resultSet.getInt("ext"));
                 channel.set_Accuracy(resultSet.getObject("accuracy")==null ? 0 : resultSet.getInt("accuracy"));
                 channel.set_NValue(resultSet.getObject("nval")==null ? Double.NaN : resultSet.getDouble("nval"));
+
 
                 channel.get_Device().setId(resultSet.getInt("dev"));
                 channel.set_DeviceName(resultSet.getString("d_name"));
@@ -391,21 +398,43 @@ public class ClassDB {
                 (channel.isParamControl() ? channel.get_Min() : null)+","+
                 (channel.is_Archive() ? 1 : 0)+","+
                 (channel.get_Ext()==Integer.MAX_VALUE ? null : channel.get_Ext())+","+
-                (channel.get_Accuracy()==Integer.MAX_VALUE ? null :channel.get_Accuracy())+
+                (channel.get_Accuracy()== 0 ? null :channel.get_Accuracy())+
                 ")";
         try{
             statement.executeUpdate(query);
         } catch (Exception e) {
             return false;
         }
-
         try {
             ResultSet resultSet=statement.executeQuery("SELECT last_insert_rowid()");
             while(resultSet.next()){
                 channel.setId(resultSet.getInt("last_insert_rowid()"));
             }
         }catch (Exception e){
+            return false;
+        }
+        return true;
+    }
 
+    public boolean RegistryEdit(ClassChannel channel){
+
+        String query="UPDATE reg SET " +
+                "name='"+channel.get_Name()+"', " +
+                "dev="+channel.get_Device().getId()+", " +
+                "type="+channel.get_TypeRegistry().ordinal()+", " +
+                "adr="+channel.get_Address()+", " +
+                "format="+channel.get_Format().ordinal()+", " +
+                "k="+channel.get_Koef()+", " +
+                "vmax="+(channel.isParamControl() ? channel.get_Max() : null)+", " +
+                "vmin="+(channel.isParamControl() ? channel.get_Min() : null)+", " +
+                "rec="+(channel.is_Archive() ? 1 : 0)+", " +
+                "ext="+(channel.get_Ext()==Integer.MAX_VALUE ? null : channel.get_Ext())+", " +
+                "accuracy="+(channel.get_Accuracy()== 0 ? null :channel.get_Accuracy())+
+                " WHERE rowid="+channel.getId();
+        try{
+            statement.executeUpdate(query);
+        } catch (Exception e) {
+            return false;
         }
         return true;
     }

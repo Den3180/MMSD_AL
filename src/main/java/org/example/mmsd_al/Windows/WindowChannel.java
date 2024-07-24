@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -15,9 +16,15 @@ import javafx.stage.Window;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
+import org.example.mmsd_al.ServiceClasses.ClassMessage;
+import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareAddress;
+import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareTypeReg;
 import org.example.mmsd_al.StartApplication;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class WindowChannel {
 
@@ -66,26 +73,26 @@ public class WindowChannel {
         listDevice.setItems(devices);
         regType.setItems(typeRegistries);
         format.setItems(formats);
-        //Проверка на наличие канала(режим добавить).
+        //Проверка на наличие id канала(режим добавить).
         if(channel.getId()==0){
             listDevice.getSelectionModel().select(channel.get_Device());
             regType.getSelectionModel().selectFirst();
             format.getSelectionModel().selectFirst();
-            min.setDisable(true);
-            max.setDisable(true);
-            //this.channel=new ClassChannel();
+            min.setDisable(!channel.isParamControl());
+            max.setDisable(!channel.isParamControl());
             return;
         }
         //Заполнение окна в режиме редактировать.
+        listDevice.setDisable(true);
         listDevice.getSelectionModel().select(channel.get_Device());
+        regType.setDisable(true);
         regType.getSelectionModel().select(channel.get_TypeRegistry());
         format.getSelectionModel().select(channel.get_Format());
         channelName.setText(channel.get_Name());
         address.setText(String.valueOf(channel.get_Address()));
         koef.setText(String.valueOf(channel.get_Koef()));
 
-        if(((Double)channel.get_Max()).isNaN()){
-            //max.setText("");
+        if(((Double)channel.get_Max()).isNaN() || !channel.isParamControl()){
             chMax.setSelected(false);
             max.setDisable(true);
         }
@@ -95,8 +102,7 @@ public class WindowChannel {
             max.setDisable(false);
         }
 
-        if(((Double)channel.get_Min()).isNaN()){
-            //min.setText("");
+        if(((Double)channel.get_Min()).isNaN() || !channel.isParamControl()){
             chMin.setSelected(false);
             min.setDisable(true);
         }
@@ -132,7 +138,7 @@ public class WindowChannel {
         stage.setResizable(false);
         stage.setScene(scene);
         stage.showAndWait();
-        return true;
+        return stage.getUserData() == null || (boolean) stage.getUserData();
     }
 
     @FXML
@@ -141,42 +147,69 @@ public class WindowChannel {
         Button button=(Button) actionEvent.getSource();
         Window window= (((Button)actionEvent.getSource()).getScene()).getWindow();
         if(button.isCancelButton()){
+            window.setUserData(false);
             ((Stage)window).close();
             return;
         }
         ClassChannel ch= fillInTheChannelFields();
-        int y=0;
         //Добавить регистр.
         if(channel.getId()==0){
-            MainWindow.DB.registryAdd(ch);
-            ch.set_StrDTAct(ch.get_StrDTAct());
-            MainWindow.Channels.add(ch);
+            if(MainWindow.DB.registryAdd(ch)){
+                MainWindow.Channels.add(ch);
+                ClassMessage.showMessage("Добавить канал","","Канал добавлен!",
+                        Alert.AlertType.INFORMATION);
+                ((Stage)window).close();
+            }
+            else {
+                ClassMessage.showMessage("Добавить канал",""," Ошибка! Канал не добавлен!",
+                        Alert.AlertType.ERROR);
+            }
         }
         //Редактировать регистр.
         else{
-
+            if(MainWindow.DB.RegistryEdit(ch)){
+                ClassChannel chTemp= (ClassChannel) MainWindow.Channels.stream().filter(c->c.getId()==ch.getId()).toArray()[0];
+                chTemp.editRegistry(ch);
+                ClassMessage.showMessage("Изменить канал","","Канал изменен!",
+                        Alert.AlertType.INFORMATION);
+                ((Stage)window).close();
+            }
+            else {
+                ClassMessage.showMessage("Изменить канал","","Ошибка! Канал не изменен!",
+                        Alert.AlertType.ERROR);
+            }
         }
-        ((Stage)window).close();
+        if(window.isShowing()) ((Stage) window).close();
     }
 
+    /**
+     * Заполнение полей канала.
+     * @return - возврат объект ClassChannel.
+     */
     private ClassChannel fillInTheChannelFields(){
         ClassChannel channel=new ClassChannel();
         channel.setId(this.channel.getId());
         channel.set_DTAct(this.channel.get_DTAct());
         channel.set_Name(channelName.getText().isEmpty() ? "Канал" : channelName.getText());
         channel.set_Device(this.channel.get_Device());
-        //TODO Настроить тип регистра.
-        channel.set_TypeRegistry(this.channel.get_TypeRegistry());
+        channel.set_TypeRegistry(regType.getSelectionModel().getSelectedItem());
         channel.set_Address(address.getText().isEmpty() ? 0 : Integer.parseInt(address.getText()));
         channel.set_Koef(koef.getText().isEmpty() ? 1 : Float.parseFloat(koef.getText()));
         channel.setParamControl(this.channel.isParamControl());
         channel.set_Max(max.getText().isEmpty() ? Double.NaN : Double.parseDouble(max.getText()));
         channel.set_Min(min.getText().isEmpty() ? Double.NaN : Double.parseDouble(min.getText()));
-        channel.set_Accuracy(accuracy.getText().isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(accuracy.getText()));
+        channel.set_Accuracy(accuracy.getText().isEmpty() ? 0 : Integer.parseInt(accuracy.getText()));
         channel.set_Ext(ext.getText().isEmpty() ? Integer.MAX_VALUE : Integer.parseInt(ext.getText()));
         channel.set_Archive(chArchive.isSelected());
         channel.set_DeviceName(channel.get_Device().get_Name());
-        //channel.set_Device(listDevice);
+        channel.set_Value(this.channel.get_Value());
+        channel.set_DTAct(this.channel.get_DTAct()==LocalDateTime.MIN ? LocalDateTime.MIN : this.channel.get_DTAct());
+        if(this.channel.getId()==0){
+            channel.set_CountNumber(MainWindow.Channels.isEmpty() ? 1 : MainWindow.Channels.size()+1);
+        }
+        else {
+            channel.set_CountNumber(this.channel.get_CountNumber());
+        }
         return channel;
     }
 

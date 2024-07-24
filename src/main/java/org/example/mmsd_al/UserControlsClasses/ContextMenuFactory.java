@@ -9,6 +9,7 @@ import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
 import org.example.mmsd_al.ServiceClasses.ClassDeleteDialog;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
+import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareAddress;
 import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareTypeReg;
 import org.example.mmsd_al.Windows.WindowChannel;
 import org.example.mmsd_al.Windows.WindowDevice;
@@ -28,9 +29,10 @@ public class ContextMenuFactory {
                 ClassDevice dev=(ClassDevice) tableView.getUserData();
                 ClassChannel ch=new ClassChannel();
                 ch.set_Device(dev);
-                WindowChannel.showWindow(ch);
-                tableView.getItems().add(MainWindow.Channels.get(MainWindow.Channels.size()-1));
-                //tableView.getItems().sort(new ChannelCompareTypeReg());
+                if(WindowChannel.showWindow(ch)){
+                    tableView.getItems().add(MainWindow.Channels.get(MainWindow.Channels.size()-1));
+                    tableView.getItems().sort(new ChannelCompareTypeReg().thenComparing(new ChannelCompareAddress()));
+                }
             }
         });
         menuItem2.setOnAction(event -> {

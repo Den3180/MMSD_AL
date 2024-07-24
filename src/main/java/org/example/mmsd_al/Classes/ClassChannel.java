@@ -53,7 +53,6 @@ public class ClassChannel {
 
     //<editor-fold desc="Setters and Getters">
 
-
     public String get_Name() {
         return _Name.get();
     }
@@ -250,7 +249,12 @@ public class ClassChannel {
 
     public void set_DTAct(@NotNull LocalDateTime _DTAct) {
         this._DTAct = _DTAct;
-        _StrDTAct.set(_DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss")));
+        if(_DTAct==LocalDateTime.MIN){
+            _StrDTAct.set("");
+        }
+        else {
+            _StrDTAct.set(_DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss")));
+        }
     }
 
     public EnumFormat get_Format() {
@@ -476,6 +480,11 @@ public class ClassChannel {
 
     }
 
+    /**
+     * Определение знака значения регистра.
+     * @param val - значение
+     * @return - результат
+     */
     private double convertMinus(double val){
 
         if (val>32767)
@@ -485,6 +494,23 @@ public class ClassChannel {
         return val;
     }
 
+    /**
+     * Копировать поля регистра из одного канала в другой.
+     * @param ch - копируемый регистр
+     */
+    public void editRegistry(@NotNull ClassChannel ch){
+
+        this.set_DeviceName(ch.get_DeviceName());
+        this.set_Address(ch.get_Address());
+        this.set_Format(ch.get_Format());
+        this.set_Koef(ch.get_Koef());
+        this.set_Max(ch.get_Max());
+        this.set_Min(ch.get_Min());
+        this.setParamControl(ch.isParamControl());
+        this.set_Accuracy(ch.get_Accuracy());
+        this.set_Ext(ch.get_Ext());
+        this.set_Archive(ch.is_Archive());
+    }
 
     //</editor-fold>
 

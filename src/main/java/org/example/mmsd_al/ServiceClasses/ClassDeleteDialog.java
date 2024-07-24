@@ -44,6 +44,8 @@ public class ClassDeleteDialog {
     }
 
     private static void deleteChannel(ClassChannel channel){
-          //TODO Удаление канала написать.
+          MainWindow.Channels.remove(channel);
+          ClassDevice dev=channel.get_Device();
+          dev.getChannels().remove(channel);
     }
 }

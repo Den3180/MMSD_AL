@@ -105,8 +105,8 @@ public class MainWindow {
         Channels=FXCollections.observableArrayList(DB.registriesLoad(0));
         //Разбивка каналов по устройствам.
         for(ClassDevice dev : Devices){
-            dev.setChannels(Channels.stream().filter(el->el.get_Device().getId()==dev.getId())
-                    .sorted(new ChannelCompareTypeReg().thenComparing(new ChannelCompareAddress())).toList());
+            dev.setChannels(FXCollections.observableArrayList(Channels.stream().filter(el->el.get_Device().getId()==dev.getId())
+                    .sorted(new ChannelCompareTypeReg().thenComparing(new ChannelCompareAddress())).toList()));
             dev.setGroups(dev.getGroups());
         }
 
@@ -300,11 +300,11 @@ public class MainWindow {
             userControlChannels=UserControlsFactory.createTable(FXCollections.observableArrayList(ch),UserControlsFactory.HEADES_CHANNEL,
                                                                UserControlsFactory.VARIABLES_CHANNEL,new ClassChannel());
             sPane.getItems().set(1,userControlChannels);
+            var id=((Pair<Integer,String>)item.getValue()).getKey();
+            ClassDevice deviceCurrent=Devices.filtered(dev->dev.getId()==id).get(0);
+            userControlChannels.setUserData(deviceCurrent);
             userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
             deviceName.setText(item.getValue().toString());
         }
-
     }
-
-
 }
