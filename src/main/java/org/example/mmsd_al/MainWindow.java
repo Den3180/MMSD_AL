@@ -105,8 +105,8 @@ public class MainWindow {
         Channels=FXCollections.observableArrayList(DB.registriesLoad(0));
         //Разбивка каналов по устройствам.
         for(ClassDevice dev : Devices){
-            dev.setChannels(FXCollections.observableArrayList(Channels.stream().filter(el->el.get_Device().getId()==dev.getId())
-                    .sorted(new ChannelCompareTypeReg().thenComparing(new ChannelCompareAddress())).toList()));
+            dev.setChannels( Channels.stream().filter(el->el.get_Device().getId()==dev.getId())
+                    .sorted(new ChannelCompareTypeReg().thenComparing(new ChannelCompareAddress())).toList());
             dev.setGroups(dev.getGroups());
         }
 

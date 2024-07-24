@@ -55,7 +55,11 @@ public class ContextMenuFactory {
                 ClassMessage.showMessage("Устройство","","Устройство не выбрано!", Alert.AlertType.CONFIRMATION);
                 return;
             }
-            ClassDeleteDialog.deleteObj(selectedElems.getSelectedItem());
+            var item=selectedElems.getSelectedItem();
+            var res=ClassDeleteDialog.deleteObj(item);
+            if(item instanceof ClassChannel){
+                if(res) tableView.getItems().remove(item);
+            }
         });
         contextMenu.getItems().setAll(menuItem1,menuItem2,menuItem3);
         return contextMenu;

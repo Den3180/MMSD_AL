@@ -9,24 +9,19 @@ import org.example.mmsd_al.MainWindow;
 
 public class ClassDeleteDialog {
 
-    private ClassDevice device;
-
-    public ClassDeleteDialog(Object obj){
-        deleteObj(obj);
-    }
-
-    public static void deleteObj(Object obj){
-        switch (obj.getClass().getSimpleName()){
+    public static boolean deleteObj(Object obj){
+        return switch (obj.getClass().getSimpleName()){
             case "ClassDevice" ->deleteDevice((ClassDevice) obj);
             case "ClassChannel" ->deleteChannel((ClassChannel) obj);
-        }
+            default -> false;
+        };
     }
 
     /**
      * Удаление устройства.
      * @param device устройство
      */
-    private static void deleteDevice(ClassDevice device){
+    private static boolean deleteDevice(ClassDevice device){
 
         ButtonType res= ClassMessage.showMessage("Устройство","Удаление",
                 "Удалить устройство: "+device.get_Name()+"?", Alert.AlertType.CONFIRMATION);
@@ -39,13 +34,33 @@ public class ClassDeleteDialog {
             else {
                 ClassMessage.showMessage("Устройство","Удаление",
                         "Ошибка! Устройство: "+device.get_Name()+"не удалено.", Alert.AlertType.ERROR);
+                return false;
             }
+            return true;
         }
+        return false;
     }
 
-    private static void deleteChannel(ClassChannel channel){
-          MainWindow.Channels.remove(channel);
-          ClassDevice dev=channel.get_Device();
-          dev.getChannels().remove(channel);
+    /**
+     * Удаление канала.
+     * @param channel - канал
+     */
+    private static boolean deleteChannel(ClassChannel channel){
+        ButtonType res= ClassMessage.showMessage("Устройство","Удаление",
+                "Удалить канал: "+channel.get_Name()+"?", Alert.AlertType.CONFIRMATION);
+        if(res.getButtonData().equals(ButtonBar.ButtonData.YES)){
+            if(MainWindow.DB.registryDel(channel)) {
+                MainWindow.Channels.remove(channel);
+                ClassMessage.showMessage("Канал","Удаление",
+                        "Канал: "+channel.get_Name()+" удален.", Alert.AlertType.INFORMATION);
+            }
+            else{
+                ClassMessage.showMessage("Канал","Удаление",
+                        "Ошибка! Канал: "+channel.get_Name()+"не удален.", Alert.AlertType.ERROR);
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 }

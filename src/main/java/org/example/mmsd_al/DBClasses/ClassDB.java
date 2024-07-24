@@ -438,6 +438,17 @@ public class ClassDB {
         }
         return true;
     }
+
+    public boolean registryDel(ClassChannel channel){
+
+        String queryDev="DELETE FROM reg WHERE rowid ="+channel.getId();
+        try{
+            statement.executeUpdate(queryDev);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
     //</editor-fold>
 
 
