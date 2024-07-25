@@ -210,7 +210,6 @@ public class MainWindow {
                 Devices.forEach(el->el.set_ComPort(String.valueOf(settings.getPortModbus())));
                 break;
             case "Создать БД...":
-                //TODO Соэдать базу данных.
                DirectoryChooser directoryChooser=new DirectoryChooser();
                directoryChooser.setTitle("Создать БД");
                File pathDefDB=new File(directoryChooser.showDialog(stage).getAbsolutePath()+"/pkm.db");
