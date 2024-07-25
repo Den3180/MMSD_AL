@@ -1,9 +1,7 @@
 package org.example.mmsd_al.UserControlsClasses;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.TableView.TableViewSelectionModel;
+import javafx.util.Pair;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;

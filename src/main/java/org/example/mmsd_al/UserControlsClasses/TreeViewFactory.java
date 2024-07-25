@@ -12,7 +12,7 @@ public class TreeViewFactory {
         root.setExpanded(true);
         for(T item:collection){
             if(item instanceof ClassDevice){
-                Pair<Integer,String> el=new Pair<>(Integer.valueOf(((ClassDevice)item).getId()),((ClassDevice)item).get_Name()){
+                Pair<Integer,String> el=new Pair<>(((ClassDevice) item).getId(),((ClassDevice)item).get_Name()){
                     @Override
                     public String toString(){
                         return this.getValue();

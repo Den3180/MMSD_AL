@@ -1,11 +1,13 @@
 package org.example.mmsd_al.ServiceClasses;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
+import com.fasterxml.jackson.dataformat.xml.XmlAnnotationIntrospector;
+import javafx.scene.control.*;
+import javafx.util.Pair;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
+
+import java.util.Optional;
 
 public class ClassDeleteDialog {
 
@@ -28,6 +30,11 @@ public class ClassDeleteDialog {
         if(res.getButtonData()== ButtonBar.ButtonData.YES){
             if(MainWindow.DB.deviceDel(device)){
                 MainWindow.Devices.remove(device);
+                TreeView<Pair<Integer,String>> treeView=MainWindow.mainWindow.getTreeView();
+                Optional<TreeItem<Pair<Integer, String>>> trItem=treeView.getRoot().getChildren().stream()
+                        .filter(el->el.getValue().getKey()==device.getId()).findFirst();
+                treeView.getRoot().getChildren().remove(trItem.stream().toList().get(0));
+
                 ClassMessage.showMessage("Устройство","Удаление",
                         "Устройство: "+device.get_Name()+" удалено.", Alert.AlertType.INFORMATION);
             }

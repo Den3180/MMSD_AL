@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
@@ -29,14 +30,12 @@ import org.jetbrains.annotations.NotNull;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 
 public class MainWindow {
@@ -62,7 +61,7 @@ public class MainWindow {
     @FXML
     public MenuItem loadArchivBtnMenu;
     @FXML
-    private TreeView treeView;
+    private TreeView<Pair<Integer,String>> treeView;
     @FXML
     private MenuBar mainMenu;
     @FXML
@@ -114,7 +113,7 @@ public class MainWindow {
         treeView.setRoot(TreeViewFactory.createRootTree(Devices,new Pair<Integer,String>(0,"Устройство"){
             @Override
             public String toString(){
-            return this.getValue();
+            return getValue();
             }
         }));
 
@@ -212,8 +211,24 @@ public class MainWindow {
                 break;
             case "Создать БД...":
                 //TODO Соэдать базу данных.
-                ClassMessage.showMessage("Создать БД","","Меню не настроено", Alert.AlertType.INFORMATION);
-                break;
+               DirectoryChooser directoryChooser=new DirectoryChooser();
+               directoryChooser.setTitle("Создать БД");
+               File pathDefDB=new File(directoryChooser.showDialog(stage).getAbsolutePath()+"/pkm.db");
+               if(pathDefDB.exists()){
+                   int i=1;
+                   while (true){
+                       var pathname=pathDefDB.getParent()+"/pkm"+i+".db";
+                       pathDefDB=new File(pathname);
+                       i++;
+                       if(!pathDefDB.exists()) break;
+                   }
+               }
+               if(ClassDB.create(pathDefDB.getAbsolutePath())){
+                   ClassMessage.showMessage("База данных","","База данных создана.", Alert.AlertType.INFORMATION);
+                   settings.setdB(pathDefDB.getAbsolutePath());
+                   settings.save();
+               }
+               break;
             case "Отправить архив...":
                 ArrayList<Integer[]> archive= ClassDeviceArchive.loadArchive();
                 if(archive==null || archive.isEmpty()){
@@ -306,5 +321,9 @@ public class MainWindow {
             userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
             deviceName.setText(item.getValue().toString());
         }
+    }
+
+    public TreeView<Pair<Integer,String>> getTreeView(){
+        return treeView;
     }
 }

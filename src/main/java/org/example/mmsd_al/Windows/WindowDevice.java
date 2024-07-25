@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Pair;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.MainWindow;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
@@ -130,6 +131,14 @@ public class WindowDevice {
             boolean res= MainWindow.DB.deviceAdd(dev);
             if(res){
                 MainWindow.Devices.add(dev);
+                TreeView<Pair<Integer, String>> treeView= MainWindow.mainWindow.getTreeView();
+                var p=new Pair<Integer,String >(dev.getId(), dev.get_Name()){
+                    @Override
+                    public String toString(){
+                        return getValue();
+                    }
+                };
+                treeView.getRoot().getChildren().add(new TreeItem<>(p));
                 ClassMessage.showMessage("Устройство","Добавление устройства","Устройство добавлено!",
                         Alert.AlertType.INFORMATION);
             }
