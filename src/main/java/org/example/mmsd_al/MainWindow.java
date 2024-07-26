@@ -6,6 +6,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
@@ -142,7 +144,7 @@ public class MainWindow {
         timerMainTime=new Timer("MainTime",true);
         timerMainTime.schedule(new TimerTask() {
             @Override
-            public void run() {//
+            public void run() {
                 SimpleDateFormat formater = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss.SSS");
                 Platform.runLater(()-> lbTime.setText(formater.format(new Date())));
             }

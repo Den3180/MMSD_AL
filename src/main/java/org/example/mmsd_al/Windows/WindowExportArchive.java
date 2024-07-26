@@ -41,7 +41,7 @@ public class WindowExportArchive {
         }
         stage.setTitle("Экспорт архива");
         stage.getIcons().add(new Image("/about.png"));
-        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setResizable(false);
         stage.setScene(scene);
         stage.showAndWait();
