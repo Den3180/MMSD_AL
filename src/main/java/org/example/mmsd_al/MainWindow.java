@@ -26,6 +26,7 @@ import org.example.mmsd_al.Settings.ClassSettings;
 import org.example.mmsd_al.UserControlsClasses.TreeViewFactory;
 import org.example.mmsd_al.UserControlsClasses.UserControlsFactory;
 import org.example.mmsd_al.Windows.WindoWConfig;
+import org.example.mmsd_al.Windows.WindowAbout;
 import org.example.mmsd_al.Windows.WindowExportArchive;
 import org.example.mmsd_al.Windows.WindowImportArchive;
 import org.jetbrains.annotations.NotNull;
@@ -247,7 +248,8 @@ public class MainWindow {
                 break;
             case "О программе...":
                 //TODO Написать окно "О программе".
-                ClassMessage.showMessage("О программе","","Меню не настроено", Alert.AlertType.INFORMATION);
+                //ClassMessage.showMessage("О программе","","Меню не настроено", Alert.AlertType.INFORMATION);
+                WindowAbout.showWindow();
                 break;
         }
     }
