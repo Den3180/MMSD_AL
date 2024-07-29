@@ -214,7 +214,9 @@ public class MainWindow {
             case "Создать БД...":
                DirectoryChooser directoryChooser=new DirectoryChooser();
                directoryChooser.setTitle("Создать БД");
-               File pathDefDB=new File(directoryChooser.showDialog(stage).getAbsolutePath()+"/pkm.db");
+               File dirPath=directoryChooser.showDialog(stage);
+               if(dirPath==null) break;
+               File pathDefDB=new File(dirPath.getAbsolutePath()+"/pkm.db");
                if(pathDefDB.exists()){
                    int i=1;
                    while (true){
