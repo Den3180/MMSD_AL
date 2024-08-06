@@ -88,9 +88,6 @@ public class UserControlsFactory {
 
                     row.pseudoClassStateChanged(up, newPrice.equals("На связи"));
                     row.pseudoClassStateChanged(down, newPrice.equals("Нет связи")
-                    //row.pseudoClassStateChanged(up, oldPrice.equals("На связи"));
-                    //row.pseudoClassStateChanged(down, oldPrice.equals("Нет связи")
-
                     );
                 };
                 row.itemProperty().addListener((obs, previousUser, currentUser) -> {
