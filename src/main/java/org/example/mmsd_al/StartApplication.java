@@ -23,13 +23,14 @@ public class StartApplication extends Application {
 
         // Берем размер всего экрана
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int width = screenSize.width;
-        int height = screenSize.height;
+        //int width = screenSize.width;
+        //int height = screenSize.height;
 
         StartApplication.stage =stage;
-        stage.setMinWidth(width);
-        stage.setMinHeight(height);
+        //stage.setMinWidth(width);
+        //stage.setMinHeight(height);
         stage.setMaximized(true);
+        stage.setResizable(true);
         FXMLLoader fxmlLoader = new FXMLLoader(StartApplication.class.getResource("MainWindow.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("ООО НПК 'ТехноПром' - Система Оперативной Телеметрии и Комплексного Анализа");
