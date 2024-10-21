@@ -183,20 +183,20 @@ public class ClassModbus {
                     {
                         data = master.readInputRegisters(device.get_Address(), group.getStartAddress(),numOfPoint);
 
-                        System.out.println(device +" " +group.get_TypeRegistry() + " : " + Arrays.toString(data));
+                        //System.out.println(device +" " +group.get_TypeRegistry() + " : " + Arrays.toString(data));
                     }
                     if(group.get_TypeRegistry()== ClassChannel.EnumTypeRegistry.HoldingRegistry && numOfPoint < numOfRegMax){
                         data = master.readHoldingRegisters(device.get_Address(), group.getStartAddress(),numOfPoint);
 
-                        System.out.println(device +" " +group.get_TypeRegistry() + " "+ group.GetSize() +" : " + Arrays.toString(data));
+                       //System.out.println(device +" " +group.get_TypeRegistry() + " "+ group.GetSize() +" : " + Arrays.toString(data));
                     }
                     if(group.get_TypeRegistry()== ClassChannel.EnumTypeRegistry.CoilOutput && numOfPoint < numOfRegMax){
                         dataBool=master.readCoils(device.get_Address(), group.getStartAddress(), numOfPoint);
-                        System.out.println(device +" " +group.get_TypeRegistry() + " "+ group.GetSize() +" : " + Arrays.toString(dataBool));
+                        //System.out.println(device +" " +group.get_TypeRegistry() + " "+ group.GetSize() +" : " + Arrays.toString(dataBool));
                     }
                     if(group.get_TypeRegistry()== ClassChannel.EnumTypeRegistry.DiscreteInput && numOfPoint < numOfRegMax){
                         dataBool=master.readDiscreteInputs(device.get_Address(), group.getStartAddress(), numOfPoint);
-                        System.out.println(device +" " +group.get_TypeRegistry() + " "+ group.GetSize() +" : " + Arrays.toString(dataBool));
+                        //System.out.println(device +" " +group.get_TypeRegistry() + " "+ group.GetSize() +" : " + Arrays.toString(dataBool));
                     }
 
             } catch (Exception e) {
