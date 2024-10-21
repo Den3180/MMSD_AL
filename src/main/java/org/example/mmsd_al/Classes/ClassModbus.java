@@ -206,7 +206,7 @@ public class ClassModbus {
                     if(exeption.getValue()==2) continue;
                 }
 
-                System.out.println("ReadGroupRegistry: "+ e.getMessage());
+                //System.out.println("ReadGroupRegistry: "+ e.getMessage());
                 Mode=eMode.None;
                 device.PacketNotReceived();
                 return;
