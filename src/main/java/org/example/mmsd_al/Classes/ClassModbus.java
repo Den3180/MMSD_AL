@@ -1,13 +1,5 @@
 package org.example.mmsd_al.Classes;
 
-//import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
-//import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
-//import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
-//import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
-//import com.intelligt.modbus.jlibmodbus.master.ModbusMasterFactory;
-//import com.intelligt.modbus.jlibmodbus.net.stream.base.ModbusOutputStream;
-//import com.intelligt.modbus.jlibmodbus.serial.SerialParameters;
-//import com.intelligt.modbus.jlibmodbus.serial.SerialPort;
 import com.intelligt.modbus.jlibmodbus.exception.*;
 import com.intelligt.modbus.jlibmodbus.master.*;
 import com.intelligt.modbus.jlibmodbus.net.transport.ModbusTransport;
