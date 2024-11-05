@@ -12,15 +12,30 @@ import java.util.List;
 
 public class TreeViewFactory {
 
+
+    /**
+     * Создает дерево устройств при первичном запуске программы.
+     * @param collection коллекция устройств
+     * @param nameRoot имя устройства и его индекс
+     * @param <T>
+     * @return
+     */
     public  static <T>  TreeItem createRootTree(List<T> collection, Pair<Integer,String> nameRoot) {
 
-            TreeItem<Pair<Integer, String>> root = new TreeItem<>(nameRoot);
-            if (collection.get(0) instanceof ClassDevice) {
-            root.setGraphic(new ImageView("/folder.png"));
-            root.setExpanded(true);
+        //Создаем корневой элемент дерева.
+        TreeItem<Pair<Integer, String>> root = new TreeItem<>(nameRoot);
+        //Добавляем иконку корневого элемента.
+        root.setGraphic(new ImageView("/folder.png"));
+        //Разворачиваем корневой элемент.
+        root.setExpanded(true);
+        //Если список устройств пуст, то заканчиваем посторение дерева.
+        if(collection.isEmpty()) return root;
+        //Построение подузлов дерева.
+        if (collection.get(0) instanceof ClassDevice) {
             int i = 0;
             for (T item : collection) {
                 if (item instanceof ClassDevice) {
+                    //Формируем узел для каждого устройства.
                     Pair<Integer, String> el = new Pair<>(((ClassDevice) item).getId(), ((ClassDevice) item).get_Name()) {
                         @Override
                         public String toString() {
@@ -28,7 +43,9 @@ public class TreeViewFactory {
                         }
                     };
                     TreeItem<Pair<Integer, String>> node = new TreeItem<>(el);
+                    //Добавляем иконку для подузла.
                     node.setGraphic(new ImageView("/hardware.png"));
+                    //Добавляем подузел в дерево.
                     root.getChildren().add(node);
                 }
             }

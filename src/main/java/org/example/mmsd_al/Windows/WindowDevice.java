@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -138,7 +139,9 @@ public class WindowDevice {
                         return getValue();
                     }
                 };
-                treeView.getRoot().getChildren().add(new TreeItem<>(p));
+                TreeItem<Pair<Integer, String>> node = new TreeItem<>(p);
+                node.setGraphic(new ImageView("/hardware.png"));
+                treeView.getRoot().getChildren().add(node);
                 ClassMessage.showMessage("Устройство","Добавление устройства","Устройство добавлено!",
                         Alert.AlertType.INFORMATION);
             }
