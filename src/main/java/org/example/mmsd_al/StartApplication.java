@@ -33,7 +33,7 @@ public class StartApplication extends Application {
         stage.setResizable(true);
         FXMLLoader fxmlLoader = new FXMLLoader(StartApplication.class.getResource("MainWindow.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("ООО НПК 'ТехноПром' - Система Оперативной Телеметрии и Комплексного Анализа");
+        stage.setTitle("ООО НПК 'ТехноПром' - Система Оперативной Телеметрии и Комплексного Анализа(М)");
         Image image=new Image(Objects.requireNonNull(StartApplication.class.getResourceAsStream("/about.png")));
         stage.getIcons().add(image);
         stage.setScene(scene);

@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.SwipeEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -247,8 +248,6 @@ public class MainWindow {
                 startTimerPoll();
                 break;
             case "О программе...":
-                //TODO Написать окно "О программе".
-                //ClassMessage.showMessage("О программе","","Меню не настроено", Alert.AlertType.INFORMATION);
                 WindowAbout.showWindow();
                 break;
         }
@@ -324,8 +323,13 @@ public class MainWindow {
             ClassDevice deviceCurrent=Devices.filtered(dev->dev.getId()==id).get(0);
             userControlChannels.setUserData(deviceCurrent);
             userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
+            userControlChannels.setOnSwipeDown(this::channels_SwipeDown);
             deviceName.setText(item.getValue().toString());
         }
+    }
+
+    private void channels_SwipeDown(SwipeEvent swipeEvent) {
+        WindowAbout.showWindow();
     }
 
     public TreeView<Pair<Integer,String>> getTreeView(){
