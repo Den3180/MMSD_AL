@@ -136,9 +136,9 @@ public class UserControlsFactory {
         });
         tableView.setOnMousePressed(e->{
             secondOfPressedMouse=LocalTime.now().getSecond();
-            posSelection=tableView.getSelectionModel().getSelectedIndex();
-        });
-
+            posSelection=indexScroll;
+        });  
+       
         tableView.setOnMouseReleased(e->{
             var offset=posSelection<indexScroll ? indexScroll - posSelection : posSelection - indexScroll;
             if(LocalTime.now().getSecond()-secondOfPressedMouse>=1 && offset < 3){
