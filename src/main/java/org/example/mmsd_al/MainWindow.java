@@ -322,14 +322,8 @@ public class MainWindow {
             var id=((Pair<Integer,String>)item.getValue()).getKey();
             ClassDevice deviceCurrent=Devices.filtered(dev->dev.getId()==id).get(0);
             userControlChannels.setUserData(deviceCurrent);
-            userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
-            userControlChannels.setOnSwipeDown(this::channels_SwipeDown);
             deviceName.setText(item.getValue().toString());
         }
-    }
-
-    private void channels_SwipeDown(SwipeEvent swipeEvent) {
-        WindowAbout.showWindow();
     }
 
     public TreeView<Pair<Integer,String>> getTreeView(){

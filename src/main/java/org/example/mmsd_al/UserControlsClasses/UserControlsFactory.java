@@ -7,8 +7,23 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
+import org.example.mmsd_al.MainWindow;
+import org.example.mmsd_al.StartApplication;
+
+import java.beans.EventHandler;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class UserControlsFactory {
+
+    /**
+     * Индекс смещения при скроллинге.
+     */
+    private static int indexScroll=0;
+    /**
+     * Предыдущая позиция мыши.
+     */
+    private static double prevY=0D;
 
     /**
      * Заголовки для таблицы устройств.
@@ -78,7 +93,7 @@ public class UserControlsFactory {
                 ((ClassChannel)el).set_CountNumber(++i);
             }
         }
-
+        //Создание строк в таблице с привязкой прослушки на свойство _LinkStateNameProperty.
         tableView.setRowFactory(userTable->{
             PseudoClass up = PseudoClass.getPseudoClass("up");
             PseudoClass down = PseudoClass.getPseudoClass("down");
@@ -112,8 +127,34 @@ public class UserControlsFactory {
         tableView.setContextMenu(ContextMenuFactory.ContextMenuDevice(tableView,obj));
         //Видимость кнопок меню.
         tableView.setTableMenuButtonVisible(true);
+        //Прокручивание списка мышью/пальцем.
+        tableView.setOnMouseDragged(e->{
+            isDragged=true;
+            int step=prevY<e.getY() ? 1 : -1;
+            indexScroll+=step;
+            tableView.scrollTo(indexScroll);
+            prevY=e.getY();
+        });
+        tableView.setOnMousePressed(e->{
+            secondOfPressedMouse=LocalTime.now().getSecond();
+            indexScroll=tableView.getSelectionModel().getSelectedIndex();
+        });
+
+        tableView.setOnMouseReleased(e->{
+            if(LocalTime.now().getSecond()-secondOfPressedMouse>1 && !isDragged){
+                ContextMenu contextMenu=tableView.getContextMenu();
+                contextMenu.show(tableView,e.getSceneX(),e.getSceneY());
+            }
+            isDragged=!isDragged;
+        });
+        //Обнуление идекса прокручивания и предыдущей координаты мыши по Y при содании новой таблицы.
+        indexScroll=0;
+        prevY=0;
         return tableView;
     }
+
+    private static int secondOfPressedMouse=0;
+    private static boolean isDragged=false;
 
     /**
      * Настройка колонок и ячеек таблицы.
