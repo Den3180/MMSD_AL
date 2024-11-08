@@ -185,7 +185,7 @@ public class MainWindow {
             case "Каналы данных...":
                 userControlChannels=UserControlsFactory.createTable(Channels,UserControlsFactory.HEADES_CHANNEL,
                         UserControlsFactory.VARIABLES_CHANNEL, new ClassChannel());
-                userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
+                //userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
                 sPane.getItems().set(1,userControlChannels);
                 break;
             case "База данных...":
@@ -291,7 +291,7 @@ public class MainWindow {
                         UserControlsFactory.VARIABLES_CHANNEL,
                         new ClassChannel());
                 userControlChannels.setUserData(device);
-                userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
+                //userControlChannels.setOnMouseClicked(this::channels_MouseClicked);
                 sPane.getItems().set(1,userControlChannels);
             }
         }

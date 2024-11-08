@@ -129,7 +129,6 @@ public class UserControlsFactory {
         tableView.setTableMenuButtonVisible(true);
         //Прокручивание списка мышью/пальцем.
         tableView.setOnMouseDragged(e->{
-            isDragged=true;
             int step=prevY<e.getY() ? 1 : -1;
             indexScroll+=step;
             tableView.scrollTo(indexScroll);
@@ -137,16 +136,25 @@ public class UserControlsFactory {
         });
         tableView.setOnMousePressed(e->{
             secondOfPressedMouse=LocalTime.now().getSecond();
-            indexScroll=tableView.getSelectionModel().getSelectedIndex();
+            posSelection=tableView.getSelectionModel().getSelectedIndex();
         });
 
         tableView.setOnMouseReleased(e->{
-            if(LocalTime.now().getSecond()-secondOfPressedMouse>1 && !isDragged){
+            var offset=posSelection<indexScroll ? indexScroll - posSelection : posSelection - indexScroll;
+            if(LocalTime.now().getSecond()-secondOfPressedMouse>=1 && offset < 3){
                 ContextMenu contextMenu=tableView.getContextMenu();
                 contextMenu.show(tableView,e.getSceneX(),e.getSceneY());
             }
-            isDragged=!isDragged;
         });
+
+        tableView.setOnMouseClicked(e->{
+//            if(e.getClickCount()==2){
+//                ContextMenu contextMenu=tableView.getContextMenu();
+//                contextMenu.show(tableView,e.getSceneX(),e.getSceneY());
+//            }
+        });
+
+
         //Обнуление идекса прокручивания и предыдущей координаты мыши по Y при содании новой таблицы.
         indexScroll=0;
         prevY=0;
@@ -154,7 +162,7 @@ public class UserControlsFactory {
     }
 
     private static int secondOfPressedMouse=0;
-    private static boolean isDragged=false;
+    private static int posSelection=0;
 
     /**
      * Настройка колонок и ячеек таблицы.
