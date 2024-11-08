@@ -7,23 +7,20 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
-import org.example.mmsd_al.MainWindow;
-import org.example.mmsd_al.StartApplication;
 
-import java.beans.EventHandler;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 public class UserControlsFactory {
 
-    /**
-     * Индекс смещения при скроллинге.
-     */
+    
+    //Индекс смещения при скроллинге.     
     private static int indexScroll=0;
-    /**
-     * Предыдущая позиция мыши.
-     */
+    //Предыдущая позиция мыши.    
     private static double prevY=0D;
+    //Длительность нажатия кнопки/пальцем. 
+    private static int secondsOfPressedMouse =0;
+    //
+    private static int indexScrollPrev =0;
 
     /**
      * Заголовки для таблицы устройств.
@@ -60,6 +57,7 @@ public class UserControlsFactory {
             "_Format", "_StrBaseValue", "_Koef","accuracyStr","minStr","maxStr",
             "valueStr","_StrDTAct"//,"_Archive","_Ext"
     };
+
 
     /**
      * Создать таблицу.
@@ -135,34 +133,24 @@ public class UserControlsFactory {
             prevY=e.getY();
         });
         tableView.setOnMousePressed(e->{
-            secondOfPressedMouse=LocalTime.now().getSecond();
-            posSelection=indexScroll;
+            secondsOfPressedMouse =LocalTime.now().getSecond();
+            indexScrollPrev =indexScroll;
         });  
        
         tableView.setOnMouseReleased(e->{
-            var offset=posSelection<indexScroll ? indexScroll - posSelection : posSelection - indexScroll;
-            if(LocalTime.now().getSecond()-secondOfPressedMouse>=1 && offset < 3){
+            var offset= indexScrollPrev <indexScroll ? indexScroll - indexScrollPrev : indexScrollPrev - indexScroll;
+            if(LocalTime.now().getSecond()- secondsOfPressedMouse >=1 && offset < 3){
                 ContextMenu contextMenu=tableView.getContextMenu();
                 contextMenu.show(tableView,e.getSceneX(),e.getSceneY());
             }
         });
-
-        tableView.setOnMouseClicked(e->{
-//            if(e.getClickCount()==2){
-//                ContextMenu contextMenu=tableView.getContextMenu();
-//                contextMenu.show(tableView,e.getSceneX(),e.getSceneY());
-//            }
-        });
-
-
+        
         //Обнуление идекса прокручивания и предыдущей координаты мыши по Y при содании новой таблицы.
         indexScroll=0;
+        indexScrollPrev =0;
         prevY=0;
         return tableView;
     }
-
-    private static int secondOfPressedMouse=0;
-    private static int posSelection=0;
 
     /**
      * Настройка колонок и ячеек таблицы.
