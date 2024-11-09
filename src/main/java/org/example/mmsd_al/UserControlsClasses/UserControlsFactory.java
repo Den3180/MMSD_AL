@@ -1,5 +1,6 @@
 package org.example.mmsd_al.UserControlsClasses;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
@@ -95,6 +96,7 @@ public class UserControlsFactory {
         tableView.setRowFactory(userTable->{
             PseudoClass up = PseudoClass.getPseudoClass("up");
             PseudoClass down = PseudoClass.getPseudoClass("down");
+            //PseudoClass def = PseudoClass.getPseudoClass("def");
             TableRow<T> row = new TableRow<>();
             if(obj instanceof ClassDevice){
                 ChangeListener<String> changeListener = (obs, oldPrice, newPrice) -> {
@@ -103,7 +105,8 @@ public class UserControlsFactory {
                     row.pseudoClassStateChanged(down, newPrice.equals("Нет связи")
                     );
                 };
-                row.itemProperty().addListener((obs, previousUser, currentUser) -> {
+                //Настройка прослушивания для строки. Используется только при построении таблицы.
+                row.itemProperty().addListener((device, previousUser, currentUser) -> {
 
                     if (previousUser != null) {
                         ((ClassDevice)previousUser)._LinkStateNameProperty().removeListener(changeListener);
@@ -119,26 +122,53 @@ public class UserControlsFactory {
                     }
                 });
             }
+            if(obj instanceof ClassChannel){
+                ChangeListener<String> changeListener = (channel, oldPrice, newPrice) -> {
+
+                    row.pseudoClassStateChanged(up, newPrice.equals("2"));
+                    row.pseudoClassStateChanged(down, newPrice.equals("1"));
+                    //row.pseudoClassStateChanged(def, newPrice.equals("0"));
+                };
+
+                row.itemProperty().addListener((device, previousUser, currentUser) -> {
+
+                    if (previousUser != null) {
+                        ((ClassChannel)previousUser).alertFlagProperty().removeListener(changeListener);
+                    }
+                    if (currentUser != null) {
+                        ((ClassChannel)currentUser).alertFlagProperty().addListener(changeListener);
+                        row.pseudoClassStateChanged(up, ((ClassChannel)currentUser).alertFlagProperty().get().equals("2"));
+                        row.pseudoClassStateChanged(down, ((ClassChannel)currentUser).alertFlagProperty().get().equals("1"));
+                        //row.pseudoClassStateChanged(def, ((ClassChannel)currentUser).alertFlagProperty().get().equals("0"));
+                    }
+                    else {
+                        row.pseudoClassStateChanged(up, false);
+                        row.pseudoClassStateChanged(down, false);
+                    }
+                });
+            }
             return row;
         });
         //Настройка контекстного меню.
         tableView.setContextMenu(ContextMenuFactory.ContextMenuDevice(tableView,obj));
         //Видимость кнопок меню.
         tableView.setTableMenuButtonVisible(true);
-        //Прокручивание списка мышью/пальцем.
+        //Прокручивание списка мышью/пальцем. Шаг прокручивания 1.
         tableView.setOnMouseDragged(e->{
             int step=prevY<e.getY() ? 1 : -1;
             indexScroll+=step;
             tableView.scrollTo(indexScroll);
             prevY=e.getY();
         });
+        //Нажатие кнопки мыши.
         tableView.setOnMousePressed(e->{
             secondsOfPressedMouse =LocalTime.now().getSecond();
             indexScrollPrev =indexScroll;
         });  
-       
+       //Отпускание кнопки мыши.
         tableView.setOnMouseReleased(e->{
             var offset= indexScrollPrev <indexScroll ? indexScroll - indexScrollPrev : indexScrollPrev - indexScroll;
+            //Отсекаем случайные подвижки скрола при открытии контекстного меню.
             if(LocalTime.now().getSecond()- secondsOfPressedMouse >=1 && offset < 3){
                 ContextMenu contextMenu=tableView.getContextMenu();
                 contextMenu.show(tableView,e.getSceneX(),e.getSceneY());

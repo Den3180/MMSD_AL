@@ -19,14 +19,23 @@ import java.util.Comparator;
 public class ClassChannel {
 
     private int id;
+    //Название канала.
     private SimpleStringProperty _Name;
+    //Дата изменения значения канала.
     private LocalDateTime _DTAct;
+    //Адрес канала.
     private SimpleIntegerProperty _Address;
+    //Строка хекс для адреса канала.
     private SimpleStringProperty _AddressHex;
+    //Формат данных канала.
     private EnumFormat _Format;
+    //Коэффициент.
     private SimpleFloatProperty _Koef;
+    //Значение канала.
     private SimpleDoubleProperty _Value;
+    //Допустимый максимум.
     private SimpleDoubleProperty _Max;
+    //Допустимый минимум.
     private SimpleDoubleProperty _Min;
     private EnumState _State;
     private EnumTypeRegistry _TypeRegistry;
@@ -47,11 +56,25 @@ public class ClassChannel {
     private SimpleStringProperty maxStr;
     private SimpleStringProperty accuracyStr;
     private SimpleStringProperty valueStr;
+    private SimpleStringProperty alertFlag;
 
     private  boolean isParamControl;
 
 
     //<editor-fold desc="Setters and Getters">
+
+
+    public String getAlertFlag() {
+        return alertFlag.get();
+    }
+
+    public SimpleStringProperty alertFlagProperty() {
+        return alertFlag;
+    }
+
+    public void setAlertFlag(String alertFlag) {
+        this.alertFlag.set(alertFlag);
+    }
 
     public String get_Name() {
         return _Name.get();
@@ -183,11 +206,17 @@ public class ClassChannel {
             decimalFormat.applyPattern("#.#####");
             valueStr.set(String.valueOf(decimalFormat.format(_Value.get())));
         }
+        if(isParamControl){
+            alertParamSet(_Value.get());
+        }
+//        else {
+//            alertFlag.set("0");
+//        }
 
         _DTAct=LocalDateTime.now();
         _StrDTAct.set(_DTAct.format(DateTimeFormatter. ofPattern("dd.MM.yyyy HH:mm:ss")));
     }
-
+    
     public int get_Accuracy() {
         return _Accuracy.get();
     }
@@ -211,7 +240,7 @@ public class ClassChannel {
 
     public void set_Max(double _Max) {
         this._Max.set(_Max);
-        setMaxStr(((Double)_Max).isNaN() || !this.isParamControl ? "" : String.valueOf(_Max));
+        setMaxStr(((Double)_Max).isNaN() || !this.isParamControl ? "" : String.valueOf(_Max));        
     }
 
     public double get_Min() {
@@ -224,7 +253,7 @@ public class ClassChannel {
 
     public void set_Min(double _Min) {
         this._Min.set(_Min);
-        setMinStr(((Double)_Min).isNaN() || !this.isParamControl ? "" : String.valueOf(_Min));
+        setMinStr(((Double)_Min).isNaN() || !this.isParamControl ? "" : String.valueOf(_Min));        
     }
 
     public void set_CountNumber(int _CountNumber) {
@@ -421,8 +450,8 @@ public class ClassChannel {
         isParamControl = paramControl;
     }
 
-//</editor-fold>
 
+//</editor-fold>
     public ClassChannel(){
         id=0;
         _Name= new SimpleStringProperty("Канал 1");
@@ -449,12 +478,13 @@ public class ClassChannel {
         maxStr=new SimpleStringProperty();
         accuracyStr=new SimpleStringProperty();
         valueStr=new SimpleStringProperty();
+        alertFlag=new SimpleStringProperty("0");
 
         isParamControl=false;
     }
 
-    //<editor-fold desc="Методы">
 
+    //<editor-fold desc="Методы">
     /**
      * Заполнение значений каналов при первой выгрузки из базы данных.
      * @param saveValue значение из БД
@@ -474,6 +504,15 @@ public class ClassChannel {
             decimalFormat.applyPattern("#.#####");
             valueStr.set(String.valueOf(decimalFormat.format(_Value.get())));
         }
+        if(isParamControl) alertParamSet(saveValue);        
+    }
+
+    private void alertParamSet(double value){
+        if(_Max.get()<value || value<_Min.get()) {
+            alertFlag.set("1");
+        }       
+        else
+            alertFlag.set("2");
     }
 
     public void sendValue(double value){
@@ -512,6 +551,7 @@ public class ClassChannel {
         this.set_Archive(ch.is_Archive());
     }
 
+
     //</editor-fold>
 
     //<editor-fold desc="Перечисления">
@@ -524,7 +564,8 @@ public class ClassChannel {
         DiscreteInput,
         CoilOutput,
         InputRegistry,
-        HoldingRegistry
+        HoldingRegistry;
+
     }
 
     /** <summary>
@@ -536,7 +577,8 @@ public class ClassChannel {
         SINT,
         Float,
         swFloat,
-        UInt32
+        UInt32;
+
     }
 
     /**
@@ -547,7 +589,8 @@ public class ClassChannel {
         Unknown,
         Norma,
         Over,
-        Less
+        Less;
+    
     }
     //</editor-fold>
 }

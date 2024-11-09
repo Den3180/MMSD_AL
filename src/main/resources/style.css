@@ -6,3 +6,7 @@
 .table-row-cell:down {
     -fx-background-color: #fa8072;
 }
+
+.table-row-cell:def {
+    -fx-background-color: transparent;
+}
