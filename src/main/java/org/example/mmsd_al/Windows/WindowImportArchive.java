@@ -41,7 +41,10 @@ public class WindowImportArchive  {
     private int endPos;
     private int deviceAddress;
     private ClassModbus modbus;
-    ClassDevice device;
+    private ClassDevice device;
+    private int [] dataNoteCount=null;
+
+    private SimpleIntegerProperty intprop=new SimpleIntegerProperty(0);
 
     @FXML
     public Button apply;
@@ -55,28 +58,42 @@ public class WindowImportArchive  {
     private TextField startRecords;
 
 
+
     public WindowImportArchive(ClassModbus modbus){
+        //Ссылка на существующий объект модбас.
         this.modbus = modbus;
+        //Список устройств, которые имеют архив.
         deviceWithArchive= FXCollections.observableArrayList(MainWindow.Devices.filtered(
                 dev->dev.get_Model().equals(ClassDevice.EnumModel.BKM_5)));
+        //Создание объекта для работы с архивом(скачивание, передача и т.д.)
         deviceArchive = new ClassDeviceArchive(this.modbus);
+        //Начальное значение конечной отметки.
         endPos=0;
     }
 
-    int [] dataNoteCount=null;
 
     @FXML
     public void initialize(){
+        //Связываем список устройств с комбобоксом.
         devArchiveComboBox.setItems(deviceWithArchive);
+        //Стартовый элемент нулевой.
         devArchiveComboBox.getSelectionModel().select(0);
+        //Ссылку на выбранное устройство делаем.
         device=(ClassDevice) devArchiveComboBox.getSelectionModel().getSelectedItem();
+        //Адрес устройства фиксируем.
         deviceAddress=device.get_Address();
+        //Получаем сведения о количестве записей в архиве.
         int [] dataNoteCount=deviceArchive.GetCountNoteArchive(deviceAddress,addressRegAO);
+        //Заполняем поле доступных записей.
         availableRecords.setText(String.valueOf(dataNoteCount[0]));
+        //Если поле доступных данных заполнено.
         if(availableRecords.getText()!="нет данных"){
+            //Поле для указание количества записей для скачивания.
             countLoadRecords.setText("0");
+            //Поле для указания ноера начальной записи.
             startRecords.setText("0");
         }
+        //Если количество доступных записей 0, то поля делаются не доступны.
         if(Objects.equals(availableRecords.getText(), "0")) {
             apply.setDisable(true);
             countLoadRecords.setDisable(true);
@@ -94,9 +111,11 @@ public class WindowImportArchive  {
         } catch (IOException e) {
             return false;
         }
+        //Настройка действий при закрытии окна.
         stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
+                //Установка настроек соединения.
                 var currentPort=MainWindow.settings.getPortModbus();
                 modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
             }
@@ -112,33 +131,41 @@ public class WindowImportArchive  {
 
     @FXML
     public void click_Button(ActionEvent actionEvent) {
+        //Получить источник события.
         Button button=(Button) actionEvent.getSource();
+        //Получить главное окно.
         Window window= (button.getScene()).getWindow();
+        //Закрыть главное окно.
         ((Stage)window).close();
+        //Если кнопка, которая нажата это не кнопка отмены.
         if(!button.isCancelButton()){
+            //Получения данных архива устройства в отдельном потоке.
             Thread thread=new Thread(this::getDeviceArchive);
+            //Делаем поток демоном.
             thread.setDaemon(true);
+            //Запускаем поток.
             thread.start();
         }
         else {
+            //Получаем номер текущего порта.
             var currentPort=MainWindow.settings.getPortModbus();
+            //Устанавливаем настройки соединения.
             modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
         }
     }
 
-
-
-     private SimpleIntegerProperty intprop=new SimpleIntegerProperty(0);
-
+    /**
+     * Получить данные архива устройства.
+     */
     private void getDeviceArchive(){
 
         //TODO Добавить блок try-catch. Выход за границы массива происходит.
         int startPos= Integer.parseInt(startRecords.getText());
         numRecords=Integer.valueOf(countLoadRecords.getText());
         int endpos=startPos+numRecords;
+        //Создание и запуск окна прогресса загрузки архива.
         WindowProcess30 windowProcess30=new WindowProcess30(this);
         Platform.runLater(()->windowProcess30.showWindow(windowProcess30));
-
         AtomicInteger finalStartPos = new AtomicInteger();
         while(startPos<endpos){
             deviceArchive.readArchive_30(deviceAddress,startPos);

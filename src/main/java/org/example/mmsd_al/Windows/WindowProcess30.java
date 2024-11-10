@@ -23,6 +23,7 @@ public class WindowProcess30 {
     @FXML
     private Stage stage;
 
+    //Величина прогрессбара.
     private final double valueProgressBar;
 
     private WindowImportArchive sp;
@@ -31,17 +32,24 @@ public class WindowProcess30 {
 
 
     public WindowProcess30(WindowImportArchive sp){
+        //Ссылка на родительское окно. 
         this.sp=sp;
+        //Установка величины прогрессбара.
         valueProgressBar= (double) 1 /(this.sp.getNumRecords()*2);
     }
 
+
+    /**
+     * Получить текущее окно.
+     * @return 
+     */
     public Stage getStage() {
         return stage;
     }
 
     @FXML
     public void initialize(){
-
+        // Устанавливаем прослушку на изменение свойства
       sp.intpropProperty().addListener((obj,oval,nval)->{
           progressText +=Math.round(valueProgressBar*100);
           progress+= valueProgressBar;
@@ -49,7 +57,7 @@ public class WindowProcess30 {
               headerLab.setText("Загрузка архива...");
           }
           if(progress<1){
-              lab.setText(String.valueOf((int) progressText));
+              lab.setText(String.valueOf(Math.min((int) progressText, 100)));
               pBar.setProgress(progress);
           }
           else{

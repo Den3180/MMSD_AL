@@ -146,6 +146,11 @@ public class ClassSettings implements Serializable {
         this.password = password;
     }
 
+
+    /**
+     * Получить номер текущего порта.
+     * @return 
+     */
     public int getPortModbus() {
         return portModbus;
     }

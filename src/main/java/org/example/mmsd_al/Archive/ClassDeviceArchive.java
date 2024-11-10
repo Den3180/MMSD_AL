@@ -285,7 +285,7 @@ public class ClassDeviceArchive {
 
     /**
      * Загрузить архив из файла.
-     * @return
+     * @return массив данных.
      */
     public static ArrayList<Integer[]> loadArchive(){
         ArrayList<Integer[]> archive;
@@ -303,6 +303,14 @@ public class ClassDeviceArchive {
         }
     }
 
+
+    /**
+     * Отправка архива на СМСД.
+     * @param resTotal массив данных
+     * @param ip адрес СМСД
+     * @param port порт СМСД
+     * @return
+     */
     public static boolean sendArchiveDevice(ArrayList<Integer[]> resTotal, String ip, int port){
 
         try {
@@ -319,7 +327,6 @@ public class ClassDeviceArchive {
         } catch (Exception e) {
             System.out.println(e.getMessage() + " "+ "Method: sendArchiveDevice");
         }
-
         return true;
     }
 }

@@ -39,6 +39,10 @@ public class ClassModbus {
     //<editor-fold desc="Setters/Getters">
 
 
+    /**
+     * Параметры настройки последовательного порта.
+     * @return 
+     */
     public SerialParameters getPortParametres() {
         return portParametres;
     }

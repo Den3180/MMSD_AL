@@ -15,6 +15,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.example.mmsd_al.Archive.ClassDeviceArchive;
 import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareAddress;
 import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareTypeReg;
@@ -298,7 +299,7 @@ public class MainWindow {
     }
 
     private void channels_MouseClicked(MouseEvent e){
-        int i=0;
+        //XSSFWorkbook workbook = new XSSFWorkbook();
     }
 
     /**

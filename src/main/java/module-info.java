@@ -6,7 +6,6 @@ open module org.example.mmsd_al {
     requires com.dlsc.formsfx;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
-    requires java.desktop;
     requires com.fasterxml.jackson.dataformat.xml;
     requires com.fasterxml.jackson.databind;
     requires java.sql;
@@ -19,6 +18,9 @@ open module org.example.mmsd_al {
     requires javafx.base;
     requires jdk.compiler;
     requires transitive org.xerial.sqlitejdbc;
+    requires org.apache.poi.ooxml;
+
+    requires java.desktop;
 
 
     exports org.example.mmsd_al;
