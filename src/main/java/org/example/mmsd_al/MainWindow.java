@@ -248,6 +248,13 @@ public class MainWindow {
                 WindowImportArchive.showWindow(modbus);
                 startTimerPoll();
                 break;
+            case "Импорт в Excel...":
+                ArrayList<Integer[]> arch= ClassDeviceArchive.loadArchive();
+                if(arch==null || arch.isEmpty()){
+                    ClassMessage.showMessage("Архив","","Нет доступного архива", Alert.AlertType.ERROR);
+                    break;
+                }
+                break;
             case "О программе...":
                 WindowAbout.showWindow();
                 break;

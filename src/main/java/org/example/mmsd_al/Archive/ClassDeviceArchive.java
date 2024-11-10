@@ -1,9 +1,5 @@
 package org.example.mmsd_al.Archive;
 
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.intelligt.modbus.jlibmodbus.exception.ModbusIOException;
-import com.intelligt.modbus.jlibmodbus.exception.ModbusNumberException;
-import com.intelligt.modbus.jlibmodbus.exception.ModbusProtocolException;
 import com.intelligt.modbus.jlibmodbus.master.ModbusMaster;
 import com.intelligt.modbus.jlibmodbus.utils.CRC16;
 import com.intelligt.modbus.jlibmodbus.utils.DataUtils;
@@ -15,7 +11,6 @@ import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
 
 import java.io.*;
-import java.net.Inet4Address;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -267,11 +262,14 @@ public class ClassDeviceArchive {
 
     /**
      * Сохранить архив в файл.
-     * @param resTotal
-     * @return
+     * @param resTotal буфер хранения архива.
+     * @return boolean
      */
     private boolean saveArchive(ArrayList<Integer[]> resTotal){
-        try(FileOutputStream fout=new FileOutputStream("arch_dev.dat")) {
+        File dirArch=new File("Archive");
+        if(!dirArch.exists()) dirArch.mkdir();
+        String pathFile= dirArch.getPath()+File.separator+"arch_dev.ach";
+        try(FileOutputStream fout=new FileOutputStream(pathFile)) {
             try(ObjectOutputStream out=new ObjectOutputStream(fout)){
                 out.writeObject(resTotal);
                 return true;
@@ -289,17 +287,23 @@ public class ClassDeviceArchive {
      */
     public static ArrayList<Integer[]> loadArchive(){
         ArrayList<Integer[]> archive;
-        try(FileInputStream fin=new FileInputStream(new File("arch_dev.dat"))){
+        File dirArch=new File("Archive");
+        //Если каталог не создан и нет архивов.
+        if(!dirArch.exists()) {
+            return  null;
+        }
+        String pathFile= dirArch.getPath()+File.separator+"arch_dev.ach";
+        try(FileInputStream fin=new FileInputStream(pathFile)){
             try (ObjectInputStream oin = new ObjectInputStream(fin)){
                 archive=(ArrayList<Integer[]>)oin.readObject();
                 return archive;
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                return null;
             }
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            return null;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
