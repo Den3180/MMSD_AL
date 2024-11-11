@@ -6,17 +6,22 @@ import com.intelligt.modbus.jlibmodbus.utils.DataUtils;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import jssc.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
+import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.Classes.ClassModbus;
+import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static java.util.stream.StreamSupport.stream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class ClassDeviceArchive {
     private int [] dataArr;
@@ -40,6 +45,7 @@ public class ClassDeviceArchive {
         resTotal=new ArrayList<>();
 
     }
+
     public ArrayList<int []> getNote_30(){
         return  note_30;
     }
@@ -333,4 +339,125 @@ public class ClassDeviceArchive {
         }
         return true;
     }
+
+
+    /**
+     * Сохранить архив в Excel.
+     *
+     * @param arch
+     * @param device
+     */
+    public static void SaveToExcel(ArrayList<Integer[]> arch, ClassDevice device) {
+
+        //Выбрать тип каналов устройства InputRegistry.
+        var channels=device.getChannels().stream().filter(ch->ch.get_TypeRegistry()== ClassChannel.EnumTypeRegistry.InputRegistry).toArray();
+        try (var workbook = new XSSFWorkbook()) {
+            // Создаем бланк Excel листа
+            XSSFSheet sheet = workbook.createSheet(device.toString());
+            //sheet.setDefaultColumnWidth(300);
+            // Создаем пустую карту с теми типами данных что там будут.
+            Map<Integer, Object[]> data = new TreeMap<Integer, Object[]>();
+            // Делаем заголовочную строку.
+            int countLine=2;
+            data.put(1, new Object[]{"Параметр", "Устройство", "Значение", "Дата"});
+            for (var note : arch){
+                var centuryNow = (LocalDate.now().getYear()/ 100) * 100;
+                var fullYear=centuryNow+note[58];
+                var month=note[59];
+                var day=note[60];
+                var hour=note[61];
+                var minute=note[62];
+                var second=note[63];
+                LocalDateTime date=LocalDateTime.of(fullYear,month,day,hour,minute,second);
+                String dateStr=date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+                int countParam=0;
+                for(int i=39;i<note.length;i++){
+                    data.put(countLine++,
+                            new Object[]{
+                                    ((ClassChannel)channels[countParam++]).get_Name(), device.toString(), note[i],dateStr});
+                }
+            }
+
+            // Iterating over data and writing it to sheet
+            Set<Integer> keyset = data.keySet();
+
+            XSSFCellStyle style=workbook.createCellStyle();
+            style.setAlignment(HorizontalAlignment.CENTER);
+            Font fnt= workbook.createFont();
+            fnt.setFontName("Courier New");
+            fnt.setBold(true);
+            fnt.setFontHeight((short)300);
+            fnt.setColor(HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
+            style.setFont(fnt);
+
+
+
+//            style.setFillBackgroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
+//            style.setFillPattern(FillPatternType.DIAMONDS);
+
+            int rownum = 0;
+            for (Integer key : keyset) {
+
+                // Creating a new row in the sheet
+                Row row = sheet.createRow(rownum);
+                Object[] objArr = data.get(key);
+
+                int cellnum = 0;
+                for (Object obj : objArr) {
+
+                    // This line creates a cell in the next
+                    //  column of that row
+                    Cell cell = row.createCell(cellnum++);
+                    if(rownum==0) {
+                         cell.setCellStyle(style);
+                         }
+
+                    if (obj instanceof String)
+                        cell.setCellValue((String) obj);
+
+                    else if (obj instanceof Integer)
+                        cell.setCellValue((Integer) obj);
+                }
+                if(rownum==1) {
+                    String cellValue = row.getCell(0).getStringCellValue();
+                    sheet.setColumnWidth(0, 20000);
+
+                    sheet.setColumnWidth(1, 7000);
+                    sheet.setColumnWidth(2, 7000);
+                    sheet.setColumnWidth(3, 7000);
+                }
+                rownum++;
+            }
+
+            // Try block to check for exceptions
+            try {
+
+                // Writing the workbook
+                FileOutputStream out = new FileOutputStream(
+                        new File("archive_excel.xlsx"));
+                workbook.write(out);
+
+                // Closing file output connections
+                out.close();
+
+                // Console message for successful execution of
+                // program
+                System.out.println(
+                        "gfgcontribute.xlsx written successfully on disk.");
+            }
+
+            // Catch block to handle exceptions
+            catch (Exception e) {
+
+                // Display exceptions along with line number
+                // using printStackTrace() method
+                e.printStackTrace();
+            }
+
+    }
+        catch (Exception exception){
+            System.out.println(exception.getMessage());
+        }
+    }
 }
+

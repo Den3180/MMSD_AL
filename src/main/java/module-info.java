@@ -18,9 +18,11 @@ open module org.example.mmsd_al {
     requires javafx.base;
     requires jdk.compiler;
     requires transitive org.xerial.sqlitejdbc;
-    requires org.apache.poi.ooxml;
 
     requires java.desktop;
+    requires poi.ooxml;
+    requires poi;
+
 
 
     exports org.example.mmsd_al;

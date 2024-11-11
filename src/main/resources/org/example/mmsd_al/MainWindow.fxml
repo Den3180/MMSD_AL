@@ -66,7 +66,7 @@
                <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Создать БД..." />
                <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Отправить архив..." />
                <MenuItem fx:id="loadArchivBtnMenu" mnemonicParsing="false" onAction="#menuItemClick" text="Загрузить архив..." />
-               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Импорт в Excel..." />
+               <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="Импорт архива в Excel..." />
            </Menu>
            <Menu mnemonicParsing="false" text="Справка">
                <MenuItem mnemonicParsing="false" onAction="#menuItemClick" text="О программе..." />

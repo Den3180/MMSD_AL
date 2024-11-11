@@ -6,16 +6,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.SwipeEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.example.mmsd_al.Archive.ClassDeviceArchive;
 import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareAddress;
 import org.example.mmsd_al.ServiceClasses.Comparators.ChannelCompareTypeReg;
@@ -27,19 +23,12 @@ import org.example.mmsd_al.ServiceClasses.ClassMessage;
 import org.example.mmsd_al.Settings.ClassSettings;
 import org.example.mmsd_al.UserControlsClasses.TreeViewFactory;
 import org.example.mmsd_al.UserControlsClasses.UserControlsFactory;
-import org.example.mmsd_al.Windows.WindoWConfig;
-import org.example.mmsd_al.Windows.WindowAbout;
-import org.example.mmsd_al.Windows.WindowExportArchive;
-import org.example.mmsd_al.Windows.WindowImportArchive;
+import org.example.mmsd_al.Windows.*;
 import org.jetbrains.annotations.NotNull;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -248,12 +237,15 @@ public class MainWindow {
                 WindowImportArchive.showWindow(modbus);
                 startTimerPoll();
                 break;
-            case "Импорт в Excel...":
+            case "Импорт архива в Excel...":
                 ArrayList<Integer[]> arch= ClassDeviceArchive.loadArchive();
                 if(arch==null || arch.isEmpty()){
                     ClassMessage.showMessage("Архив","","Нет доступного архива", Alert.AlertType.ERROR);
                     break;
                 }
+                ClassDevice device = (ClassDevice) WindowChooseDevice.showWindow();
+                if(device==null) break;
+                ClassDeviceArchive.SaveToExcel(arch,device);
                 break;
             case "О программе...":
                 WindowAbout.showWindow();
