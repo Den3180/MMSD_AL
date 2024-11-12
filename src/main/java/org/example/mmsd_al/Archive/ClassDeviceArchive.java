@@ -9,7 +9,6 @@ import jssc.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
-import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.Classes.ClassModbus;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
@@ -33,8 +32,6 @@ public class ClassDeviceArchive {
     private static ArrayList<Integer []> resTotal;
     private SerialPort serialPort;
     public final static Object locker=new Object();
-
-
 
     public ClassDeviceArchive(ClassModbus modbus){
         this.master= modbus.getModbusMaster();
@@ -204,7 +201,7 @@ public class ClassDeviceArchive {
     /**
      * Обработка полученных блоков архива.
      */
-    public void processArchive(){
+    public void processArchive(ClassDevice device){
 
         List<Integer> res=new ArrayList<Integer>();
         int countNote_31 = 0;
@@ -257,12 +254,9 @@ public class ClassDeviceArchive {
             }
         }
         if(saveArchive(resTotal)){
-            Platform.runLater(()->
-            ClassMessage.showMessage(
-                    "Архив",
-                    "Сохранение архива",
-                    "Архив сохранен",
-                    Alert.AlertType.INFORMATION));
+            Platform.runLater(()->ClassMessage.showMessage("Архив","Сохранение архива","Архив сохранен",
+                                                            Alert.AlertType.INFORMATION));
+            SaveToExcel(resTotal,device);
         }
     }
 
@@ -312,7 +306,6 @@ public class ClassDeviceArchive {
             return null;
         }
     }
-
 
     /**
      * Отправка архива на СМСД.
@@ -381,6 +374,7 @@ public class ClassDeviceArchive {
             // Iterating over data and writing it to sheet
             Set<Integer> keyset = data.keySet();
 
+            //Настройка стилей для первой строки.
             XSSFCellStyle style=workbook.createCellStyle();
             style.setAlignment(HorizontalAlignment.CENTER);
             Font fnt= workbook.createFont();
@@ -389,11 +383,6 @@ public class ClassDeviceArchive {
             fnt.setFontHeight((short)300);
             fnt.setColor(HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
             style.setFont(fnt);
-
-
-
-//            style.setFillBackgroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
-//            style.setFillPattern(FillPatternType.DIAMONDS);
 
             int rownum = 0;
             for (Integer key : keyset) {
@@ -412,16 +401,19 @@ public class ClassDeviceArchive {
                          cell.setCellStyle(style);
                          }
 
-                    if (obj instanceof String)
+                    if (obj instanceof String){
                         cell.setCellValue((String) obj);
-
-                    else if (obj instanceof Integer)
+                    }
+                    else if (obj instanceof Integer){
+                        var st=workbook.createCellStyle();
+                        st.setAlignment(HorizontalAlignment.CENTER);
+                        cell.setCellStyle(st);
                         cell.setCellValue((Integer) obj);
+                    }
                 }
                 if(rownum==1) {
                     String cellValue = row.getCell(0).getStringCellValue();
                     sheet.setColumnWidth(0, 20000);
-
                     sheet.setColumnWidth(1, 7000);
                     sheet.setColumnWidth(2, 7000);
                     sheet.setColumnWidth(3, 7000);
@@ -431,32 +423,41 @@ public class ClassDeviceArchive {
 
             // Try block to check for exceptions
             try {
-
-                // Writing the workbook
+                File dirArch=new File("Архивы");
+                if(!dirArch.exists()) dirArch.mkdir();
+                //Полуить заводской номер устройства.
+                var devPlantNumber=data.get(5)[2];
+                //Путь к файлу архива.
+                String path=device+"_"+device.get_Address()+"_"+devPlantNumber+".xlsx";
+                //Объект информации о файле.
+                File fileArch=new File(dirArch.getPath()+File.separator+path);
+                int i=0;
+                //Проверка на совпадение имени файла и генерации уникального, если есть совпадение.
+                while (fileArch.exists()){
+                    path=device+"_"+device.get_Address()+"_"+devPlantNumber+"("+i+")"+".xlsx";
+                    fileArch=new File(dirArch.getPath()+File.separator+path);
+                    i++;
+                }
+                //Создание потока и сохранение файла.
                 FileOutputStream out = new FileOutputStream(
-                        new File("archive_excel.xlsx"));
+                        new File(dirArch.getPath()+File.separator+path));
                 workbook.write(out);
-
-                // Closing file output connections
+                // Закрытие потока.
                 out.close();
-
-                // Console message for successful execution of
-                // program
-                System.out.println(
-                        "gfgcontribute.xlsx written successfully on disk.");
+                Platform.runLater(()->
+                        ClassMessage.showMessage(
+                                "Архив",
+                                "Импорт в Excel",
+                                "Импорт архива завершен!",
+                                Alert.AlertType.INFORMATION));
             }
-
-            // Catch block to handle exceptions
             catch (Exception e) {
-
-                // Display exceptions along with line number
-                // using printStackTrace() method
                 e.printStackTrace();
+                ClassMessage.showMessage("Архив","","Ошибка импорта архива!", Alert.AlertType.ERROR);
             }
-
-    }
+        }
         catch (Exception exception){
-            System.out.println(exception.getMessage());
+            ClassMessage.showMessage("Архив","","Ошибка импорта архива!", Alert.AlertType.ERROR);
         }
     }
 }

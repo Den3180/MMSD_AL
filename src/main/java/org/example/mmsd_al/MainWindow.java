@@ -227,7 +227,7 @@ public class MainWindow {
             case "Отправить архив...":
                 ArrayList<Integer[]> archive= ClassDeviceArchive.loadArchive();
                 if(archive==null || archive.isEmpty()){
-                    ClassMessage.showMessage("Архив","","Нет доступного архива", Alert.AlertType.ERROR);
+                    ClassMessage.showMessage("Архив","","Нет доступного архива!", Alert.AlertType.ERROR);
                     break;
                 }
                 WindowExportArchive.showWindow(archive);
@@ -240,7 +240,7 @@ public class MainWindow {
             case "Импорт архива в Excel...":
                 ArrayList<Integer[]> arch= ClassDeviceArchive.loadArchive();
                 if(arch==null || arch.isEmpty()){
-                    ClassMessage.showMessage("Архив","","Нет доступного архива", Alert.AlertType.ERROR);
+                    ClassMessage.showMessage("Архив","","Нет доступного архива!", Alert.AlertType.ERROR);
                     break;
                 }
                 ClassDevice device = (ClassDevice) WindowChooseDevice.showWindow();

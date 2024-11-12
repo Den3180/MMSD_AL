@@ -194,7 +194,7 @@ public class WindowImportArchive  {
             ClassDelay.delay(1000);
         Platform.runLater(()->windowProcess30.getStage().close());
         deviceArchive.closeSerialPort();
-        deviceArchive.processArchive();
+        deviceArchive.processArchive(device);
         var currentPort=MainWindow.settings.getPortModbus();
         modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
     }
