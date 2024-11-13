@@ -153,7 +153,7 @@ public class MainWindow {
             public void run() {
                 timerSec_Tick();
             }
-        },500,5000);
+        },500,1000);
     }
 
     /**

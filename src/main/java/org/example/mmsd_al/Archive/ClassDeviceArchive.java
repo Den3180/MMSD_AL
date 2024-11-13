@@ -5,6 +5,7 @@ import com.intelligt.modbus.jlibmodbus.utils.CRC16;
 import com.intelligt.modbus.jlibmodbus.utils.DataUtils;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.stage.FileChooser;
 import jssc.*;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
@@ -14,6 +15,7 @@ import org.example.mmsd_al.Classes.ClassModbus;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
 import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.ServiceClasses.ClassMessage;
+import org.example.mmsd_al.StartApplication;
 
 import java.io.*;
 import java.net.Socket;
@@ -253,7 +255,7 @@ public class ClassDeviceArchive {
                 throw new RuntimeException(e);
             }
         }
-        if(saveArchive(resTotal)){
+        if(saveArchive(resTotal, device)){
             Platform.runLater(()->ClassMessage.showMessage("Архив","Сохранение архива","Архив сохранен",
                                                             Alert.AlertType.INFORMATION));
             SaveToExcel(resTotal,device);
@@ -262,14 +264,26 @@ public class ClassDeviceArchive {
 
     /**
      * Сохранить архив в файл.
+     *
      * @param resTotal буфер хранения архива.
+     * @param device
      * @return boolean
      */
-    private boolean saveArchive(ArrayList<Integer[]> resTotal){
+    private boolean saveArchive(ArrayList<Integer[]> resTotal, ClassDevice device){
         File dirArch=new File("Archive");
         if(!dirArch.exists()) dirArch.mkdir();
-        String pathFile= dirArch.getPath()+File.separator+"arch_dev.ach";
-        try(FileOutputStream fout=new FileOutputStream(pathFile)) {
+        String pathFile= device+"_"+device.get_Address()+".ach";
+
+        File fileArch=new File(dirArch.getPath()+File.separator+pathFile);
+        int i=0;
+        //Проверка на совпадение имени файла и генерации уникального, если есть совпадение.
+        while (fileArch.exists()){
+            pathFile=device+"_"+device.get_Address()+"_"+"("+i+")"+".xlsx";
+            fileArch=new File(dirArch.getPath()+File.separator+pathFile);
+            i++;
+        }
+        //Откурытие потока и сохранение в файл.
+        try(FileOutputStream fout=new FileOutputStream(fileArch.getPath())) {
             try(ObjectOutputStream out=new ObjectOutputStream(fout)){
                 out.writeObject(resTotal);
                 return true;
@@ -292,7 +306,13 @@ public class ClassDeviceArchive {
         if(!dirArch.exists()) {
             return  null;
         }
-        String pathFile= dirArch.getPath()+File.separator+"arch_dev.ach";
+        FileChooser fileArch=new FileChooser();
+        fileArch.setTitle("Архив");
+        fileArch.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Архив","*.ach"));
+        File archFile= fileArch.showOpenDialog(StartApplication.stage);
+
+//        String pathFile= dirArch.getPath()+File.separator+"arch_dev.ach";
+        String pathFile= archFile.getAbsolutePath();
         try(FileInputStream fin=new FileInputStream(pathFile)){
             try (ObjectInputStream oin = new ObjectInputStream(fin)){
                 archive=(ArrayList<Integer[]>)oin.readObject();
