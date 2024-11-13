@@ -204,7 +204,6 @@ public class ClassDeviceArchive {
      * Обработка полученных блоков архива.
      */
     public void processArchive(ClassDevice device){
-
         List<Integer> res=new ArrayList<Integer>();
         int countNote_31 = 0;
         for(int [] note:note_31){
@@ -367,13 +366,14 @@ public class ClassDeviceArchive {
         try (var workbook = new XSSFWorkbook()) {
             // Создаем бланк Excel листа
             XSSFSheet sheet = workbook.createSheet(device.toString());
-            //sheet.setDefaultColumnWidth(300);
             // Создаем пустую карту с теми типами данных что там будут.
             Map<Integer, Object[]> data = new TreeMap<Integer, Object[]>();
             // Делаем заголовочную строку.
             int countLine=2;
             data.put(1, new Object[]{"Параметр", "Устройство", "Значение", "Дата"});
+            //Заполняем карту данных.
             for (var note : arch){
+                //Парсим дату из массива данных архива.
                 var centuryNow = (LocalDate.now().getYear()/ 100) * 100;
                 var fullYear=centuryNow+note[58];
                 var month=note[59];
@@ -384,16 +384,15 @@ public class ClassDeviceArchive {
                 LocalDateTime date=LocalDateTime.of(fullYear,month,day,hour,minute,second);
                 String dateStr=date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
                 int countParam=0;
+                //Заполняем карту параметрами из архива для текущей записи.
                 for(int i=39;i<note.length;i++){
                     data.put(countLine++,
                             new Object[]{
                                     ((ClassChannel)channels[countParam++]).get_Name(), device.toString(), note[i],dateStr});
                 }
             }
-
-            // Iterating over data and writing it to sheet
+            // Создание списка ключей.
             Set<Integer> keyset = data.keySet();
-
             //Настройка стилей для первой строки.
             XSSFCellStyle style=workbook.createCellStyle();
             style.setAlignment(HorizontalAlignment.CENTER);
@@ -404,18 +403,15 @@ public class ClassDeviceArchive {
             fnt.setColor(HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
             style.setFont(fnt);
 
+            //Создание строк.
             int rownum = 0;
             for (Integer key : keyset) {
-
-                // Creating a new row in the sheet
+                // Создание новой строки.
                 Row row = sheet.createRow(rownum);
                 Object[] objArr = data.get(key);
-
                 int cellnum = 0;
+                //Создание ячеек в каждой строке.
                 for (Object obj : objArr) {
-
-                    // This line creates a cell in the next
-                    //  column of that row
                     Cell cell = row.createCell(cellnum++);
                     if(rownum==0) {
                          cell.setCellStyle(style);
@@ -430,9 +426,21 @@ public class ClassDeviceArchive {
                         cell.setCellStyle(st);
                         cell.setCellValue((Integer) obj);
                     }
-                }
-                if(rownum==1) {
+
+                    //Индикация цветом начала каждой записи.
                     String cellValue = row.getCell(0).getStringCellValue();
+                    if(cellValue.equals("Инв. № объекта")){
+                        var headerStyle = workbook.createCellStyle();
+                            headerStyle.setFillForegroundColor(IndexedColors.SEA_GREEN.getIndex());
+                            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                        if(cell.getColumnIndex()==2){
+                                headerStyle.setAlignment(HorizontalAlignment.CENTER);
+                            }
+                            cell.setCellStyle(headerStyle);
+                    }
+                }
+                //Настройка ширины столбцов.
+                if(rownum==1) {
                     sheet.setColumnWidth(0, 20000);
                     sheet.setColumnWidth(1, 7000);
                     sheet.setColumnWidth(2, 7000);
