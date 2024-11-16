@@ -106,6 +106,7 @@ public class ClassModbus {
             RTUMaster=null;
         }
 
+            portParametres=setParametres(MainWindow.settings);
             RTUMaster = ModbusMasterFactory.createModbusMasterRTU(portParametres);
             RTUMaster.setResponseTimeout(timeOut);
             RTUMaster.connect();
@@ -123,7 +124,7 @@ public class ClassModbus {
      */
     public void portClose()
     {
-        if (RTUMaster != null && RTUMaster.isConnected()) {
+        if (RTUMaster != null || RTUMaster.isConnected()) {
             try {
                 RTUMaster.disconnect();
                 System.out.println("Связь с RTUMaster: "+ RTUMaster.isConnected());

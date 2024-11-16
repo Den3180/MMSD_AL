@@ -214,4 +214,30 @@ public class WindowImportArchive  {
     public int getNumRecords() {
         return numRecords;
     }
+
+    @FXML
+    public void ChangeItemCombobox(ActionEvent actionEvent) {
+        device=(ClassDevice) devArchiveComboBox.getSelectionModel().getSelectedItem();
+        deviceAddress=device.get_Address();
+        int [] dataNoteCount=deviceArchive.GetCountNoteArchive(deviceAddress,addressRegAO);
+        availableRecords.setText(String.valueOf(dataNoteCount[0]));
+        //Если поле доступных данных заполнено.
+        if(availableRecords.getText()!="нет данных"){
+            //Поле для указание количества записей для скачивания.
+            countLoadRecords.setText("0");
+            //Поле для указания ноера начальной записи.
+            startRecords.setText("0");
+        }
+        //Если количество доступных записей 0, то поля делаются не доступны.
+        if(Objects.equals(availableRecords.getText(), "0")) {
+            apply.setDisable(true);
+            countLoadRecords.setDisable(true);
+            startRecords.setDisable(true);
+        }
+        else{
+            apply.setDisable(false);
+            countLoadRecords.setDisable(false);
+            startRecords.setDisable(false);
+        }
+    }
 }

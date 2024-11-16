@@ -5,12 +5,8 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane focusTraversable="true" 
-            xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.mmsd_al.Windows.WindowImportArchive">
-    <VBox alignment="CENTER" prefWidth="322.0" style="-fx-border-color: black; -fx-border-width: 1;"
-          AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0"
-          AnchorPane.rightAnchor="3" AnchorPane.topAnchor="3">
+<AnchorPane focusTraversable="true" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.mmsd_al.Windows.WindowImportArchive">
+    <VBox alignment="CENTER" prefWidth="322.0" style="-fx-border-color: black; -fx-border-width: 1;" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3" AnchorPane.topAnchor="3">
         <children>
             <GridPane alignment="CENTER">
                 <columnConstraints>
@@ -87,7 +83,7 @@
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </GridPane.margin>
                </Label>
-               <ComboBox fx:id="devArchiveComboBox" prefWidth="150.0" GridPane.columnIndex="1">
+               <ComboBox fx:id="devArchiveComboBox" onAction="#ChangeItemCombobox" prefWidth="150.0" GridPane.columnIndex="1">
                   <GridPane.margin>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </GridPane.margin>
@@ -99,8 +95,7 @@
             </GridPane>
          <HBox alignment="CENTER">
             <children>
-                  <Button fx:id="apply" alignment="TOP_CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false"
-                          onAction="#click_Button" prefHeight="30.0" prefWidth="91.0" text="Применить" textAlignment="CENTER">
+                  <Button fx:id="apply" alignment="TOP_CENTER" contentDisplay="CENTER" defaultButton="true" mnemonicParsing="false" onAction="#click_Button" prefHeight="30.0" prefWidth="91.0" text="Применить" textAlignment="CENTER">
                       <font>
                           <Font size="14.0" />
                       </font>
@@ -108,8 +103,7 @@
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </HBox.margin>
                   </Button>
-               <Button alignment="TOP_CENTER" cancelButton="true" contentDisplay="CENTER" mnemonicParsing="false"
-                       onAction="#click_Button" prefHeight="30.0" prefWidth="91.0" text="Отмена">
+               <Button alignment="TOP_CENTER" cancelButton="true" contentDisplay="CENTER" mnemonicParsing="false" onAction="#click_Button" prefHeight="30.0" prefWidth="91.0" text="Отмена">
                   <font>
                      <Font size="14.0" />
                   </font>

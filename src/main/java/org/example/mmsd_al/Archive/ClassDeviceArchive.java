@@ -65,12 +65,18 @@ public class ClassDeviceArchive {
      */
     public int[] GetCountNoteArchive(int devAddress, int startReg){
         try {
+                //if(!modbus.getModbusMaster().isConnected()) modbus.portOpen();
                 dataArr=master.readHoldingRegisters(devAddress,startReg,1);
                 modbus.portClose();
                 modbus.getPortParametres().setDevice("");
                 serialPort=new SerialPort(portName);
                 return dataArr;
         } catch (Exception e) {
+            modbus.portClose();
+            modbus.getPortParametres().setDevice("");
+            serialPort=new SerialPort(portName);
+            modbus.portOpen();
+            master=modbus.getModbusMaster();
             return new int[]{0};
         }
     }
