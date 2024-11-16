@@ -146,6 +146,7 @@ public class ClassModbus {
         if(device.getChannels().isEmpty()) continue;
         if(RTUMaster==null) continue;
         if(device.get_Period()==0) continue;
+        if(!device.is_IsPoll()) continue;
         //if(device.getCounGroup()>0) continue;
         //if (someDeviceInTheProcess(MainWindow.Devices, device)) continue;
         //if(device.getInProcess()==true) continue;

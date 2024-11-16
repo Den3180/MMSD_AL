@@ -321,8 +321,11 @@ public class ClassDB {
      */
     public ArrayList<ClassChannel> registriesLoad(int deviceID){
         ArrayList<ClassChannel> lst=new ArrayList<>();
+        //Команда выгрузки всех регистров в базе данных в том случае если ID устройства равен 0.
         StringBuilder cmd=new StringBuilder("SELECT reg.rowid, reg.*, dev.name AS d_name, dev.address AS d_adr"
                 + " FROM reg LEFT JOIN dev ON reg.dev = dev.rowid");
+        //Если ID устройства НЕ равен 0, то в команду добавляем условие, которое предписывает выбирать регистры
+        // для этого конкретного устройства.
         if(deviceID >0 ){
             cmd.append(" WHERE reg.dev = "+String.valueOf(deviceID)+" ORDER by type DESC, adr ASC");
         }

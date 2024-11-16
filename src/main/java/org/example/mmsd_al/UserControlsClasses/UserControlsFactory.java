@@ -1,10 +1,12 @@
 package org.example.mmsd_al.UserControlsClasses;
 
 import javafx.beans.InvalidationListener;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import org.example.mmsd_al.Classes.ClassChannel;
 import org.example.mmsd_al.DevicesClasses.ClassDevice;
@@ -29,7 +31,7 @@ public class UserControlsFactory {
     public static final String [] HEADERS_DEVICE =new String[]{
             "№", "Устройство", "Модель","Пикет", "С.Ш.", "В.Д",
             "Высота", "Протокол", "Порт/IP","Адрес/ID", "SIM карта", "Период опроса",
-            "Пакетов", "Наличие связи"
+            "Пакетов", "Наличие связи","Опрос"
     };
 
     /**
@@ -38,7 +40,7 @@ public class UserControlsFactory {
     public static final String[] VARIABLES_DEVICE =new String[]{
             "countNumber", "_Name",  "_ModelName","_Picket", "_Latitude", "_Longitude",
             "_Elevation", "_ProtocolName", "_ComPort","_Address", "_SIM", "_Period",
-            "_PacketStatistics", "_LinkStateName"
+            "_PacketStatistics", "_LinkStateName", "_IsPoll"
     };
 
     /**
@@ -179,6 +181,7 @@ public class UserControlsFactory {
         indexScroll=0;
         indexScrollPrev =0;
         prevY=0;
+        tableView.setEditable(true);
         return tableView;
     }
 
@@ -195,11 +198,20 @@ public class UserControlsFactory {
     private static <T,S> TableColumn<T,S> setColTable(T obj1, S obj2, String hdr, String vrb){
         TableColumn<T,S> col = new TableColumn<T,S>(hdr);
 
+        //Ширина колонок по умолчанию 20.
         col.setMinWidth(20);
+        //Если это первый заголовок таблицы устройств или таблицы каналов.
         if(HEADERS_DEVICE[1].equals(hdr) && obj1 instanceof ClassDevice ||HEADES_CHANNEL[1].equals(hdr)){
+            //Выставляем ширину для выбранных столбцов.
             col.setPrefWidth(300);
             col.setMaxWidth(800);
         }
+
+        if(HEADERS_DEVICE[14].equals(hdr) && obj1 instanceof ClassDevice){
+            col.setCellFactory(column->new CheckBoxTableCell<>());
+            col.setCellValueFactory(new PropertyValueFactory<T,S>(vrb));
+        }
+        else
         col.setCellValueFactory(new PropertyValueFactory<T,S>(vrb));
         return col;
     }

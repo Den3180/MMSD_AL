@@ -3,6 +3,7 @@ package org.example.mmsd_al.DevicesClasses;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 //import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -30,36 +31,49 @@ public class ClassDevice {
 
     private SimpleStringProperty _Name;
     private SimpleIntegerProperty _Address;
-    private EnumProtocol _Protocol;
     private SimpleIntegerProperty _Period;
     private SimpleStringProperty _IPAddress;
-    private int _IPPort;
-    private EnumLink _LinkState;
-    private int _TxCounter;
-    private int _RxCounter;
-    private int _PacketLost;
-    private LocalDate _DTAct;
     private SimpleStringProperty _ComPort;
     private SimpleStringProperty _SIM;
-    private EnumModel _Model;
-    private LocalDate _DTConnect;
-    private boolean _WaitAnswer;
     private SimpleStringProperty _Picket;
     private SimpleDoubleProperty _Latitude;
     private SimpleDoubleProperty _Longitude;
     private SimpleDoubleProperty _Elevation;
     private SimpleStringProperty _LinkStateName;
     private SimpleStringProperty _PacketStatistics;
-    private int countNumber;
     private SimpleStringProperty _ProtocolName;
     private SimpleStringProperty _ModelName;
+    private SimpleBooleanProperty _IsPoll;
+    private EnumProtocol _Protocol;
+    private int _IPPort;
+    private EnumLink _LinkState;
+    private int _TxCounter;
+    private int _RxCounter;
+    private int _PacketLost;
+    private LocalDate _DTAct;
     private List<ClassChannel> channels;
+    private EnumModel _Model;
+    private LocalDate _DTConnect;
+    private boolean _WaitAnswer;
+    private int countNumber;
     private int counGroup;
     private boolean inProcess;
 
 
     //region Setters and Getters
 
+
+    public boolean is_IsPoll() {
+        return _IsPoll.get();
+    }
+
+    public SimpleBooleanProperty _IsPollProperty() {
+        return _IsPoll;
+    }
+
+    public void set_IsPoll(boolean _IsPoll) {
+        this._IsPoll.set(_IsPoll);
+    }
 
     public void setGroups(List<ClassGroupRequest> groups) {
         this.groups = groups;
@@ -451,6 +465,7 @@ public class ClassDevice {
         _ProtocolName=new SimpleStringProperty();
         _PacketStatistics=new SimpleStringProperty("0/0");
         _LinkStateName=new SimpleStringProperty("Неизвестно");
+        _IsPoll=new SimpleBooleanProperty(false);
         inProcess=false;
     }
 
