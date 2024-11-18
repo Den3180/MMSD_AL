@@ -132,8 +132,7 @@ public class ClassModbus {
                 RTUMaster=null;
                 Mode=eMode.PortClosed;
             } catch (ModbusIOException e) {
-                //throw new RuntimeException(e);
-                
+                throw new RuntimeException(e);
             }
         }
     }
