@@ -306,15 +306,18 @@ public class ClassDeviceArchive {
      */
     public static ArrayList<Integer[]> loadArchive(){
         ArrayList<Integer[]> archive;
+        
         File dirArch=new File("Archive");
         //Если каталог не создан и нет архивов.
         if(!dirArch.exists()) {
-            return  null;
-        }
+            dirArch.mkdir();
+        }        
         FileChooser fileArch=new FileChooser();
         fileArch.setTitle("Архив");
-        fileArch.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Архив","*.ach"));
+        fileArch.getExtensionFilters().addAll
+                (new FileChooser.ExtensionFilter("Архив","*.ach"));
         File archFile= fileArch.showOpenDialog(StartApplication.stage);
+        if(archFile==null) return null;
 
 //        String pathFile= dirArch.getPath()+File.separator+"arch_dev.ach";
         String pathFile= archFile.getAbsolutePath();
