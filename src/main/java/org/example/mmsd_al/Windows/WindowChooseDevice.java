@@ -74,6 +74,7 @@ public class WindowChooseDevice {
         ((Stage)window).close();
         //Если кнопка, которая нажата это не кнопка отмены.
         if(!button.isCancelButton()){
+            device=(ClassDevice) devArchiveComboBox.getSelectionModel().getSelectedItem();
             window.setUserData(device);
         }
     }

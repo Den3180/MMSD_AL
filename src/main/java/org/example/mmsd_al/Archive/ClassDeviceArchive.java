@@ -398,6 +398,9 @@ public class ClassDeviceArchive {
                     data.put(countLine++,
                             new Object[]{
                                     ((ClassChannel)channels[countParam++]).get_Name(), device.toString(), note[i],dateStr});
+                    if(countParam>=channels.length){
+                        break;
+                    }
                 }
             }
             // Создание списка ключей.
@@ -494,7 +497,7 @@ public class ClassDeviceArchive {
             }
         }
         catch (Exception exception){
-            ClassMessage.showMessage("Архив","","Ошибка импорта архива!", Alert.AlertType.ERROR);
+            ClassMessage.showMessage("Архив","","Ошибка импорта архива!  "+ exception.getMessage(), Alert.AlertType.ERROR);
         }
     }
 }
