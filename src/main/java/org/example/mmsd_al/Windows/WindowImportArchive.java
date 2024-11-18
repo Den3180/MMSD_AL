@@ -150,7 +150,9 @@ public class WindowImportArchive  {
             //Получаем номер текущего порта.
             var currentPort=MainWindow.settings.getPortModbus();
             //Устанавливаем настройки соединения.
-            modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
+            if(currentPort<SerialPortList.getPortNames().length) {
+                modbus.getPortParametres().setDevice(SerialPortList.getPortNames()[currentPort]);
+            }
         }
     }
 

@@ -124,6 +124,7 @@ public class ClassModbus {
      */
     public void portClose()
     {
+        if(SerialPortList.getPortNames().length==0) return;
         if (RTUMaster != null || RTUMaster.isConnected()) {
             try {
                 RTUMaster.disconnect();
@@ -131,7 +132,8 @@ public class ClassModbus {
                 RTUMaster=null;
                 Mode=eMode.PortClosed;
             } catch (ModbusIOException e) {
-                throw new RuntimeException(e);
+                //throw new RuntimeException(e);
+                
             }
         }
     }
