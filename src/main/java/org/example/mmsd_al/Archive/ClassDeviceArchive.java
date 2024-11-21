@@ -283,7 +283,7 @@ public class ClassDeviceArchive {
         int i=0;
         //Проверка на совпадение имени файла и генерации уникального, если есть совпадение.
         while (fileArch.exists()){
-            pathFile=device+"_"+device.get_Address()+"_"+"("+i+")"+".xlsx";
+            pathFile=device+"_"+device.get_Address()+"_"+"("+i+")"+".ach";
             fileArch=new File(dirArch.getPath()+File.separator+pathFile);
             i++;
         }
