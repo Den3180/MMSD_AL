@@ -19,6 +19,8 @@ import org.example.mmsd_al.StartApplication;
 
 import java.io.*;
 import java.net.Socket;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -406,9 +408,15 @@ public class ClassDeviceArchive {
                 for(int i=39;i<note.length;i++){
                     ClassChannel ch=(ClassChannel)channels[countParam++];
                     Object val;
+                    //Если введен коэффициент отображения канала.
                     if(ch.get_Koef()!=1){
-                        //val=(double)note[i]*ch.get_Koef();
-                        val=(double)Math.round((double)note[i]*ch.get_Koef()*100)/100;
+                        //val=(double)Math.round((double)note[i]*ch.get_Koef()*100)/100;
+                        //Выбор десятичного разделителя.
+                        NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
+                        DecimalFormat df = new DecimalFormat("#.##");
+                        String tt=df.format((double)note[i]*ch.get_Koef());
+                        Number number = format.parse(tt);
+                        val=number.doubleValue();
                     }
                     else {
                         val=note[i];
