@@ -163,12 +163,16 @@ public class WindowImportArchive  {
 
         //TODO Добавить блок try-catch. Выход за границы массива происходит.
         int startPos= Integer.parseInt(startRecords.getText());
+        //Количество записей, которые надо прочесть.
         numRecords=Integer.valueOf(countLoadRecords.getText());
+        //Устанавливаем крайнюю позицию, до которой будет читаться архив.
         int endpos=startPos+numRecords;
         //Создание и запуск окна прогресса загрузки архива.
         WindowProcess30 windowProcess30=new WindowProcess30(this);
         Platform.runLater(()->windowProcess30.showWindow(windowProcess30));
+        //Атомарный тип, чтобы исключиьт ошибки обновления счетчика при многопоточности.
         AtomicInteger finalStartPos = new AtomicInteger();
+        //Опрос устройства командой 30.
         while(startPos<endpos){
             deviceArchive.readArchive_30(deviceAddress,startPos);
             Platform.runLater(()->setIntprop(finalStartPos.get()));
@@ -180,11 +184,14 @@ public class WindowImportArchive  {
         int countNotCurr=0;
         var note_30=deviceArchive.getNote_30();
         while(startPos<endpos){
+            //Парсим записи, полученные командой 30, чтоб получить количество блоков, которые надо прочесть
+            //командой 31.
             int [] noteHeader=note_30.get(countNotCurr);
             countNotCurr++;
             int sizeBlockNote = noteHeader[4] * 100 + noteHeader[5];
             int numBlocks = sizeBlockNote % 200 == 0 ? sizeBlockNote / 200 : sizeBlockNote / 200 + 1;
             int countBlock = 0;
+            //Опрос устройства командой 31.
             while (countBlock < numBlocks){
                 deviceArchive.readArchive_31(deviceAddress,startPos,countBlock);
                 countBlock++;
@@ -213,6 +220,11 @@ public class WindowImportArchive  {
         this.intprop.set(intprop);
     }
 
+
+    /**
+     * Получить количество записей, указанных пользователем.
+     * @return количество записей
+     */
     public int getNumRecords() {
         return numRecords;
     }

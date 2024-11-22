@@ -257,6 +257,10 @@ public class ClassDeviceArchive {
                     res.clear();
                 }
             } catch (NumberFormatException e) {
+                Platform.runLater(()->ClassMessage.showMessage("Архив","Сохранение архива",
+                        "Ошибка! Часть данных потеряна.\n"+
+                        "Перезапустите программу и повторите операцию!",
+                        Alert.AlertType.ERROR));
                 throw new RuntimeException(e);
             }
         }
@@ -264,6 +268,11 @@ public class ClassDeviceArchive {
             Platform.runLater(()->ClassMessage.showMessage("Архив","Сохранение архива","Архив сохранен",
                                                             Alert.AlertType.INFORMATION));
             SaveToExcel(resTotal,device);
+        }
+        else{
+            Platform.runLater(()->ClassMessage.showMessage("Архив","Сохранение архива",
+                    "Ошибка! Архив не сохранен!",
+                    Alert.AlertType.INFORMATION));
         }
     }
 
@@ -395,9 +404,18 @@ public class ClassDeviceArchive {
                 int countParam=0;
                 //Заполняем карту параметрами из архива для текущей записи.
                 for(int i=39;i<note.length;i++){
+                    ClassChannel ch=(ClassChannel)channels[countParam++];
+                    Object val;
+                    if(ch.get_Koef()!=1){
+                        //val=(double)note[i]*ch.get_Koef();
+                        val=(double)Math.round((double)note[i]*ch.get_Koef()*100)/100;
+                    }
+                    else {
+                        val=note[i];
+                    }
                     data.put(countLine++,
                             new Object[]{
-                                    ((ClassChannel)channels[countParam++]).get_Name(), device.toString(), note[i],dateStr});
+                                    ch.get_Name(), device.toString(), val,dateStr});
                     if(countParam>=channels.length){
                         break;
                     }
@@ -415,6 +433,19 @@ public class ClassDeviceArchive {
             fnt.setColor(HSSFColor.HSSFColorPredefined.DARK_RED.getIndex());
             style.setFont(fnt);
 
+            XSSFCellStyle st=workbook.createCellStyle();
+            st.setAlignment(HorizontalAlignment.CENTER);
+
+            var headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.SEA_GREEN.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            var headerStyleCenter = workbook.createCellStyle();
+            headerStyleCenter.setFillForegroundColor(IndexedColors.SEA_GREEN.getIndex());
+            headerStyleCenter.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyleCenter.setAlignment(HorizontalAlignment.CENTER);
+
+
             //Создание строк.
             int rownum = 0;
             for (Integer key : keyset) {
@@ -425,30 +456,31 @@ public class ClassDeviceArchive {
                 //Создание ячеек в каждой строке.
                 for (Object obj : objArr) {
                     Cell cell = row.createCell(cellnum++);
+                    //Присваиваем стиль первой строке(заголовок).
                     if(rownum==0) {
                          cell.setCellStyle(style);
                          }
 
                     if (obj instanceof String){
                         cell.setCellValue((String) obj);
-                    }
-                    else if (obj instanceof Integer){
-                        var st=workbook.createCellStyle();
-                        st.setAlignment(HorizontalAlignment.CENTER);
+                    }else if (obj instanceof Integer){
                         cell.setCellStyle(st);
                         cell.setCellValue((Integer) obj);
+                    }else if (obj instanceof Double){
+                        cell.setCellStyle(st);
+                        cell.setCellValue((Double) obj);
                     }
 
                     //Индикация цветом начала каждой записи.
                     String cellValue = row.getCell(0).getStringCellValue();
                     if(cellValue.equals("Инв. № объекта")){
-                        var headerStyle = workbook.createCellStyle();
-                            headerStyle.setFillForegroundColor(IndexedColors.SEA_GREEN.getIndex());
-                            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                        if(cell.getColumnIndex()==2){
-                                headerStyle.setAlignment(HorizontalAlignment.CENTER);
+                        row.forEach(c->{
+                            c.setCellStyle(headerStyle);
+                            if(c.getColumnIndex()==2){
+                                c.setCellStyle(headerStyleCenter);
                             }
-                            cell.setCellStyle(headerStyle);
+                        });
+                        row.setRowStyle(headerStyle);
                     }
                 }
                 //Настройка ширины столбцов.
@@ -460,7 +492,6 @@ public class ClassDeviceArchive {
                 }
                 rownum++;
             }
-
             // Try block to check for exceptions
             try {
                 File dirArch=new File("Архивы");
@@ -497,7 +528,7 @@ public class ClassDeviceArchive {
             }
         }
         catch (Exception exception){
-            ClassMessage.showMessage("Архив","","Ошибка импорта архива!  "+ exception.getMessage(), Alert.AlertType.ERROR);
+            ClassMessage.showMessage("Архив","","Ошибка импорта архива!\n"+ exception.getMessage(), Alert.AlertType.ERROR);
         }
     }
 }

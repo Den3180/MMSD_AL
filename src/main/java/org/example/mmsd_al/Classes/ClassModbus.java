@@ -2,8 +2,6 @@ package org.example.mmsd_al.Classes;
 
 import com.intelligt.modbus.jlibmodbus.exception.*;
 import com.intelligt.modbus.jlibmodbus.master.*;
-import com.intelligt.modbus.jlibmodbus.net.transport.ModbusTransport;
-import com.intelligt.modbus.jlibmodbus.net.transport.ModbusTransportFactory;
 import com.intelligt.modbus.jlibmodbus.serial.*;
 import javafx.collections.ObservableList;
 import jssc.SerialPortList;
@@ -13,7 +11,6 @@ import org.example.mmsd_al.MainWindow;
 import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.Settings.ClassSettings;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 
@@ -35,13 +32,15 @@ public class ClassModbus {
     private final int numOfRegMin=1;
     private int timeOut=1000;
     private boolean canPoll;
+    boolean flagWrite169 =false;
 
     //<editor-fold desc="Setters/Getters">
 
 
+
     /**
      * Параметры настройки последовательного порта.
-     * @return 
+     * @return
      */
     public SerialParameters getPortParametres() {
         return portParametres;
@@ -76,8 +75,8 @@ public class ClassModbus {
     }
 
 
-
     //</editor-fold>
+
 
     public ClassModbus() {
         portParametres = setParametres(MainWindow.settings);
@@ -154,8 +153,19 @@ public class ClassModbus {
         //if(device.getInProcess()==true) continue;
         //List<ClassGroupRequest> groups=device.getGroups();
             if(RTUMaster.isConnected()){
+                if(!flagWrite169){
+                    flagWrite169 = writeRegister169(device);
+                }
                 ReadGroupRegistry(device,RTUMaster);
             }
+        }
+    }
+    private boolean writeRegister169(ClassDevice device){
+        try {
+            RTUMaster.writeSingleRegister(device.get_Address(), 169,1);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 
@@ -165,7 +175,6 @@ public class ClassModbus {
      * @param master текущий мастер(RTU,TCP,ASCII)
      */
     private void ReadGroupRegistry(ClassDevice device, ModbusMaster master){
-
         device.setInProcess(true);
         //int countBadRequest=0;
         //int countGroup= device.getCounGroup();

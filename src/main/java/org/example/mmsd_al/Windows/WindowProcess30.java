@@ -34,10 +34,10 @@ public class WindowProcess30 {
     public WindowProcess30(WindowImportArchive sp){
         //Ссылка на родительское окно. 
         this.sp=sp;
-        //Установка величины прогрессбара.
-        valueProgressBar= (double) 1 /(this.sp.getNumRecords()*2);
+        //Установка величины прогрессбара. 1/количество записей.
+        valueProgressBar= (double) 1 /(this.sp.getNumRecords());
+//        valueProgressBar= (double) 1 /(this.sp.getNumRecords()*2);
     }
-
 
     /**
      * Получить текущее окно.
@@ -51,10 +51,14 @@ public class WindowProcess30 {
     public void initialize(){
         // Устанавливаем прослушку на изменение свойства
       sp.intpropProperty().addListener((obj,oval,nval)->{
-          progressText +=Math.round(valueProgressBar*100);
           progress+= valueProgressBar;
-          if(progress>0.5){
+          progressText =Math.round(progress*100);
+          if(progress>=1){
               headerLab.setText("Загрузка архива...");
+              progress=0;
+              pBar.setProgress(progress);
+              progressText=0;
+              lab.setText(String.valueOf(Math.min((int) progressText, 100)));
           }
           if(progress<1){
               lab.setText(String.valueOf(Math.min((int) progressText, 100)));
