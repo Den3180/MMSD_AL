@@ -26,6 +26,8 @@ import org.example.mmsd_al.ServiceClasses.ClassDelay;
 import org.example.mmsd_al.StartApplication;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -53,9 +55,9 @@ public class WindowImportArchive  {
     @FXML
     public TextField availableRecords;
     @FXML
-    private TextField countLoadRecords;
+    private ComboBox countLoadRecords;
     @FXML
-    private TextField startRecords;
+    private ComboBox startRecords;
 
 
 
@@ -83,15 +85,21 @@ public class WindowImportArchive  {
         //Адрес устройства фиксируем.
         deviceAddress=device.get_Address();
         //Получаем сведения о количестве записей в архиве.
-        int [] dataNoteCount=deviceArchive.GetCountNoteArchive(deviceAddress,addressRegAO);
+        dataNoteCount=deviceArchive.GetCountNoteArchive(deviceAddress,addressRegAO);
         //Заполняем поле доступных записей.
         availableRecords.setText(String.valueOf(dataNoteCount[0]));
         //Если поле доступных данных заполнено.
         if(availableRecords.getText()!="нет данных"){
             //Поле для указание количества записей для скачивания.
-            countLoadRecords.setText("0");
+           var list= new ArrayList<Integer>();
+            for(int i=1;i<=dataNoteCount[0];i++){
+                list.add(i);
+            }
+//            countLoadRecords.setItems(FXCollections.observableArrayList(list));
+//            countLoadRecords.getSelectionModel().select(0);
             //Поле для указания ноера начальной записи.
-            startRecords.setText("0");
+            startRecords.setItems(FXCollections.observableArrayList(list));
+            startRecords.getSelectionModel().select(0);
         }
         //Если количество доступных записей 0, то поля делаются не доступны.
         if(Objects.equals(availableRecords.getText(), "0")) {
@@ -162,9 +170,11 @@ public class WindowImportArchive  {
     private void getDeviceArchive(){
 
         //TODO Добавить блок try-catch. Выход за границы массива происходит.
-        int startPos= Integer.parseInt(startRecords.getText());
+//        int startPos= Integer.parseInt(startRecords.getText());
+        int startPos= (int)startRecords.getSelectionModel().getSelectedItem()-1;
         //Количество записей, которые надо прочесть.
-        numRecords=Integer.valueOf(countLoadRecords.getText());
+//        numRecords=Integer.valueOf(countLoadRecords.getText());
+        numRecords=(int)countLoadRecords.getSelectionModel().getSelectedItem();
         //Устанавливаем крайнюю позицию, до которой будет читаться архив.
         int endpos=startPos+numRecords;
         //Создание и запуск окна прогресса загрузки архива.
@@ -180,7 +190,8 @@ public class WindowImportArchive  {
             startPos++;
         }
 
-        startPos=Integer.parseInt(startRecords.getText());
+//        startPos=Integer.parseInt(startRecords.getText());
+        startPos=(int)startRecords.getSelectionModel().getSelectedItem()-1;
         int countNotCurr=0;
         var note_30=deviceArchive.getNote_30();
         while(startPos<endpos){
@@ -233,14 +244,24 @@ public class WindowImportArchive  {
     public void ChangeItemCombobox(ActionEvent actionEvent) {
         device=(ClassDevice) devArchiveComboBox.getSelectionModel().getSelectedItem();
         deviceAddress=device.get_Address();
-        int [] dataNoteCount=deviceArchive.GetCountNoteArchive(deviceAddress,addressRegAO);
+        dataNoteCount=deviceArchive.GetCountNoteArchive(deviceAddress,addressRegAO);
         availableRecords.setText(String.valueOf(dataNoteCount[0]));
         //Если поле доступных данных заполнено.
         if(availableRecords.getText()!="нет данных"){
             //Поле для указание количества записей для скачивания.
-            countLoadRecords.setText("0");
+//            countLoadRecords.setText("0");
+//            //Поле для указания ноера начальной записи.
+//            startRecords.setText("0");
+
+            var list= new ArrayList<Integer>();
+            for(int i=1;i<=dataNoteCount[0];i++){
+                list.add(i);
+            }
+//            countLoadRecords.setItems(FXCollections.observableArrayList(list));
+//            countLoadRecords.getSelectionModel().select(0);
             //Поле для указания ноера начальной записи.
-            startRecords.setText("0");
+            startRecords.setItems(FXCollections.observableArrayList(list));
+            startRecords.getSelectionModel().select(0);
         }
         //Если количество доступных записей 0, то поля делаются не доступны.
         if(Objects.equals(availableRecords.getText(), "0")) {
@@ -253,5 +274,22 @@ public class WindowImportArchive  {
             countLoadRecords.setDisable(false);
             startRecords.setDisable(false);
         }
+    }
+
+
+    /**
+     * Обработчик выбора начала записи.
+     * @param actionEvent
+     */
+    public void startRecordsChange(ActionEvent actionEvent) {
+        var selectedItem=(int)startRecords.getSelectionModel().getSelectedItem()-1;
+        var count=dataNoteCount[0]-selectedItem;
+        var list= new ArrayList<Integer>();
+        for(int i=0;i<count;i++){
+            list.add(i+1);
+        }
+        countLoadRecords.setItems(FXCollections.observableArrayList(list));
+        countLoadRecords.getSelectionModel().select(0);
+
     }
 }
