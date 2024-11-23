@@ -95,8 +95,8 @@ public class WindowImportArchive  {
             for(int i=1;i<=dataNoteCount[0];i++){
                 list.add(i);
             }
-//            countLoadRecords.setItems(FXCollections.observableArrayList(list));
-//            countLoadRecords.getSelectionModel().select(0);
+            countLoadRecords.setItems(FXCollections.observableArrayList(list));
+            countLoadRecords.getSelectionModel().select(0);
             //Поле для указания ноера начальной записи.
             startRecords.setItems(FXCollections.observableArrayList(list));
             startRecords.getSelectionModel().select(0);
