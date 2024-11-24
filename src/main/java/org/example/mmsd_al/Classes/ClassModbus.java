@@ -153,13 +153,20 @@ public class ClassModbus {
         //if(device.getInProcess()==true) continue;
         //List<ClassGroupRequest> groups=device.getGroups();
             if(RTUMaster.isConnected()){
-                if(!flagWrite169){
+                if(!flagWrite169 && device.get_Model()== ClassDevice.EnumModel.BKM_5){
                     flagWrite169 = writeRegister169(device);
                 }
                 ReadGroupRegistry(device,RTUMaster);
             }
         }
     }
+
+
+    /**
+     * Принудительный опрос устройства.
+     * @param device
+     * @return
+     */
     private boolean writeRegister169(ClassDevice device){
         try {
             RTUMaster.writeSingleRegister(device.get_Address(), 169,1);
